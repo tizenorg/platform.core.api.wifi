@@ -1,0 +1,31 @@
+capi-network-wifi (0.1.1-2) unstable; urgency=low
+
+  * Ad UTC files
+  * Git: api/wifi
+  * Tag: capi-network-wifi_0.1.1-2
+
+ -- JaeHyun Kim <jeik01.kim@samsung.com>  Wed, 04 Jul 2012 11:41:10 +0900
+
+capi-network-wifi (0.1.1-1) unstable; urgency=low
+
+  * Add AP initialization functions for user creation
+  * Git: api/wifi
+  * Tag: capi-network-wifi_0.1.1-1
+
+ -- JaeHyun Kim <jeik01.kim@samsung.com>  Mon, 02 Jul 2012 11:01:10 +0900
+
+capi-network-wifi (0.1.1-0) unstable; urgency=low
+
+  * Package implementation
+  * Git: api/wifi
+  * Tag: capi-network-wifi_0.1.1-0
+
+ -- JaeHyun Kim <jeik01.kim@samsung.com>  Mon, 21 May 2012 19:31:01 +0900
+
+capi-network-wifi (0.1.0-1) unstable; urgency=low
+
+  * Initial Upload
+  * Git: api/wifi
+  * Tag: capi-network-wifi_0.1.0-1
+
+ -- JaeHyun Kim <jeik01.kim@samsung.com>  Mon, 09 Apr 2012 20:54:57 +0900

@@ -1,0 +1,21 @@
+Source: capi-network-wifi
+Section: libs
+Priority: extra
+Maintainer: JaeHyun Kim <jeik01.kim@samsung.com>
+Build-Depends: debhelper (>= 5), dlog-dev, capi-base-common-dev, libvconf-dev, libglib2.0-dev, libdbus-glib-1-dev, libnetwork-dev
+
+Package: capi-network-wifi
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Network Wi-Fi library in TIZEN C API
+
+Package: capi-network-wifi-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, capi-network-wifi (= ${Source-Version}), capi-base-common-dev
+Description: Network Wi-Fi library in TIZEN C API (DEV)
+
+Package: capi-network-wifi-dbg
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, capi-network-wifi (= ${Source-Version})
+Description: Network Wi-Fi library in TIZEN C API (DBG)
+
