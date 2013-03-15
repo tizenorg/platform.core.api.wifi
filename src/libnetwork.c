@@ -29,6 +29,8 @@ struct _wifi_cb_s {
 	void *bg_scan_user_data;
 	wifi_scan_finished_cb scan_request_cb;
 	void *scan_request_user_data;
+	wifi_scan_finished_cb scan_hidden_ap_cb;
+	void *scan_hidden_ap_user_data;
 	wifi_connection_state_changed_cb connection_state_cb;
 	void *connection_state_user_data;
 	wifi_activated_cb activated_cb;
@@ -48,6 +50,7 @@ struct _profile_list_s {
 
 static struct _wifi_cb_s wifi_callbacks = {0,};
 static struct _profile_list_s profile_iterator = {0, NULL};
+static struct _profile_list_s hidden_profile_iterator = {0, NULL};
 
 
 static wifi_error_e __libnet_convert_to_ap_error_type(net_err_t err_type)
@@ -155,6 +158,35 @@ static void __libnet_update_profile_iterator(void)
 	profile_iterator.profiles = wifi_profiles.profiles;
 }
 
+static void __libnet_update_hidden_profile_iterator(GSList *ap_list)
+{
+	int count;
+	GSList *list = ap_list;
+
+	for (count = 0; list; list = list->next)
+		count++;
+
+	if (count == 0) {
+		WIFI_LOG(WIFI_INFO, "No hidden AP found\n");
+		return;
+	}
+
+	hidden_profile_iterator.count = count;
+	hidden_profile_iterator.profiles = g_try_new0(net_profile_info_t, count);
+
+	list = ap_list;
+	for (count = 0; list; list = list->next) {
+		net_wifi_connection_info_t *ap = list->data;
+		net_profile_info_t *profile = &hidden_profile_iterator.profiles[count];
+
+		g_strlcpy(profile->ProfileInfo.Wlan.essid, ap->essid, NET_WLAN_ESSID_LEN+1);
+		profile->ProfileInfo.Wlan.security_info.sec_mode = ap->security_info.sec_mode;
+		count++;
+	}
+
+	WIFI_LOG(WIFI_INFO, "Hidden AP count : %d\n", count);
+}
+
 static void __libnet_convert_profile_info_to_wifi_info(net_wifi_connection_info_t *wifi_info,
 								net_profile_info_t *ap_info)
 {
@@ -251,6 +283,7 @@ static void __libnet_power_on_off_cb(net_event_info_t *event_cb, bool is_request
 			WIFI_LOG(WIFI_INFO, "Wi-Fi State : Power OFF\n");
 			state = WIFI_DEVICE_STATE_DEACTIVATED;
 			__libnet_clear_profile_list(&profile_iterator);
+			__libnet_clear_profile_list(&hidden_profile_iterator);
 		} else {
 			WIFI_LOG(WIFI_INFO, "Wi-Fi State : Unknown\n");
 			error_code = WIFI_ERROR_OPERATION_FAILED;
@@ -269,7 +302,7 @@ static void __libnet_power_on_off_cb(net_event_info_t *event_cb, bool is_request
 		wifi_callbacks.device_state_cb(state, wifi_callbacks.device_state_user_data);
 }
 
-static void __libnet_scan_cb(net_event_info_t *event_cb, bool is_requested)
+static void __libnet_scan_cb(net_event_info_t *event_cb)
 {
 	wifi_error_e error_code = WIFI_ERROR_NONE;
 
@@ -287,6 +320,27 @@ static void __libnet_scan_cb(net_event_info_t *event_cb, bool is_requested)
 
 	if (wifi_callbacks.bg_scan_cb != NULL)
 		wifi_callbacks.bg_scan_cb(error_code, wifi_callbacks.bg_scan_user_data);
+}
+
+static void __libnet_hidden_scan_cb(net_event_info_t *event_cb)
+{
+	wifi_error_e error_code = WIFI_ERROR_NONE;
+
+	__libnet_clear_profile_list(&hidden_profile_iterator);
+
+	if (event_cb->Error != NET_ERR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Hidden scan failed!, Error [%d]\n", event_cb->Error);
+		error_code = WIFI_ERROR_OPERATION_FAILED;
+	} else if (event_cb->Data) {
+		GSList *ap_list = event_cb->Data;
+		__libnet_update_hidden_profile_iterator(ap_list);
+	}
+
+	if (wifi_callbacks.scan_hidden_ap_cb) {
+		wifi_callbacks.scan_hidden_ap_cb(error_code, wifi_callbacks.scan_hidden_ap_user_data);
+		wifi_callbacks.scan_hidden_ap_cb = NULL;
+		wifi_callbacks.scan_hidden_ap_user_data = NULL;
+	}
 }
 
 static void __libnet_set_connected_cb(wifi_connected_cb user_cb, void *user_data)
@@ -423,18 +477,25 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 		break;
 	case NET_EVENT_WIFI_SCAN_RSP:
 	case NET_EVENT_WIFI_SCAN_IND:
-		WIFI_LOG(WIFI_ERROR, "Got wifi scan IND\n");
-		__libnet_scan_cb(event_cb, is_requested);
+		WIFI_LOG(WIFI_INFO, "Got wifi scan IND\n");
+		__libnet_scan_cb(event_cb);
+		break;
+	case NET_EVENT_SPECIFIC_SCAN_RSP:
+		WIFI_LOG(WIFI_INFO, "Got wifi hidden scan RSP\n");
+		break;
+	case NET_EVENT_SPECIFIC_SCAN_IND:
+		WIFI_LOG(WIFI_INFO, "Got wifi hidden scan IND\n");
+		__libnet_hidden_scan_cb(event_cb);
 		break;
 	case NET_EVENT_WIFI_POWER_RSP:
 		is_requested = true;
 		/* fall through */
 	case NET_EVENT_WIFI_POWER_IND:
-		WIFI_LOG(WIFI_ERROR, "Got wifi power IND\n");
+		WIFI_LOG(WIFI_INFO, "Got wifi power IND\n");
 		__libnet_power_on_off_cb(event_cb, is_requested);
 		break;
 	default :
-		WIFI_LOG(WIFI_ERROR, "Error! Unknown Event\n\n");
+		WIFI_LOG(WIFI_INFO, "Error! Unknown Event\n\n");
 	}
 }
 
@@ -455,6 +516,7 @@ bool _wifi_libnet_deinit(void)
 		return false;
 
 	__libnet_clear_profile_list(&profile_iterator);
+	__libnet_clear_profile_list(&hidden_profile_iterator);
 	g_slist_free_full(ap_handle_list, g_free);
 	ap_handle_list = NULL;
 	memset(&wifi_callbacks, 0, sizeof(struct _wifi_cb_s));
@@ -498,8 +560,11 @@ bool _wifi_libnet_check_ap_validity(wifi_ap_h ap_h)
 	for (list = ap_handle_list; list; list = list->next)
 		if (ap_h == list->data) return true;
 
-	for (;i < profile_iterator.count;i++)
+	for (; i < profile_iterator.count; i++)
 		if (ap_h == &profile_iterator.profiles[i]) return true;
+
+	for (i = 0; i < hidden_profile_iterator.count; i++)
+		if (ap_h == &hidden_profile_iterator.profiles[i]) return true;
 
 	return false;
 }
@@ -635,6 +700,22 @@ int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void* user_data)
 	return WIFI_ERROR_OPERATION_FAILED;
 }
 
+int _wifi_libnet_scan_hidden_ap(const char *essid,
+					wifi_scan_finished_cb callback, void* user_data)
+{
+	int rv;
+	rv = net_specific_scan_wifi(essid);
+
+	if (rv == NET_ERR_NONE) {
+		wifi_callbacks.scan_hidden_ap_cb = callback;
+		wifi_callbacks.scan_hidden_ap_user_data = user_data;
+		return WIFI_ERROR_NONE;
+	} else if (rv == NET_ERR_INVALID_OPERATION)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	return WIFI_ERROR_OPERATION_FAILED;
+}
+
 int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
 {
 	int i = 0;
@@ -680,6 +761,24 @@ bool _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback, void *user_data)
 
 	for (;i < profile_iterator.count;i++) {
 		rv = callback((wifi_ap_h)(&profile_iterator.profiles[i]), user_data);
+		if (rv == false) break;
+	}
+
+	return true;
+}
+
+bool _wifi_libnet_foreach_found_hidden_aps(wifi_found_ap_cb callback, void *user_data)
+{
+	int i = 0;
+	bool rv = true;
+
+	if (hidden_profile_iterator.count == 0) {
+		WIFI_LOG(WIFI_INFO, "There is no hidden APs.\n");
+		return true;
+	}
+
+	for (;i < hidden_profile_iterator.count;i++) {
+		rv = callback((wifi_ap_h)(&hidden_profile_iterator.profiles[i]), user_data);
 		if (rv == false) break;
 	}
 

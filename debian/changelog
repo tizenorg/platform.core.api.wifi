@@ -1,3 +1,11 @@
+capi-network-wifi (0.1.2-15) unstable; urgency=low
+
+  * Added specific(hidden) scan support
+  * Git: framework/api/wifi
+  * Tag: capi-network-wifi_0.1.2-15
+
+ -- JaeHyun Kim <jeik01.kim@samsung.com>  Tue, 26 Feb 2013 11:19:52 +0900
+
 capi-network-wifi (0.1.2-14) unstable; urgency=low
 
   * Fix memory corruption

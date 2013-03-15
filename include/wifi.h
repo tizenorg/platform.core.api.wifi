@@ -233,8 +233,9 @@ typedef void* wifi_ap_h;
 * @param[in]  ap  The access point
 * @param[in]  user_data  The user data passed from the request function
 * @return  @c true to continue with the next iteration of the loop, \n @c false to break out of the loop
-* @pre  wifi_foreach_found_aps() will invoke this callback.
+* @pre  wifi_foreach_found_aps() and wifi_foreach_found_hidden_aps() will invoke this callback.
 * @see  wifi_foreach_found_aps()
+* @see  wifi_foreach_found_hidden_aps()
 */
 typedef bool(*wifi_found_ap_cb)(wifi_ap_h ap, void* user_data);
 
@@ -243,6 +244,7 @@ typedef bool(*wifi_found_ap_cb)(wifi_ap_h ap, void* user_data);
 * @param[in] error_code  The error code
 * @param[in] user_data The user data passed from the callback registration function
 * @see wifi_scan()
+* @see wifi_scan_hidden_ap()
 * @see wifi_set_background_scan_cb()
 * @see wifi_unset_background_scan_cb()
 */
@@ -437,6 +439,20 @@ int wifi_get_network_interface_name(char** name);
 int wifi_scan(wifi_scan_finished_cb callback, void* user_data);
 
 /**
+* @brief Starts hidden ap scan, asynchronously.
+* @param[in] essid     The essid of hidden ap
+* @param[in] callback  The callback function to be called
+* @param[in] user_data The user data passed to the callback function
+* @return 0 on success, otherwise negative error value.
+* @retval #WIFI_ERROR_NONE  Successful
+* @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
+* @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
+* @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+* @post This function invokes wifi_scan_finished_cb().
+*/
+int wifi_scan_hidden_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data);
+
+/**
 * @brief Gets the handle of connected access point.
 * @remarks @a handle must be released with wifi_ap_destroy().
 * @param[out] ap  The handle of access point
@@ -459,6 +475,18 @@ int wifi_get_connected_ap(wifi_ap_h* ap);
 * @post This function invokes wifi_found_ap_cb().
 */
 int wifi_foreach_found_aps(wifi_found_ap_cb callback, void* user_data);
+
+/**
+* @brief Gets the result of hidden ap scan.
+* @param[in] callback  The callback to be called
+* @param[in] user_data The user data passed to the callback function
+* @return 0 on success, otherwise negative error value.
+* @retval #WIFI_ERROR_NONE  Successful
+* @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
+* @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+* @post This function invokes wifi_found_ap_cb().
+*/
+int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback, void* user_data);
 
 /**
 * @brief Connects the access point, asynchronously.

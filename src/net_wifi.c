@@ -183,6 +183,27 @@ int wifi_scan(wifi_scan_finished_cb callback, void* user_data)
 	return rv;
 }
 
+int wifi_scan_hidden_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data)
+{
+	int rv;
+
+	if (callback == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	rv = _wifi_libnet_scan_hidden_ap(essid, callback, user_data);
+	if (rv != WIFI_ERROR_NONE)
+		WIFI_LOG(WIFI_ERROR, "Error!! Wi-Fi hidden scan failed.\n");
+
+	return rv;
+}
+
 int wifi_get_connected_ap(wifi_ap_h* ap)
 {
 	int rv;
@@ -206,6 +227,19 @@ int wifi_foreach_found_aps(wifi_found_ap_cb callback, void* user_data)
 	}
 
 	if (_wifi_libnet_foreach_found_aps(callback, user_data) == false)
+		return WIFI_ERROR_OPERATION_FAILED;
+
+	return WIFI_ERROR_NONE;
+}
+
+int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback, void* user_data)
+{
+	if (callback == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	if (_wifi_libnet_foreach_found_hidden_aps(callback, user_data) == false)
 		return WIFI_ERROR_OPERATION_FAILED;
 
 	return WIFI_ERROR_NONE;

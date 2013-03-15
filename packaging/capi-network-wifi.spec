@@ -1,9 +1,9 @@
 Name:       capi-network-wifi
 Summary:    Network Wi-Fi library in TIZEN C API
-Version:    0.1.2_14
+Version:    0.1.2_15
 Release:    1
 Group:      System/Network
-License:    Apache License Version 2.0
+License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(dlog)
@@ -11,8 +11,6 @@ BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(vconf)
 BuildRequires:  pkgconfig(capi-base-common)
 BuildRequires:  pkgconfig(network)
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
 
 %description
 Network Wi-Fi library in Tizen C API
@@ -31,7 +29,7 @@ Network Wi-Fi library in Tizen C API (Development)
 
 %build
 MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
-cmake . -DCMAKE_INSTALL_PREFIX=/usr -DFULLVER=%{version} -DMAJORVER=${MAJORVER}
+%cmake . -DFULLVER=%{version} -DMAJORVER=${MAJORVER}
 
 make %{?_smp_mflags}
 
