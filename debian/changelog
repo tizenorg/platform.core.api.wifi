@@ -1,3 +1,11 @@
+capi-network-wifi (0.1.2-16) unstable; urgency=low
+
+  * Revise wifi_is_activated() to fix performance issue
+  * Git: framework/api/wifi
+  * Tag: capi-network-wifi_0.1.2-16
+
+ -- JaeHyun Kim <jeik01.kim@samsung.com>  Tue, 19 Mar 2013 01:01:15 +0900
+
 capi-network-wifi (0.1.2-15) unstable; urgency=low
 
   * Added specific(hidden) scan support

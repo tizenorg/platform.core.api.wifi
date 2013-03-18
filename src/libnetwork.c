@@ -610,28 +610,17 @@ bool _wifi_libnet_check_profile_name_validity(const char *profile_name)
 
 bool _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)
 {
-	net_wifi_state_t wlan_state;
-	net_profile_name_t profile_name;
+	net_tech_info_t tech_info;
 
-	if (net_get_wifi_state(&wlan_state, &profile_name) != NET_ERR_NONE) {
-		WIFI_LOG(WIFI_ERROR, "Error!! net_get_wifi_state() failed.\n");
+	if (net_get_technology_properties(NET_DEVICE_WIFI, &tech_info) != NET_ERR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Error!! net_get_technology_properties() failed.\n");
 		return false;
 	}
 
-	switch (wlan_state) {
-	case WIFI_OFF:
-		*device_state = WIFI_DEVICE_STATE_DEACTIVATED;
-		break;
-	case WIFI_ON:
-	case WIFI_CONNECTING:
-	case WIFI_CONNECTED:
-	case WIFI_DISCONNECTING:
+	if (tech_info.powered)
 		*device_state = WIFI_DEVICE_STATE_ACTIVATED;
-		break;
-	default :
-		WIFI_LOG(WIFI_ERROR, "Error!! Unknown state\n");
-		return false;
-	}
+	else
+		*device_state = WIFI_DEVICE_STATE_DEACTIVATED;
 
 	return true;
 }
