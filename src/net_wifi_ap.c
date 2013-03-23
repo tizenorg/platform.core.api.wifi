@@ -205,7 +205,7 @@ int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
 	}
 
 	net_profile_info_t *profile_info = ap;
-	*max_speed = (int)profile_info->ProfileInfo.Wlan.max_rate;
+	*max_speed = (int)profile_info->ProfileInfo.Wlan.max_rate / 1000000;
 
 	return WIFI_ERROR_NONE;
 }

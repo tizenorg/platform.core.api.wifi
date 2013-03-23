@@ -409,6 +409,9 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 			__libnet_state_changed_cb(event_cb->ProfileName, prof_info_p,
 							WIFI_CONNECTION_STATE_CONNECTED);
 			return;
+		case NET_ERR_ACTIVE_CONNECTION_EXISTS:
+			WIFI_LOG(WIFI_INFO, "Connection already existed\n");
+			return;
 		default :
 			WIFI_LOG(WIFI_ERROR, "Connection open failed!\n");
 			break;
