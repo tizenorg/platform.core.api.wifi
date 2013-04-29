@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <arpa/inet.h>
 #include <glib.h>
 #include "net_wifi_private.h"
 
