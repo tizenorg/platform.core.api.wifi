@@ -390,7 +390,8 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 		is_requested = true;
 		/* fall through */
 	case NET_EVENT_OPEN_IND:
-		if (strstr(event_cb->ProfileName, "/wifi_") == NULL) return;
+		if (_wifi_libnet_check_profile_name_validity(event_cb->ProfileName) != true)
+			return;
 
 		result = __libnet_convert_to_ap_error_type(event_cb->Error);
 		WIFI_LOG(WIFI_INFO, "Got Open RSP/IND : %s\n",
@@ -429,7 +430,8 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 		is_requested = true;
 		/* fall through */
 	case NET_EVENT_CLOSE_IND:
-		if (strstr(event_cb->ProfileName, "/wifi_") == NULL) return;
+		if (_wifi_libnet_check_profile_name_validity(event_cb->ProfileName) != true)
+			return;
 
 		result = __libnet_convert_to_ap_error_type(event_cb->Error);
 		WIFI_LOG(WIFI_INFO, "Got Close RSP/IND : %s\n",
@@ -440,7 +442,6 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 
 		switch (event_cb->Error) {
 		case NET_ERR_NONE:
-			/* Successful PDP Deactivation */
 			WIFI_LOG(WIFI_INFO, "Connection close succeeded!\n");
 			if (net_get_profile_info(event_cb->ProfileName, &prof_info) == NET_ERR_NONE)
 				__libnet_state_changed_cb(event_cb->ProfileName, &prof_info,
@@ -456,7 +457,8 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 
 		break;
 	case NET_EVENT_NET_STATE_IND:
-		if (strstr(event_cb->ProfileName, "/wifi_") == NULL) return;
+		if (_wifi_libnet_check_profile_name_validity(event_cb->ProfileName) != true)
+			return;
 
 		WIFI_LOG(WIFI_INFO, "Got State changed IND\n");
 
@@ -585,27 +587,21 @@ void _wifi_libnet_remove_from_ap_list(wifi_ap_h ap_h)
 
 bool _wifi_libnet_check_profile_name_validity(const char *profile_name)
 {
-	const char *profile_header = "/net/connman/service/wifi_";
+	const char *profile_prefix = "/net/connman/service/wifi_";
 	int i = 0;
-	int string_len = 0;
 
-	if (profile_name == NULL || strlen(profile_name) <= strlen(profile_header)) {
+	if (profile_name == NULL ||
+			g_str_has_prefix(profile_name, profile_prefix) != TRUE) {
 		WIFI_LOG(WIFI_ERROR, "Error!!! Profile name is invalid\n");
 		return false;
 	}
 
-	string_len = strlen(profile_name);
-
-	if (strncmp(profile_header, profile_name, strlen(profile_header)) == 0) {
-		for (;i < string_len;i++) {
-			if (isgraph(profile_name[i]) == 0) {
-				WIFI_LOG(WIFI_ERROR, "Error!!! Profile name is invalid\n");
-				return false;
-			}
+	while (profile_name[i] != '\0') {
+		if (isgraph(profile_name[i]) == 0) {
+			WIFI_LOG(WIFI_ERROR, "Error!!! Profile name is invalid\n");
+			return false;
 		}
-	} else {
-		WIFI_LOG(WIFI_ERROR, "Error!!! Profile name is invalid\n");
-		return false;
+		i++;
 	}
 
 	return true;
@@ -779,18 +775,23 @@ bool _wifi_libnet_foreach_found_hidden_aps(wifi_found_ap_cb callback, void *user
 
 int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void* user_data)
 {
-	net_profile_info_t *ap_info = ap_h;
-	net_profile_name_t profile_name;
 	int rv;
+	bool valid_profile;
+	net_profile_name_t profile_name;
+	net_profile_info_t *ap_info = ap_h;
 
 	g_strlcpy(profile_name.ProfileName, ap_info->ProfileName, NET_PROFILE_NAME_LEN_MAX+1);
 
-	if (ap_info->ProfileInfo.Wlan.security_info.sec_mode == WLAN_SEC_MODE_IEEE8021X)
-		rv = __libnet_connect_with_wifi_info(ap_info);
-	else if (_wifi_libnet_check_profile_name_validity(ap_info->ProfileName) == false)
-		rv = __libnet_connect_with_wifi_info(ap_info);
-	else
+	valid_profile =
+			_wifi_libnet_check_profile_name_validity(profile_name.ProfileName);
+
+	if (valid_profile == true && ap_info->Favourite)
 		rv = net_open_connection_with_profile(profile_name.ProfileName);
+	else if (valid_profile == true &&
+			ap_info->ProfileInfo.Wlan.security_info.sec_mode == WLAN_SEC_MODE_NONE)
+		rv = net_open_connection_with_profile(profile_name.ProfileName);
+	else
+		rv = __libnet_connect_with_wifi_info(ap_info);
 
 	if (rv != NET_ERR_NONE)
 		return WIFI_ERROR_OPERATION_FAILED;

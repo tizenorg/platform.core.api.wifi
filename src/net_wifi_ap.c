@@ -20,7 +20,6 @@
 #include <glib.h>
 #include "net_wifi_private.h"
 
-
 static char* __ap_convert_ip_to_string(net_addr_t *ip_addr)
 {
 	unsigned char *ipaddr = (unsigned char *)&ip_addr->Data.Ipv4.s_addr;
@@ -29,7 +28,7 @@ static char* __ap_convert_ip_to_string(net_addr_t *ip_addr)
 	if (ipstr == NULL)
 		return NULL;
 
-	snprintf(ipstr, 16, "%d.%d.%d.%d", ipaddr[0], ipaddr[1], ipaddr[2], ipaddr[3]);
+	g_snprintf(ipstr, 16, "%d.%d.%d.%d", ipaddr[0], ipaddr[1], ipaddr[2], ipaddr[3]);
 
 	return ipstr;
 }
@@ -844,10 +843,7 @@ int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
 
-	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
-		return WIFI_ERROR_NONE;
-
-	return _wifi_update_ap_info(profile_info);
+	return WIFI_ERROR_NONE;
 }
 
 int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)

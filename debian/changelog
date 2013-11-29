@@ -1,3 +1,11 @@
+capi-network-wifi (0.1.2-19) unstable; urgency=low
+
+  * Fix Wi-Fi open connection
+  * Git: framework/api/wifi
+  * Tag: capi-network-wifi_0.1.2-19
+
+ -- Taesub Kim <taesub.kim@samsung.com>  Fri, 29 Nov 2013 12:04:46 +0900
+
 capi-network-wifi (0.1.2-17) unstable; urgency=low
 
   * Handle NET_ERR_ACTIVE_CONNECTION_EXISTS event and correct the unit of data transfer rate

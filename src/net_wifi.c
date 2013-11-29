@@ -18,12 +18,12 @@
 #include <string.h>
 #include <glib.h>
 #include <vconf/vconf.h>
+
 #include "net_wifi_private.h"
 
 static bool is_init = false;
 static wifi_rssi_level_changed_cb rssi_level_changed_cb = NULL;
 static void *rssi_level_changed_user_data = NULL;
-
 
 static void __rssi_level_changed_cb(keynode_t *node, void *user_data)
 {
