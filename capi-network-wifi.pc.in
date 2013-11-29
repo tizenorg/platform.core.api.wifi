@@ -11,4 +11,3 @@ Version: @VERSION@
 Requires: @PC_REQUIRED@
 Libs: -L${libdir} @PC_LDFLAGS@
 Cflags: -I${includedir}
-

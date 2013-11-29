@@ -26,8 +26,7 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 #include <signal.h>
-#include "assert.h"
-#include "glib.h"
+#include <assert.h>
 #include <wifi.h>
 #include <tizen_error.h>
 

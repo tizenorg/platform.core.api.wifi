@@ -1,3 +1,11 @@
+capi-network-wifi (0.1.2-24) unstable; urgency=low
+
+  * Clean the unnecessary things up
+  * Git: framework/api/wifi
+  * Tag: capi-network-wifi_0.1.2-24
+
+ -- Taesub Kim <taesub.kim@samsung.com>  Fri, 29 Nov 2013 14:50:46 +0900
+
 capi-network-wifi (0.1.2-23) unstable; urgency=low
 
   * Use 'Already exists' error msg if applicable
