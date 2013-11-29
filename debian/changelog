@@ -1,3 +1,11 @@
+capi-network-wifi (0.1.2-22) unstable; urgency=low
+
+  * Revise wifi_ap_set_eap_private_key_info() - admit to set without password
+  * Git: framework/api/wifi
+  * Tag: capi-network-wifi_0.1.2-22
+
+ -- Taesub Kim <taesub.kim@samsung.com>  Fri, 29 Nov 2013 14:05:46 +0900
+
 capi-network-wifi (0.1.2-21) unstable; urgency=low
 
   * Avoid resetting IP, subnet mask and gateway to 0 in case of static type

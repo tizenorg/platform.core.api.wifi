@@ -992,7 +992,7 @@ EXPORT_API int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file)
 
 EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char* password)
 {
-	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL || password == NULL) {
+	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
@@ -1003,8 +1003,11 @@ EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, 
 
 	g_strlcpy(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.private_key_filename,
 			file, NETPM_WLAN_PRIVATE_KEY_FILENAME_LEN+1);
-	g_strlcpy(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.private_key_passwd,
-			password, NETPM_WLAN_PRIVATE_KEY_PASSWD_LEN+1);
+
+	if (password) {
+		g_strlcpy(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.private_key_passwd,
+				password, NETPM_WLAN_PRIVATE_KEY_PASSWD_LEN+1);
+	}
 
 	return WIFI_ERROR_NONE;
 }
