@@ -482,25 +482,25 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 		break;
 	case NET_EVENT_WIFI_SCAN_RSP:
 	case NET_EVENT_WIFI_SCAN_IND:
-		WIFI_LOG(WIFI_INFO, "Got wifi scan IND\n");
+		WIFI_LOG(WIFI_INFO, "Got Wi-Fi scan IND\n");
 		__libnet_scan_cb(event_cb);
 		break;
 	case NET_EVENT_SPECIFIC_SCAN_RSP:
-		WIFI_LOG(WIFI_INFO, "Got wifi hidden scan RSP\n");
+		WIFI_LOG(WIFI_INFO, "Got Wi-Fi hidden scan RSP\n");
 		break;
 	case NET_EVENT_SPECIFIC_SCAN_IND:
-		WIFI_LOG(WIFI_INFO, "Got wifi hidden scan IND\n");
+		WIFI_LOG(WIFI_INFO, "Got Wi-Fi hidden scan IND\n");
 		__libnet_hidden_scan_cb(event_cb);
 		break;
 	case NET_EVENT_WIFI_POWER_RSP:
 		is_requested = true;
 		/* fall through */
 	case NET_EVENT_WIFI_POWER_IND:
-		WIFI_LOG(WIFI_INFO, "Got wifi power IND\n");
+		WIFI_LOG(WIFI_INFO, "Got Wi-Fi power IND\n");
 		__libnet_power_on_off_cb(event_cb, is_requested);
 		break;
 	default :
-		WIFI_LOG(WIFI_INFO, "Error! Unknown Event\n\n");
+		WIFI_LOG(WIFI_ERROR, "Error! Unknown Event\n\n");
 	}
 }
 
@@ -529,7 +529,7 @@ bool _wifi_libnet_deinit(void)
 	return true;
 }
 
-int _wifi_activate(wifi_activated_cb callback, void* user_data)
+int _wifi_activate(wifi_activated_cb callback, void *user_data)
 {
 	int rv;
 
@@ -539,11 +539,13 @@ int _wifi_activate(wifi_activated_cb callback, void* user_data)
 		return WIFI_ERROR_NONE;
 	} else if (rv == NET_ERR_INVALID_OPERATION)
 		return WIFI_ERROR_INVALID_OPERATION;
+	else if (rv == NET_ERR_ALREADY_EXISTS)
+		return WIFI_ERROR_ALREADY_EXISTS;
 
 	return WIFI_ERROR_OPERATION_FAILED;
 }
 
-int _wifi_deactivate(wifi_deactivated_cb callback, void* user_data)
+int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 {
 	int rv;
 
@@ -553,6 +555,8 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void* user_data)
 		return WIFI_ERROR_NONE;
 	} else if (rv == NET_ERR_INVALID_OPERATION)
 		return WIFI_ERROR_INVALID_OPERATION;
+	else if (rv == NET_ERR_ALREADY_EXISTS)
+		return WIFI_ERROR_ALREADY_EXISTS;
 
 	return WIFI_ERROR_OPERATION_FAILED;
 }
@@ -621,6 +625,8 @@ bool _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)
 	else
 		*device_state = WIFI_DEVICE_STATE_DEACTIVATED;
 
+	WIFI_LOG(WIFI_ERROR, "Wi-Fi device state: %d", *device_state);
+
 	return true;
 }
 
@@ -673,7 +679,7 @@ int _wifi_libnet_get_intf_name(char** name)
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void* user_data)
+int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void *user_data)
 {
 	int rv;
 	rv = net_scan_wifi();
@@ -689,7 +695,7 @@ int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void* user_data)
 }
 
 int _wifi_libnet_scan_hidden_ap(const char *essid,
-					wifi_scan_finished_cb callback, void* user_data)
+					wifi_scan_finished_cb callback, void *user_data)
 {
 	int rv;
 	rv = net_specific_scan_wifi(essid);
@@ -773,7 +779,7 @@ bool _wifi_libnet_foreach_found_hidden_aps(wifi_found_ap_cb callback, void *user
 	return true;
 }
 
-int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void* user_data)
+int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data)
 {
 	int rv;
 	bool valid_profile;
@@ -801,7 +807,7 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void* 
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, void* user_data)
+int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, void *user_data)
 {
 	net_profile_info_t *ap_info = ap_h;
 	net_profile_name_t profile_name;
@@ -816,7 +822,7 @@ int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, vo
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h, wifi_connected_cb callback, void* user_data)
+int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data)
 {
 	net_profile_info_t *ap_info = ap_h;
 	net_wifi_wps_info_t wps_info;
@@ -923,4 +929,3 @@ int _wifi_update_ap_info(net_profile_info_t *ap_info)
 
 	return WIFI_ERROR_NONE;
 }
-

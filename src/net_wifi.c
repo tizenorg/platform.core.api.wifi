@@ -45,6 +45,8 @@ EXPORT_API int wifi_initialize(void)
 
 	is_init = true;
 
+	WIFI_LOG(WIFI_INFO, "Wi-Fi successfully initialized!\n");
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -62,6 +64,8 @@ EXPORT_API int wifi_deinitialize(void)
 
 	is_init = false;
 	wifi_unset_rssi_level_changed_cb();
+
+	WIFI_LOG(WIFI_INFO, "Wi-Fi successfully de-initialized!\n");
 
 	return WIFI_ERROR_NONE;
 }
