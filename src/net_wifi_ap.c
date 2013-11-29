@@ -301,9 +301,6 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 	switch (type) {
 	case WIFI_IP_CONFIG_TYPE_STATIC:
 		profile_info->ProfileInfo.Wlan.net_info.IpConfigType = NET_IP_CONFIG_TYPE_STATIC;
-		profile_info->ProfileInfo.Wlan.net_info.IpAddr.Data.Ipv4.s_addr = 0;
-		profile_info->ProfileInfo.Wlan.net_info.SubnetMask.Data.Ipv4.s_addr = 0;
-		profile_info->ProfileInfo.Wlan.net_info.GatewayAddr.Data.Ipv4.s_addr = 0;
 		break;
 	case WIFI_IP_CONFIG_TYPE_DYNAMIC:
 		profile_info->ProfileInfo.Wlan.net_info.IpConfigType = NET_IP_CONFIG_TYPE_DYNAMIC;

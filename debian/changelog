@@ -1,3 +1,11 @@
+capi-network-wifi (0.1.2-21) unstable; urgency=low
+
+  * Avoid resetting IP, subnet mask and gateway to 0 in case of static type
+  * Git: framework/api/wifi
+  * Tag: capi-network-wifi_0.1.2-21
+
+ -- Taesub Kim <taesub.kim@samsung.com>  Fri, 29 Nov 2013 13:52:46 +0900
+
 capi-network-wifi (0.1.2-20) unstable; urgency=low
 
   * Set CFLAGS fvisibility hidden
