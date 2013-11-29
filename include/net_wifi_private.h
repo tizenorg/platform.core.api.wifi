@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-
-
-#ifndef __NET_CONNECTION_PRIVATE_H__        /* To prevent inclusion of a header file twice */
+#ifndef __NET_CONNECTION_PRIVATE_H__
 #define __NET_CONNECTION_PRIVATE_H__
 
 #include <dlog.h>
 #include <network-cm-intf.h>
 #include <network-wifi-intf.h>
+
 #include "wifi.h"
 
 #undef LOG_TAG

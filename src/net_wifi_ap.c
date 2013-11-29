@@ -72,9 +72,8 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)
 	return ap_state;
 }
 
-/* Wi-Fi AP module ********************************************************************************/
-
-int wifi_ap_create(const char* essid, wifi_ap_h* ap)
+/* Wi-Fi AP ******************************************************************/
+EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 {
 	if (essid == NULL || ap == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -93,7 +92,7 @@ int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_destroy(wifi_ap_h ap)
+EXPORT_API int wifi_ap_destroy(wifi_ap_h ap)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -105,7 +104,7 @@ int wifi_ap_destroy(wifi_ap_h ap)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin)
+EXPORT_API int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin)
 {
 	if (_wifi_libnet_check_ap_validity(origin) == false || cloned_ap == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -124,7 +123,7 @@ int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_refresh(wifi_ap_h ap)
+EXPORT_API int wifi_ap_refresh(wifi_ap_h ap)
 {
 	net_profile_info_t ap_info_local;
 	net_profile_info_t *ap_info = ap;
@@ -139,9 +138,8 @@ int wifi_ap_refresh(wifi_ap_h ap)
 	return WIFI_ERROR_NONE;
 }
 
-/* Wi-Fi network information module ***************************************************************/
-
-int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
+/* Wi-Fi network information *************************************************/
+EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || essid == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -156,7 +154,7 @@ int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
+EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || bssid == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -171,7 +169,7 @@ int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)
+EXPORT_API int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || rssi == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -184,7 +182,7 @@ int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)
+EXPORT_API int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || frequency == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -197,7 +195,7 @@ int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
+EXPORT_API int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || max_speed == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -210,7 +208,7 @@ int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
+EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || favorite == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -227,7 +225,7 @@ int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state)
+EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || state == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -244,7 +242,7 @@ int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e* type)
+EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -284,7 +282,7 @@ int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_famil
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e type)
+EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -329,7 +327,7 @@ int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_famil
 	return _wifi_update_ap_info(profile_info);
 }
 
-int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, char** ip_address)
+EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, char** ip_address)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -352,7 +350,7 @@ int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, c
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* ip_address)
+EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* ip_address)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -379,7 +377,7 @@ int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, c
 	return _wifi_update_ap_info(profile_info);
 }
 
-int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, char** subnet_mask)
+EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, char** subnet_mask)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -402,7 +400,7 @@ int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, 
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, const char* subnet_mask)
+EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, const char* subnet_mask)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -429,7 +427,7 @@ int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, 
 	return _wifi_update_ap_info(profile_info);
 }
 
-int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, char** gateway_address)
+EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, char** gateway_address)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -452,7 +450,7 @@ int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_fami
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* gateway_address)
+EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* gateway_address)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -479,7 +477,7 @@ int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_fami
 	return _wifi_update_ap_info(profile_info);
 }
 
-int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, char** proxy_address)
+EXPORT_API int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, char** proxy_address)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -502,7 +500,7 @@ int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* proxy_address)
+EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* proxy_address)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -530,7 +528,7 @@ int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family
 	return _wifi_update_ap_info(profile_info);
 }
 
-int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
+EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -559,7 +557,7 @@ int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type)
+EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -597,7 +595,7 @@ int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type)
 	return rv;
 }
 
-int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, char** dns_address)
+EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, char** dns_address)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -623,7 +621,7 @@ int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e addre
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, const char* dns_address)
+EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, const char* dns_address)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -655,11 +653,8 @@ int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e addre
 	return _wifi_update_ap_info(profile_info);
 }
 
-
-
-/* Wi-Fi security information module **************************************************************/
-
-int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type)
+/* Wi-Fi security information ************************************************/
+EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -691,7 +686,7 @@ int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type)
+EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -723,7 +718,7 @@ int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type)
+EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -755,7 +750,7 @@ int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type)
+EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -787,7 +782,7 @@ int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
+EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || required == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -818,7 +813,7 @@ int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
+EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || passphrase == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -846,7 +841,7 @@ int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)
+EXPORT_API int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || supported == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -863,11 +858,8 @@ int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)
 	return WIFI_ERROR_NONE;
 }
 
-
-
-/* Wi-Fi EAP module *******************************************************************************/
-
-int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* password)
+/* Wi-Fi EAP *****************************************************************/
+EXPORT_API int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* password)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || (user_name == NULL && password == NULL)) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -889,7 +881,7 @@ int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* 
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password_set)
+EXPORT_API int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password_set)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||user_name == NULL || is_password_set == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -913,7 +905,7 @@ int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file)
+EXPORT_API int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -931,7 +923,7 @@ int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file)
+EXPORT_API int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -948,7 +940,7 @@ int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file)
+EXPORT_API int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -966,7 +958,7 @@ int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file)
+EXPORT_API int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -983,7 +975,7 @@ int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file)
+EXPORT_API int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -1001,7 +993,7 @@ int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char* password)
+EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char* password)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL || password == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -1020,7 +1012,7 @@ int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char*
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
+EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -1054,7 +1046,7 @@ int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
+EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -1088,7 +1080,7 @@ int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type)
+EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -1125,7 +1117,7 @@ int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type)
 	return WIFI_ERROR_NONE;
 }
 
-int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type)
+EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -1161,5 +1153,3 @@ int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type)
 
 	return WIFI_ERROR_NONE;
 }
-
-

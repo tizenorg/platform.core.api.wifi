@@ -1,3 +1,11 @@
+capi-network-wifi (0.1.2-20) unstable; urgency=low
+
+  * Set CFLAGS fvisibility hidden
+  * Git: framework/api/wifi
+  * Tag: capi-network-wifi_0.1.2-20
+
+ -- Taesub Kim <taesub.kim@samsung.com>  Fri, 29 Nov 2013 13:31:46 +0900
+
 capi-network-wifi (0.1.2-19) unstable; urgency=low
 
   * Fix Wi-Fi open connection
