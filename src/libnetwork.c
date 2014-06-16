@@ -20,6 +20,8 @@
 #include <glib.h>
 #include "net_wifi_private.h"
 
+#include <winet-wifi.h>
+
 static GSList *ap_handle_list = NULL;
 
 struct _wifi_cb_s {
@@ -437,24 +439,19 @@ static void connman_service_disconnect_cb(
 	__libnet_disconnected_cb(connman_lib2capi_result(result));
 }
 
-static int __net_dbus_set_agent_field(const char *key, const char *value)
-{
-	/**
-	 * TODO:
-	 */
-	return NET_ERR_NONE;
-}
-
-static int __net_dbus_set_agent_passphrase(const char *passphrase)
+static int __net_dbus_set_agent_passphrase(const char *path,
+						 const char *passphrase)
 {
 	int ret_val;
+	char *service_id;
 
 	if (NULL == passphrase || strlen(passphrase) <= 0) {
 		WIFI_LOG(WIFI_ERROR, "Invalid param \n");
 		return NET_ERR_INVALID_PARAM;
 	}
 
-	ret_val = __net_dbus_set_agent_field("winet_key", passphrase);
+	service_id = g_strrstr(path, "/") + 1;
+	ret_val = winet_wifi_update_agent_passphrase(service_id, passphrase);
 	if (NET_ERR_NONE != ret_val) {
 		WIFI_LOG(WIFI_ERROR,
 			"__net_dbus_set_agent_field failed. Error = %d \n",
@@ -484,7 +481,9 @@ static int __net_dbus_connect_service(wifi_ap_h ap_h,
 			goto done;
 		}
 	} else if (g_strcmp0(wifi_connection_info->security, "none") != 0) {
-		Error = __net_dbus_set_agent_passphrase(wifi_connection_info->passphrase);
+		Error = __net_dbus_set_agent_passphrase(
+				connman_service_get_path(service),
+				wifi_connection_info->passphrase);
 		if (NET_ERR_NONE != Error) {
 			WIFI_LOG(WIFI_ERROR, "Fail to set agent_passphrase\n");
 
@@ -610,12 +609,12 @@ static int __libnet_connect_with_wifi_info(wifi_ap_h ap_h, wifi_connected_cb cal
 {
 	struct connman_service* service = ap_h;
 
-	net_wifi_connection_info_t wifi_info;
-	memset(&wifi_info, 0, sizeof(net_wifi_connection_info_t));
+	net_wifi_connection_info_t *wifi_info;
+	/*memset(&wifi_info, 0, sizeof(net_wifi_connection_info_t));*/
 
 	wifi_info = connman_service_get_wifi_conn_info(service);
 
-	if (__net_open_connection_with_wifi_info(ap_h, &wifi_info) != NET_ERR_NONE)
+	if (__net_open_connection_with_wifi_info(ap_h, wifi_info) != NET_ERR_NONE)
 		return WIFI_ERROR_OPERATION_FAILED;
 
 	return WIFI_ERROR_NONE;

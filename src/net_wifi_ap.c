@@ -883,6 +883,8 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 	net_wifi_connection_info_t wifi_conn_info;
 	memset(&wifi_conn_info, 0, sizeof(net_wifi_connection_info_t));
 
+	wifi_conn_info.wlan_mode = NETPM_WLAN_CONNMODE_AUTO;
+
 	wlan_security_info_t sec_info;
 	convert_wifi_security(&sec_info, connman_service_get_security(service));
 
@@ -910,6 +912,8 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 		wifi_conn_info.essid,
 		connman_service_get_name(service),
 		NET_WLAN_ESSID_LEN + 1);
+
+	wifi_conn_info.security_info.sec_mode = sec_info.sec_mode;
 
 	connman_service_set_wifi_conn_info(service, &wifi_conn_info);
 
