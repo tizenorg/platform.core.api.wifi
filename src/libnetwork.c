@@ -19,7 +19,6 @@
 #include <ctype.h>
 #include <glib.h>
 #include "net_wifi_private.h"
-#include <connman_lib.h>
 
 static GSList *ap_handle_list = NULL;
 
@@ -411,7 +410,7 @@ static void __libnet_disconnected_cb(wifi_error_e result)
 	wifi_callbacks.disconnected_user_data = NULL;
 }
 
-wifi_error_e connman_lib2capi_result(enum connman_lib_error_e result)
+wifi_error_e connman_lib2capi_result(enum connman_lib_err_e result)
 {
 	/*
 	 * TODO:
@@ -421,7 +420,7 @@ wifi_error_e connman_lib2capi_result(enum connman_lib_error_e result)
 }
 
 static void connman_service_connect_cb(
-					enum connman_lib_error_e result,
+					enum connman_lib_err_e result,
 					void *user_data)
 {
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
@@ -430,7 +429,7 @@ static void connman_service_connect_cb(
 }
 
 static void connman_service_disconnect_cb(
-					enum connman_lib_error_e result,
+					enum connman_lib_err_e result,
 					void *user_data)
 {
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
@@ -934,7 +933,7 @@ bool _wifi_libnet_deinit(void)
 }
 
 static void __connman_technology_powered_on_cb(
-					enum connman_lib_error_e result,
+					enum connman_lib_err_e result,
 					void *user_data)
 {
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
@@ -943,7 +942,7 @@ static void __connman_technology_powered_on_cb(
 }
 
 static void __connman_technology_powered_off_cb(
-					enum connman_lib_error_e result,
+					enum connman_lib_err_e result,
 					void *user_data)
 {
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
@@ -1405,17 +1404,16 @@ int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback, void *user_
 	/*
 	 * New capi
 	 */
-	struct common_reply_data *reply_data;
+/*	struct common_reply_data *reply_data;
 
 	reply_data =
-	    common_reply_data_new(callback, user_data, NULL, TRUE);
+	    common_reply_data_new(callback, user_data, NULL, TRUE);*/
 
 	connman_technology_set_property_changed_cb(
 			connman_get_technology(TECH_TYPE_WIFI),
 			TECH_PROP_POWERED,
 			connman_technology_set_device_state_changed_cb,
-			reply_data,
-			TRUE);
+			user_data);
 
 	return WIFI_ERROR_NONE;
 }

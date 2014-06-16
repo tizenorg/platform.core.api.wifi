@@ -19,7 +19,10 @@
 
 #include <dlog.h>
 
-#include <connman_lib.h>
+#include <connman-lib.h>
+#include <connman-manager.h>
+#include <connman-technology.h>
+#include <connman-service.h>
 
 #include "wifi.h"
 
