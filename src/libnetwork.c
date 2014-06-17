@@ -124,6 +124,8 @@ const char *_get_ip_config_str(net_ip_config_type_t ip_config_type)
 	case NET_IP_CONFIG_TYPE_OFF:
 		return "off";
 	}
+
+	return NULL;
 }
 
 /*static wifi_error_e __libnet_convert_to_ap_error_type(net_err_t err_type)
