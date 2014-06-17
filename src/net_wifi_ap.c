@@ -915,7 +915,7 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 
 	wifi_conn_info.security_info.sec_mode = sec_info.sec_mode;
 
-	connman_service_set_wifi_conn_info(service, &wifi_conn_info);
+	_set_wifi_conn_info(&wifi_conn_info);
 
 	return WIFI_ERROR_NONE;
 }

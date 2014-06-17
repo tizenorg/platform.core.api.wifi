@@ -24,6 +24,22 @@
 
 static GSList *ap_handle_list = NULL;
 
+typedef struct {
+	char *type;
+	char *mode;
+	char *ssid;
+	char *security;
+	char *passphrase;
+	char *eap_type;
+	char *eap_auth;
+	char *identity;
+	char *password;
+	char *ca_cert_file;
+	char *client_cert_file;
+	char *private_key_file;
+	char *private_key_password;
+} net_wifi_connect_service_info_t;
+
 struct _wifi_cb_s {
 	wifi_device_state_changed_cb device_state_cb;
 	void *device_state_user_data;
@@ -53,6 +69,26 @@ struct _profile_list_s {
 static struct _wifi_cb_s wifi_callbacks = {0,};
 static struct _profile_list_s profile_iterator = {0, NULL};
 static struct _profile_list_s hidden_profile_iterator = {0, NULL};
+
+/*For connection which CAPI send some message to WiNet daemon*/
+static net_wifi_connection_info_t net_wifi_conn_info;
+
+/*For connection which CAPI send some message to WiNet daemon*/
+void _set_wifi_conn_info(net_wifi_connection_info_t *wifi_conn_info)
+{
+	g_strlcpy(net_wifi_conn_info.essid, wifi_conn_info->essid,
+					NET_WLAN_ESSID_LEN+1);
+	net_wifi_conn_info.wlan_mode = wifi_conn_info->wlan_mode;
+	memcpy(&net_wifi_conn_info.security_info,
+					&wifi_conn_info->security_info,
+					sizeof(wlan_security_info_t));
+}
+
+/*For connection which CAPI send some message to WiNet daemon*/
+net_wifi_connection_info_t *_get_wifi_conn_info(void)
+{
+	return &net_wifi_conn_info;
+}
 
 net_state_type_t _get_service_state_type(const char *state)
 {
@@ -362,22 +398,6 @@ char* _net_print_error(net_err_t error)
 	}
 }
 
-typedef struct {
-	char *type;
-	char *mode;
-	char *ssid;
-	char *security;
-	char *passphrase;
-	char *eap_type;
-	char *eap_auth;
-	char *identity;
-	char *password;
-	char *ca_cert_file;
-	char *client_cert_file;
-	char *private_key_file;
-	char *private_key_password;
-} net_wifi_connect_service_info_t;
-
 static void __libnet_set_connected_cb(wifi_connected_cb user_cb, void *user_data)
 {
 	if (user_cb) {
@@ -607,12 +627,9 @@ static int __net_open_connection_with_wifi_info(wifi_ap_h ap_h, const net_wifi_c
 
 static int __libnet_connect_with_wifi_info(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data)
 {
-	struct connman_service* service = ap_h;
-
 	net_wifi_connection_info_t *wifi_info;
-	/*memset(&wifi_info, 0, sizeof(net_wifi_connection_info_t));*/
 
-	wifi_info = connman_service_get_wifi_conn_info(service);
+	wifi_info = _get_wifi_conn_info();
 
 	if (__net_open_connection_with_wifi_info(ap_h, wifi_info) != NET_ERR_NONE)
 		return WIFI_ERROR_OPERATION_FAILED;

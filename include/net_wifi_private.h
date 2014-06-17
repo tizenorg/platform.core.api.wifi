@@ -51,6 +51,33 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/*****************************************************************************
+ * 	Global Structures
+ *****************************************************************************/
+/**
+ * This is the structure to connect with WPS network.
+ */
+typedef struct {
+	/** PBC / PIN */
+	net_wifi_wps_type_t type;
+
+	/** Optional. This pin is needed when the user input PIN code */
+	char pin[NET_WLAN_MAX_WPSPIN_LEN + 1];
+} net_wifi_wps_info_t;
+
+/**
+ * This is the profile structure to connect hidden WiFi network.
+ */
+typedef struct {
+	/** Basic feature */
+	char essid[NET_WLAN_ESSID_LEN + 1];
+
+	/** Infrastructure / ad-hoc / auto mode */
+	wlan_connection_mode_type_t wlan_mode;
+
+	/** Security mode and authentication info */
+	wlan_security_info_t security_info;
+} net_wifi_connection_info_t;
 
 bool _wifi_libnet_init(void);
 bool _wifi_libnet_deinit(void);
@@ -89,6 +116,11 @@ wifi_connection_state_e _wifi_convert_to_ap_state(
 					net_state_type_t state);
 
 net_state_type_t _get_service_state_type(const char *state);
+
+/*For connection which CAPI send some message to WiNet daemon*/
+void _set_wifi_conn_info(net_wifi_connection_info_t *wifi_conn_info);
+net_wifi_connection_info_t *_get_wifi_conn_info(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
