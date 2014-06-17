@@ -238,8 +238,7 @@ EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_
 
 	enum connman_service_state_type state_type;
 
-	struct connman_service *service =
-		connman_get_service(((net_profile_info_t *) ap)->essid);
+	struct connman_service *service = ap;
 	if (!service)
 		return NET_ERR_INVALID_PARAM;
 
@@ -310,8 +309,7 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 
 	net_ip_config_type_t ip_config_type;
 
-	struct connman_service *service =
-		connman_get_service(((net_profile_info_t *) ap)->essid);
+	struct connman_service *service = ap;
 	if (!service)
 		return NET_ERR_INVALID_PARAM;
 
@@ -335,10 +333,9 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct service_ipv4 ipv4_config;
-	ipv4_config.method = g_strdup(_get_ip_config_str(ip_config_type));
-
-	connman_service_set_ipv4_config(service, &ipv4_config);
+	connman_service_set_ipv4_config(service,
+			_get_ip_config_str(ip_config_type),
+			IP_INFO_METHOD);
 
 	return WIFI_ERROR_NONE;
 
@@ -397,15 +394,11 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 
 	/*return _wifi_update_ap_info(profile_info)*/;
 
-	struct connman_service *service =
-		connman_get_service(((net_profile_info_t *) ap)->essid);
+	struct connman_service *service = ap;
 	if (!service)
 		return NET_ERR_INVALID_PARAM;
 
-	struct service_ipv4 ipv4_config;
-	ipv4_config.address = g_strdup(ip_address);
-
-	connman_service_set_ipv4_config(service, &ipv4_config);
+	connman_service_set_ipv4_config(service, ip_address, IP_INFO_ADDRESS);
 
 	return WIFI_ERROR_NONE;
 }
@@ -459,15 +452,11 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 
 	/*return WIFI_ERROR_NONE _wifi_update_ap_info(profile_info)*/
 
-	struct connman_service *service =
-		connman_get_service(((net_profile_info_t *) ap)->essid);
+	struct connman_service *service = ap;
 	if (!service)
 		return NET_ERR_INVALID_PARAM;
 
-	struct service_ipv4 ipv4_config;
-	ipv4_config.netmask = g_strdup(subnet_mask);
-
-	connman_service_set_ipv4_config(service, &ipv4_config);
+	connman_service_set_ipv4_config(service, subnet_mask, IP_INFO_NETMASK);
 
 	return WIFI_ERROR_NONE;
 }
@@ -523,16 +512,12 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 
 	/*return WIFI_ERROR_NONE _wifi_update_ap_info(profile_info)*/
 
-	struct connman_service *service =
-		connman_get_service(((net_profile_info_t *) ap)->essid);
+	struct connman_service *service = ap;
 	if (!service)
 		return NET_ERR_INVALID_PARAM;
 
-	struct service_ipv4 ipv4_config;
-
-	ipv4_config.gateway = g_strdup(gateway_address);
-
-	connman_service_set_ipv4_config(service, &ipv4_config);
+	connman_service_set_ipv4_config(service, gateway_address,
+							IP_INFO_GATEWAY);
 
 	return WIFI_ERROR_NONE;
 }
