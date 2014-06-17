@@ -79,6 +79,16 @@ typedef struct {
 	wlan_security_info_t security_info;
 } net_wifi_connection_info_t;
 
+/**
+ * This is the profile structure exposed to applications.
+ */
+typedef struct
+{
+	/** Profile name */
+	char *essid;
+} net_profile_info_t;
+
+
 bool _wifi_libnet_init(void);
 bool _wifi_libnet_deinit(void);
 int _wifi_activate(wifi_activated_cb callback, void *user_data);

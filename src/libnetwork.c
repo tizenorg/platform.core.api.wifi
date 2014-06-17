@@ -488,7 +488,11 @@ static int __net_dbus_connect_service(wifi_ap_h ap_h,
 		const net_wifi_connect_service_info_t *wifi_connection_info)
 {
 	net_err_t Error = NET_ERR_NONE;
-	struct connman_service *service = ap_h;
+
+	struct connman_service *service =
+		connman_get_service(((net_profile_info_t *) ap_h)->essid);
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
 
 	if (g_strcmp0(wifi_connection_info->security, "ieee8021x") == 0) {
 		/* Create the EAP config file
@@ -1032,7 +1036,11 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 
 bool _wifi_libnet_check_ap_validity(wifi_ap_h ap_h)
 {
-	struct connman_service *service = ap_h;
+	struct connman_service *service =
+		connman_get_service(((net_profile_info_t *) ap_h)->essid);
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
 	const char *name = connman_service_get_name(service);
 
 	if (!name)
@@ -1048,7 +1056,9 @@ void _wifi_libnet_add_to_ap_list(wifi_ap_h ap_h)
 
 void _wifi_libnet_remove_from_ap_list(wifi_ap_h ap_h)
 {
-	ap_handle_list = g_slist_remove(ap_handle_list, ap_h);
+	net_profile_info_t *ap_info = ap_h;
+	ap_handle_list = g_slist_remove(ap_handle_list, ap_info);
+	g_free(ap_info->essid);
 	g_free(ap_h);
 }
 
@@ -1212,7 +1222,14 @@ int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
 		return WIFI_ERROR_NO_CONNECTION;
 	}
 
-	*ap = ap_h;
+	*ap = g_try_malloc0(sizeof(net_profile_info_t));
+	if (*ap == NULL)
+		return WIFI_ERROR_OUT_OF_MEMORY;
+
+	((net_profile_info_t *) (*ap))->essid =
+				g_strdup(connman_service_get_path(ap_h));
+
+	_wifi_libnet_add_to_ap_list(*ap);
 
 	return WIFI_ERROR_NONE;
 }
@@ -1317,7 +1334,11 @@ int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, vo
 
 	__libnet_set_disconnected_cb(callback, user_data);*/
 
-	struct connman_service* service = ap_h;
+	struct connman_service *service =
+		connman_get_service(((net_profile_info_t *) ap_h)->essid);
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
 	__libnet_set_disconnected_cb(callback, user_data);
 	connman_service_disconnect(service, connman_service_disconnect_cb, NULL);
 
@@ -1343,7 +1364,10 @@ int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h, wifi_connected_cb callback, vo
 	__libnet_set_connected_cb(callback, user_data);*/
 
 	int rv = NET_ERR_NONE;
-	struct connman_service* service = ap_h;
+	struct connman_service *service =
+		connman_get_service(((net_profile_info_t *) ap_h)->essid);
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
 
 	__libnet_set_connected_cb(callback, user_data);
 
@@ -1372,7 +1396,10 @@ int _wifi_libnet_forget_ap(wifi_ap_h ap)
 		return WIFI_ERROR_OPERATION_FAILED;*/
 
 	int rv = NET_ERR_NONE;
-	struct connman_service* service = ap;
+	struct connman_service *service =
+		connman_get_service(((net_profile_info_t *) ap)->essid);
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
 
 	connman_service_remove(service);
 

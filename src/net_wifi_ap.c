@@ -33,17 +33,17 @@
 	return ipstr;
 }*/
 
-/*static void __wifi_init_ap(net_profile_info_t *profile_info, const char *essid)
+static void __wifi_init_ap(net_profile_info_t *profile_info, const char *essid)
 {
-	profile_info->profile_type = NET_DEVICE_WIFI;
+/*	profile_info->profile_type = NET_DEVICE_WIFI;
 	profile_info->ProfileState = NET_STATE_TYPE_IDLE;
 	profile_info->ProfileInfo.Wlan.net_info.IpConfigType = NET_IP_CONFIG_TYPE_OFF;
 	profile_info->ProfileInfo.Wlan.net_info.ProxyMethod = NET_PROXY_TYPE_DIRECT;
 	profile_info->ProfileInfo.Wlan.wlan_mode = NETPM_WLAN_CONNMODE_AUTO;
 	profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_NONE;
-	profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_NONE;
-	g_strlcpy(profile_info->ProfileInfo.Wlan.essid, essid, NET_WLAN_ESSID_LEN+1);
-}*/
+	profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_NONE;*/
+	profile_info->essid = g_strdup(essid);
+}
 
 wifi_connection_state_e _wifi_convert_to_ap_state(
 				net_state_type_t state)
@@ -82,14 +82,14 @@ EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-/*	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
+	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
 	if (ap_info == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
 	__wifi_init_ap(ap_info, essid);
 
 	_wifi_libnet_add_to_ap_list((wifi_ap_h)ap_info);
-	*ap = (wifi_ap_h)ap_info;*/
+	*ap = (wifi_ap_h)ap_info;
 
 	return WIFI_ERROR_NONE;
 }
@@ -113,14 +113,14 @@ EXPORT_API int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	/*net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
+	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
 	if (ap_info == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
 	memcpy(ap_info, origin, sizeof(net_profile_info_t));
 
 	_wifi_libnet_add_to_ap_list((wifi_ap_h)ap_info);
-	*cloned_ap = (wifi_ap_h)ap_info;*/
+	*cloned_ap = (wifi_ap_h)ap_info;
 
 	return WIFI_ERROR_NONE;
 }
