@@ -110,6 +110,22 @@ net_state_type_t _get_service_state_type(const char *state)
 		return NET_STATE_TYPE_UNKNOWN;
 }
 
+const char *_get_ip_config_str(net_ip_config_type_t ip_config_type)
+{
+	switch (ip_config_type) {
+	case NET_IP_CONFIG_TYPE_STATIC:
+		return "manual";
+	case NET_IP_CONFIG_TYPE_DYNAMIC:
+		return "dhcp";
+	case NET_IP_CONFIG_TYPE_AUTO_IP:
+		return "dhcp";
+	case NET_IP_CONFIG_TYPE_FIXED:
+		return "fixed";
+	case NET_IP_CONFIG_TYPE_OFF:
+		return "off";
+	}
+}
+
 /*static wifi_error_e __libnet_convert_to_ap_error_type(net_err_t err_type)
 {
 	switch (err_type) {

@@ -236,8 +236,12 @@ EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service *service = ap;
 	enum connman_service_state_type state_type;
+
+	struct connman_service *service =
+		connman_get_service(((net_profile_info_t *) ap)->essid);
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
 
 	state_type = _get_service_state_type(
 					connman_service_get_state(service));
@@ -304,32 +308,44 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-/*	net_profile_info_t *profile_info = ap;
+	net_ip_config_type_t ip_config_type;
+	struct service_ipv4 ipv4_config;
+
+	struct connman_service *service =
+		connman_get_service(((net_profile_info_t *) ap)->essid);
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
 
 	switch (type) {
 	case WIFI_IP_CONFIG_TYPE_STATIC:
-		profile_info->ProfileInfo.Wlan.net_info.IpConfigType = NET_IP_CONFIG_TYPE_STATIC;
+		ip_config_type = NET_IP_CONFIG_TYPE_STATIC;
 		break;
 	case WIFI_IP_CONFIG_TYPE_DYNAMIC:
-		profile_info->ProfileInfo.Wlan.net_info.IpConfigType = NET_IP_CONFIG_TYPE_DYNAMIC;
+		ip_config_type = NET_IP_CONFIG_TYPE_DYNAMIC;
 		break;
 	case WIFI_IP_CONFIG_TYPE_AUTO:
-		profile_info->ProfileInfo.Wlan.net_info.IpConfigType = NET_IP_CONFIG_TYPE_AUTO_IP;
+		ip_config_type = NET_IP_CONFIG_TYPE_AUTO_IP;
 		break;
 	case WIFI_IP_CONFIG_TYPE_FIXED:
-		profile_info->ProfileInfo.Wlan.net_info.IpConfigType = NET_IP_CONFIG_TYPE_FIXED;
+		ip_config_type = NET_IP_CONFIG_TYPE_FIXED;
 		break;
 	case WIFI_IP_CONFIG_TYPE_NONE:
-		profile_info->ProfileInfo.Wlan.net_info.IpConfigType = NET_IP_CONFIG_TYPE_OFF;
+		ip_config_type = NET_IP_CONFIG_TYPE_OFF;
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
+	ipv4_config.method = _get_ip_config_str(ip_config_type);
+
+/*	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
 		return WIFI_ERROR_NONE;*/
 
-	return WIFI_ERROR_NONE/*_wifi_update_ap_info(profile_info)*/;
+	/*return _wifi_update_ap_info(profile_info)*/;
+
+	connman_service_set_ipv4_config(service, &ipv4_config);
+
+	return WIFI_ERROR_NONE;
 }
 
 EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, char** ip_address)

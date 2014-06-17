@@ -131,6 +131,8 @@ net_state_type_t _get_service_state_type(const char *state);
 void _set_wifi_conn_info(net_wifi_connection_info_t *wifi_conn_info);
 net_wifi_connection_info_t *_get_wifi_conn_info(void);
 
+const char *_get_ip_config_str(net_ip_config_type_t ip_config_type);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
