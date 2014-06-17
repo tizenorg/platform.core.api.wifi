@@ -335,12 +335,10 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct service_ipv4 *ipv4_config;
-	ipv4_config = connman_service_get_ipv4_config(service);
-	g_free(ipv4_config->method);
-	ipv4_config->method = g_strdup(_get_ip_config_str(ip_config_type));
+	struct service_ipv4 ipv4_config;
+	ipv4_config.method = g_strdup(_get_ip_config_str(ip_config_type));
 
-	connman_service_set_ipv4_config(service, ipv4_config);
+	connman_service_set_ipv4_config(service, &ipv4_config);
 
 	return WIFI_ERROR_NONE;
 
@@ -404,12 +402,10 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 	if (!service)
 		return NET_ERR_INVALID_PARAM;
 
-	struct service_ipv4 *ipv4_config;
-	ipv4_config = connman_service_get_ipv4_config(service);
-	g_free(ipv4_config->address);
-	ipv4_config->address = g_strdup(ip_address);
+	struct service_ipv4 ipv4_config;
+	ipv4_config.address = g_strdup(ip_address);
 
-	connman_service_set_ipv4_config(service, ipv4_config);
+	connman_service_set_ipv4_config(service, &ipv4_config);
 
 	return WIFI_ERROR_NONE;
 }
@@ -468,12 +464,10 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 	if (!service)
 		return NET_ERR_INVALID_PARAM;
 
-	struct service_ipv4 *ipv4_config;
-	ipv4_config = connman_service_get_ipv4_config(service);
-	g_free(ipv4_config->netmask);
-	ipv4_config->netmask = g_strdup(subnet_mask);
+	struct service_ipv4 ipv4_config;
+	ipv4_config.netmask = g_strdup(subnet_mask);
 
-	connman_service_set_ipv4_config(service, ipv4_config);
+	connman_service_set_ipv4_config(service, &ipv4_config);
 
 	return WIFI_ERROR_NONE;
 }
@@ -534,12 +528,11 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 	if (!service)
 		return NET_ERR_INVALID_PARAM;
 
-	struct service_ipv4 *ipv4_config;
-	ipv4_config = connman_service_get_ipv4_config(service);
-	g_free(ipv4_config->gateway);
-	ipv4_config->gateway = g_strdup(gateway_address);
+	struct service_ipv4 ipv4_config;
 
-	connman_service_set_ipv4_config(service, ipv4_config);
+	ipv4_config.gateway = g_strdup(gateway_address);
+
+	connman_service_set_ipv4_config(service, &ipv4_config);
 
 	return WIFI_ERROR_NONE;
 }
@@ -594,7 +587,9 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e add
 		return WIFI_ERROR_NONE;
 */
 
-	return WIFI_ERROR_NONE/*_wifi_update_ap_info(profile_info)*/;
+	/*return WIFI_ERROR_NONE_wifi_update_ap_info(profile_info)*/
+
+	return WIFI_ERROR_NONE;
 }
 
 EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
