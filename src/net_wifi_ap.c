@@ -20,6 +20,32 @@
 #include <glib.h>
 #include "net_wifi_private.h"
 
+static void convert_wifi_security(wlan_security_info_t *security_info, char **security)
+{
+	while (*security) {
+		if (g_strcmp0(*security, "none") == 0 &&
+		    security_info->sec_mode < WLAN_SEC_MODE_NONE)
+			security_info->sec_mode = WLAN_SEC_MODE_NONE;
+		else if (!g_strcmp0(*security, "wep"))
+			security_info->sec_mode = WLAN_SEC_MODE_WEP;
+		else if (!g_strcmp0(*security, "psk"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
+		else if (!g_strcmp0(*security, "ieee8021x"))
+			security_info->sec_mode = WLAN_SEC_MODE_IEEE8021X;
+		else if (!g_strcmp0(*security, "wpa"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
+		else if (!g_strcmp0(*security, "rsn"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA2_PSK;
+		else if (!g_strcmp0(*security, "wps"))
+			security_info->wps_support = TRUE;
+		else
+			security_info->sec_mode = WLAN_SEC_MODE_NONE;
+
+		security++;
+	}
+
+}
+
 /*static char* __ap_convert_ip_to_string(net_addr_t *ip_addr)
 {
 	unsigned char *ipaddr = (unsigned char *)&ip_addr->Data.Ipv4.s_addr;
@@ -865,7 +891,8 @@ EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e*
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-/*	net_profile_info_t *profile_info = ap;
+	/*
+	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.enc_mode) {
 	case WLAN_ENC_MODE_NONE:
@@ -885,7 +912,8 @@ EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e*
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
-	}*/
+	}
+	*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -920,35 +948,6 @@ EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e 
 	}*/
 
 	return WIFI_ERROR_NONE;
-}
-
-/*
- * Added by Chengyi
- */
-void convert_wifi_security(wlan_security_info_t *security_info, char **security)
-{
-	while (*security) {
-		if (g_strcmp0(*security, "none") == 0 &&
-		    security_info->sec_mode < WLAN_SEC_MODE_NONE)
-			security_info->sec_mode = WLAN_SEC_MODE_NONE;
-		else if (!g_strcmp0(*security, "wep"))
-			security_info->sec_mode = WLAN_SEC_MODE_WEP;
-		else if (!g_strcmp0(*security, "psk"))
-			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
-		else if (!g_strcmp0(*security, "ieee8021x"))
-			security_info->sec_mode = WLAN_SEC_MODE_IEEE8021X;
-		else if (!g_strcmp0(*security, "wpa"))
-			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
-		else if (!g_strcmp0(*security, "rsn"))
-			security_info->sec_mode = WLAN_SEC_MODE_WPA2_PSK;
-		else if (!g_strcmp0(*security, "wps"))
-			security_info->wps_support = TRUE;
-		else
-			security_info->sec_mode = WLAN_SEC_MODE_NONE;
-
-		security++;
-	}
-
 }
 
 EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
