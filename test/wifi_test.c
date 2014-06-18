@@ -673,7 +673,7 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 		else
 			printf("Fail to get Connection State\n");
 
-		if (wifi_ap_get_ip_config_type(ap, WIFI_ADDRESS_FAMILY_IPV4, &ip_type) == WIFI_ERROR_NONE)
+		if (wifi_ap_wifi_get_ip_config_type(ap, WIFI_ADDRESS_FAMILY_IPV4, &ip_type) == WIFI_ERROR_NONE)
 			printf("IP config type : %d\n", ip_type);
 		else
 			printf("Fail to get IP config type\n");
@@ -1286,7 +1286,7 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		rv = test_is_activated();
 		break;
 	case '6':
-		rv = test_get_connection_state();  /*TODO*/
+		rv = test_get_connection_state();
 		break;
 	case '7':
 		rv = test_get_mac_address(); /*TODO*/

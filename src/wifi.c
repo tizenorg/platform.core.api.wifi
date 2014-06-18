@@ -1,25 +1,28 @@
 /*
- * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd All Rights Reserved
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Network Wi-Fi library
+*
+* Copyright (c) 2014-2015 Intel Corporation. All rights reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*              http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*/
 
 #include <stdio.h>
 #include <string.h>
 #include <glib.h>
 #include <vconf/vconf.h>
 
-#include "net_wifi_private.h"
+#include "wifi-internal.h"
 
 static bool is_init = false;
 static wifi_rssi_level_changed_cb rssi_level_changed_cb = NULL;
@@ -128,7 +131,8 @@ EXPORT_API int wifi_is_activated(bool* activated)
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_get_connection_state(wifi_connection_state_e* connection_state)
+EXPORT_API int wifi_get_connection_state(
+				wifi_connection_state_e* connection_state)
 {
 	if (connection_state == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -191,7 +195,9 @@ EXPORT_API int wifi_scan(wifi_scan_finished_cb callback, void* user_data)
 	return rv;
 }
 
-EXPORT_API int wifi_scan_hidden_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data)
+EXPORT_API int wifi_scan_hidden_ap(const char* essid,
+					wifi_scan_finished_cb callback,
+					void* user_data)
 {
 	int rv;
 
@@ -227,7 +233,8 @@ EXPORT_API int wifi_get_connected_ap(wifi_ap_h* ap)
 	return rv;
 }
 
-EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback, void* user_data)
+EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback,
+					 void* user_data)
 {
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -240,7 +247,8 @@ EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback, void* user_data
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback, void* user_data)
+EXPORT_API int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback,
+						 void* user_data)
 {
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -253,7 +261,8 @@ EXPORT_API int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback, void* us
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)
+EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback,
+							void* user_data)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -268,7 +277,8 @@ EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user
 	return _wifi_libnet_open_profile(ap, callback, user_data);
 }
 
-EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void* user_data)
+EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback,
+							void* user_data)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -283,7 +293,9 @@ EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void
 	return _wifi_libnet_close_profile(ap, callback, user_data);
 }
 
-EXPORT_API int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)
+EXPORT_API int wifi_connect_by_wps_pbc(wifi_ap_h ap,
+					  wifi_connected_cb callback,
+					  void* user_data)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -313,7 +325,9 @@ EXPORT_API int wifi_forget_ap(wifi_ap_h ap)
 	return _wifi_libnet_forget_ap(ap);
 }
 
-EXPORT_API int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb callback, void* user_data)
+EXPORT_API int wifi_set_device_state_changed_cb(
+					wifi_device_state_changed_cb callback,
+					void* user_data)
 {
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -326,8 +340,6 @@ EXPORT_API int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb cal
 	}
 
 	return _wifi_set_power_on_off_cb(callback, user_data);
-
-	/*return wifi_set_power_on_off_cb(callback, user_data);*/
 }
 
 EXPORT_API int wifi_unset_device_state_changed_cb(void)
@@ -335,7 +347,9 @@ EXPORT_API int wifi_unset_device_state_changed_cb(void)
 	return _wifi_unset_power_on_off_cb();
 }
 
-EXPORT_API int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void* user_data)
+EXPORT_API int wifi_set_background_scan_cb(
+					wifi_scan_finished_cb callback,
+					void* user_data)
 {
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -355,7 +369,9 @@ EXPORT_API int wifi_unset_background_scan_cb(void)
 	return _wifi_unset_background_scan_cb();
 }
 
-EXPORT_API int wifi_set_connection_state_changed_cb(wifi_connection_state_changed_cb callback, void* user_data)
+EXPORT_API int wifi_set_connection_state_changed_cb(
+				wifi_connection_state_changed_cb callback,
+				void* user_data)
 {
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -375,7 +391,9 @@ EXPORT_API int wifi_unset_connection_state_changed_cb(void)
 	return _wifi_unset_connection_state_cb();
 }
 
-EXPORT_API int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback, void* user_data)
+EXPORT_API int wifi_set_rssi_level_changed_cb(
+				wifi_rssi_level_changed_cb callback,
+				void* user_data)
 {
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
@@ -383,7 +401,8 @@ EXPORT_API int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callbac
 	}
 
 	if (rssi_level_changed_cb == NULL)
-		vconf_notify_key_changed(VCONFKEY_WIFI_STRENGTH, __rssi_level_changed_cb, NULL);
+		vconf_notify_key_changed(VCONFKEY_WIFI_STRENGTH,
+					__rssi_level_changed_cb, NULL);
 	else
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -396,7 +415,8 @@ EXPORT_API int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callbac
 EXPORT_API int wifi_unset_rssi_level_changed_cb(void)
 {
 	if (rssi_level_changed_cb != NULL)
-		vconf_ignore_key_changed(VCONFKEY_WIFI_STRENGTH, __rssi_level_changed_cb);
+		vconf_ignore_key_changed(VCONFKEY_WIFI_STRENGTH,
+						__rssi_level_changed_cb);
 	else
 		return WIFI_ERROR_INVALID_OPERATION;
 

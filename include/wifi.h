@@ -807,7 +807,7 @@ int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state);
 * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
 * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED  Address family not supported
 */
-int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e* type);
+int wifi_ap_wifi_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e* type);
 
 /**
 * @brief Sets the config type of IP.
