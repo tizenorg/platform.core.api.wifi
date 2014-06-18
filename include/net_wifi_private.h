@@ -25,7 +25,7 @@
 #include <connman-service.h>
 
 #include "wifi.h"
-#include "net_wifi_common_private.h"
+#include "common_private.h"
 
 #undef LOG_TAG
 #define LOG_TAG "CAPI_NETWORK_WIFI"

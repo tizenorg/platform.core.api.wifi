@@ -1469,7 +1469,7 @@ int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
 	((net_profile_info_t *) (*ap))->essid =
-				g_strdup(connman_service_get_path(ap_h));
+				g_strdup(connman_service_get_name(ap_h));
 
 	_wifi_libnet_add_to_ap_list(*ap);
 
