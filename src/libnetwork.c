@@ -959,8 +959,137 @@ static void __libnet_hidden_scan_cb(net_event_info_t *event_cb)
 	}
 }*/
 
+wifi_connection_state_e connection_state_string2type(const char *str)
+{
+	if (strcmp(str, "idle") == 0)
+		return WIFI_CONNECTION_STATE_DISCONNECTED;
+	if (strcmp(str, "association") == 0)
+		return WIFI_CONNECTION_STATE_ASSOCIATION;
+	if (strcmp(str, "configuration") == 0)
+		return WIFI_CONNECTION_STATE_CONFIGURATION;
+	if (strcmp(str, "ready") == 0)
+		return WIFI_CONNECTION_STATE_CONNECTED;
+	if (strcmp(str, "online") == 0)
+		return WIFI_CONNECTION_STATE_CONNECTED;
+	if (strcmp(str, "disconnect") == 0)
+		return WIFI_CONNECTION_STATE_DISCONNECTED;
+	if (strcmp(str, "failure") == 0)
+		return WIFI_CONNECTION_STATE_DISCONNECTED;
+
+	return -1;
+}
+
+static void service_state_changed(struct connman_service *service,
+							void *user_data)
+{
+	const char *name = connman_service_get_name(service);
+	const char *new_state = connman_service_get_state(service);
+
+
+	WIFI_LOG(WIFI_INFO, "name %s, state, %s", name, new_state);
+
+	if (wifi_callbacks.connection_state_cb) {
+		GSList *list;
+		net_profile_info_t *info = NULL;
+		net_profile_info_t *profile_info = NULL;
+		wifi_connection_state_e state =
+				connection_state_string2type(new_state);
+
+		for (list = ap_handle_list; list; list = list->next) {
+
+			if (list == NULL)
+				break;
+
+			info = (net_profile_info_t *)list->data;
+			if (strcmp(info->essid, name) == 0) {
+				profile_info = info;
+				break;
+			}
+		}
+
+		wifi_callbacks.connection_state_cb(state,
+				(wifi_ap_h)profile_info,
+				wifi_callbacks.connection_state_user_data);
+	}
+}
+
+static void service_strength_changed(struct connman_service *service,
+							void *user_data)
+{
+	const char *name = connman_service_get_name(service);
+	int strength = connman_service_get_strength(service);
+
+	WIFI_LOG(WIFI_INFO, "name %s, strength, %d", name, strength);
+}
+
+static void register_service_monitor(gpointer data, gpointer user_data)
+{
+	struct connman_service *service = data;
+
+	const char *path = connman_service_get_path(service);
+	const char *type = connman_service_get_type(service);
+
+	WIFI_LOG(WIFI_INFO, "path %s, type %s", path, type);
+
+	if (strcmp(type, "wifi") != 0)
+		return;
+
+	connman_service_set_property_changed_cb(service, SERVICE_PROP_STATE,
+					service_state_changed, user_data);
+
+	connman_service_set_property_changed_cb(service, SERVICE_PROP_STRENGTH,
+					service_strength_changed, user_data);
+}
+
+static void service_changed_callback(struct connman_manager *manager,
+							void *user_data)
+{
+	GList *services;
+
+	WIFI_LOG(WIFI_INFO, "service changed");
+
+	services = connman_get_services();
+
+	g_list_foreach(services, register_service_monitor, NULL);
+}
+
+static void technology_powered_changed(struct connman_technology *technology,
+							void *user_data)
+{
+	gboolean powered = connman_get_technology_powered(technology);
+	enum connman_technology_type type =
+				connman_get_technology_type(technology);
+
+	WIFI_LOG(WIFI_INFO, "technology %d powered %d", type, powered);
+
+	if (wifi_callbacks.device_state_cb) {
+		wifi_device_state_e state;
+
+		state = powered ? WIFI_DEVICE_STATE_ACTIVATED :
+						WIFI_DEVICE_STATE_DEACTIVATED;
+		wifi_callbacks.device_state_cb(state,
+					wifi_callbacks.device_state_user_data);
+	}
+}
+
+static void technology_added_callback(struct connman_technology *technology,
+							void *user_data)
+{
+	enum connman_technology_type type =
+				connman_get_technology_type(technology);
+
+	WIFI_LOG(WIFI_INFO, "technology %d added", type);
+
+	if (type == TECH_TYPE_WIFI)
+		connman_technology_set_property_changed_cb(technology,
+						TECH_PROP_POWERED,
+						technology_powered_changed,
+						user_data);
+}
+
 bool _wifi_libnet_init(void)
 {
+	struct connman_technology *technology;
 	int rv = NET_ERR_NONE;
 	/*rv = net_register_client_ext((net_event_cb_t)__libnet_evt_cb, NET_DEVICE_WIFI, NULL);*/
 /*	net_register_client_ext((net_event_cb_t)__libnet_evt_cb, NET_DEVICE_WIFI, NULL);
@@ -968,6 +1097,17 @@ bool _wifi_libnet_init(void)
 	connman_lib_init();
 	if (rv != NET_ERR_NONE)
 		return false;
+
+	connman_set_services_changed_cb(service_changed_callback, NULL);
+
+	connman_set_technology_added_cb(technology_added_callback, NULL);
+
+	technology = connman_get_technology(TECH_TYPE_WIFI);
+	if (technology)
+		connman_technology_set_property_changed_cb(technology,
+						TECH_PROP_POWERED,
+						technology_powered_changed,
+						NULL);
 
 	return true;
 }
@@ -1023,6 +1163,9 @@ int _wifi_activate(wifi_activated_cb callback, void *user_data)
 	/*
 	 * New capi
 	 */
+	if (winet_wifi_set_work_mode(WIFI_WORK_MODE_STATION) < 0)
+		return WIFI_ERROR_OPERATION_FAILED;
+
 	struct connman_technology *technology =
 					connman_get_technology(TECH_TYPE_WIFI);
 	if (!technology)
@@ -1065,6 +1208,9 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 	connman_disable_technology(technology,
 					__connman_technology_powered_off_cb,
 					NULL);
+
+	if (winet_wifi_set_work_mode(WIFI_WORK_MODE_OFF) < 0)
+		return WIFI_ERROR_OPERATION_FAILED;
 
 	return WIFI_ERROR_NONE;
 }
@@ -1138,9 +1284,23 @@ bool _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)
 	return true;
 }
 
+/* Only for test
+static void test_service(gpointer data, gpointer user_data)
+{
+	struct connman_service *service = data;
+	const char *type = connman_service_get_type(service);
+	const char *name = connman_service_get_name(service);
+
+	WIFI_LOG(WIFI_INFO, "type: %s, state %s", name,  type);
+}*/
+
 bool _wifi_libnet_get_wifi_state(wifi_connection_state_e* connection_state)
 {
-	net_wifi_state_t wlan_state = 0;
+	/*net_wifi_state_t wlan_state = 0;*/
+	struct connman_technology *technology;
+	gboolean wifi_powered;
+	GList *services;
+	GList *list;
 
 
 	// DELETE:
@@ -1150,6 +1310,54 @@ bool _wifi_libnet_get_wifi_state(wifi_connection_state_e* connection_state)
 		return false;
 	}*/
 
+	technology = connman_get_technology(TECH_TYPE_WIFI);
+	wifi_powered = connman_get_technology_powered(technology);
+
+	if (!wifi_powered) {
+		*connection_state = WIFI_CONNECTION_STATE_DISCONNECTED;
+		return true;
+	}
+
+	services = connman_get_services();
+	if (services == NULL) {
+		*connection_state = WIFI_CONNECTION_STATE_DISCONNECTED;
+		return true;
+	}
+
+//	g_list_foreach(services, test_service, NULL);
+
+//	list = g_list_next(services);
+	list = services;
+
+	WIFI_LOG(WIFI_INFO, "list: %p", list);
+	WIFI_LOG(WIFI_INFO, "services: %p", services);
+
+	while (list != NULL) {
+		wifi_connection_state_e state;
+		struct connman_service *service;
+		const char *str;
+		const char *type;
+
+		service = list->data;
+		str = connman_service_get_state(service);
+		state = connection_state_string2type(str);
+		type = connman_service_get_type(service);
+
+		WIFI_LOG(WIFI_INFO, "type: %s, state %s", type, str);
+
+		if (state > WIFI_CONNECTION_STATE_DISCONNECTED &&
+			strcmp(type, "wifi") == 0) {
+			*connection_state = state;
+			return true;
+		}
+
+		list = g_list_next(list);
+		WIFI_LOG(WIFI_INFO, "list: %p, services %p", list, services);
+	}
+
+	*connection_state = WIFI_CONNECTION_STATE_DISCONNECTED;
+	return true;
+/*
 	switch (wlan_state) {
 	case WIFI_OFF:
 	case WIFI_ON:
@@ -1169,7 +1377,7 @@ bool _wifi_libnet_get_wifi_state(wifi_connection_state_e* connection_state)
 		return false;
 	}
 
-	return true;
+	return true;*/
 }
 
 int _wifi_libnet_get_intf_name(char** name)
@@ -1440,6 +1648,7 @@ int _wifi_libnet_forget_ap(wifi_ap_h ap)
 	return WIFI_ERROR_NONE;
 }
 
+/*
 void connman_technology_set_device_state_changed_cb(
 				struct connman_technology *technology,
 				void *user_data)
@@ -1463,17 +1672,17 @@ void connman_technology_set_device_state_changed_cb(
 		wifi_device_state_changed_cb cb = reply_data->cb;
 		cb(state, reply_data->data);
 	}
-}
+}*/
 
 int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback, void *user_data)
 {
-/*	if (wifi_callbacks.device_state_cb)
+	if (wifi_callbacks.device_state_cb)
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	wifi_callbacks.device_state_cb = callback;
 	wifi_callbacks.device_state_user_data = user_data;
 
-	return WIFI_ERROR_NONE;*/
+	return WIFI_ERROR_NONE;
 
 	/*
 	 * New capi
@@ -1481,7 +1690,8 @@ int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback, void *user_
 /*	struct common_reply_data *reply_data;
 
 	reply_data =
-	    common_reply_data_new(callback, user_data, NULL, TRUE);*/
+	    common_reply_data_new(callback, user_data, NULL, TRUE);
+
 
 	connman_technology_set_property_changed_cb(
 			connman_get_technology(TECH_TYPE_WIFI),
@@ -1489,7 +1699,7 @@ int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback, void *user_
 			connman_technology_set_device_state_changed_cb,
 			user_data);
 
-	return WIFI_ERROR_NONE;
+	return WIFI_ERROR_NONE;*/
 }
 
 int _wifi_unset_power_on_off_cb(void)
