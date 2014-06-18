@@ -701,7 +701,7 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 		else
 			printf("Fail to get Proxy type\n");
 
-		if (wifi_ap_get_proxy_address(ap, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
+/*		if (wifi_ap_get_proxy_address(ap, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
 			printf("Proxy : %s\n", str_value);
 			g_free(str_value);
 		} else
@@ -717,7 +717,7 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 			printf("DNS2 : %s\n", str_value);
 			g_free(str_value);
 		} else
-			printf("Fail to get DNS2\n");
+			printf("Fail to get DNS2\n");*/
 
 		/* Security info */
 		if (wifi_ap_get_security_type(ap, &sec_type) == WIFI_ERROR_NONE)

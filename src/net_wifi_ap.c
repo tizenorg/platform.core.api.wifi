@@ -151,6 +151,9 @@ EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 	}
 
 	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
 	*essid = g_strdup(connman_service_get_name(service));
 	if (*essid == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
@@ -170,6 +173,14 @@ EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 	if (*bssid == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	*bssid = g_strdup(connman_service_get_bssid(service));
+	if (*bssid == NULL)
+		return WIFI_ERROR_OUT_OF_MEMORY;
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -182,6 +193,12 @@ EXPORT_API int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)
 
 /*	net_profile_info_t *profile_info = ap;
 	*rssi = (int)profile_info->ProfileInfo.Wlan.Strength;*/
+
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	*rssi = connman_service_get_strength(service);
 
 	return WIFI_ERROR_NONE;
 }
@@ -196,6 +213,12 @@ EXPORT_API int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)
 /*	net_profile_info_t *profile_info = ap;
 	*frequency = (int)profile_info->ProfileInfo.Wlan.frequency;*/
 
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	*frequency = connman_service_get_frequency(service);
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -208,6 +231,12 @@ EXPORT_API int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
 
 /*	net_profile_info_t *profile_info = ap;
 	*max_speed = (int)profile_info->ProfileInfo.Wlan.max_rate / 1000000;*/
+
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	*max_speed = connman_service_get_max_rate(service);
 
 	return WIFI_ERROR_NONE;
 }
@@ -225,6 +254,12 @@ EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
 		*favorite = true;
 	else
 		*favorite = false;*/
+
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	*favorite = connman_service_get_favorite(service);
 
 	return WIFI_ERROR_NONE;
 }
@@ -289,6 +324,33 @@ EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
 	}*/
+
+	const struct service_ipv4 *ipv4_config;
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	ipv4_config = connman_service_get_ipv4_config(service);
+
+	switch (_get_ip_config_type(ipv4_config->method)) {
+	case NET_IP_CONFIG_TYPE_STATIC:
+		*type = WIFI_IP_CONFIG_TYPE_STATIC;
+		break;
+	case NET_IP_CONFIG_TYPE_DYNAMIC:
+		*type = WIFI_IP_CONFIG_TYPE_DYNAMIC;
+		break;
+	case NET_IP_CONFIG_TYPE_AUTO_IP:
+		*type = WIFI_IP_CONFIG_TYPE_AUTO;
+		break;
+	case NET_IP_CONFIG_TYPE_FIXED:
+		*type = WIFI_IP_CONFIG_TYPE_FIXED;
+		break;
+	case NET_IP_CONFIG_TYPE_OFF:
+		*type = WIFI_IP_CONFIG_TYPE_NONE;
+		break;
+	default:
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
 
 	return WIFI_ERROR_NONE;
 }
@@ -364,6 +426,15 @@ EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 	*ip_address = __ap_convert_ip_to_string(&profile_info->ProfileInfo.Wlan.net_info.IpAddr);
 	if (*ip_address == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;*/
+	const struct service_ipv4 *ipv4;
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	ipv4 = connman_service_get_ipv4_info(service);
+	*ip_address = ipv4->address;
+	if (*ip_address == NULL)
+		return WIFI_ERROR_OUT_OF_MEMORY;
 
 	return WIFI_ERROR_NONE;
 }
@@ -423,6 +494,16 @@ EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 	if (*subnet_mask == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
+	const struct service_ipv4 *ipv4;
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	ipv4 = connman_service_get_ipv4_info(service);
+	*subnet_mask = ipv4->netmask;
+	if (*subnet_mask == NULL)
+		return WIFI_ERROR_OUT_OF_MEMORY;
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -480,6 +561,16 @@ EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 	*gateway_address = __ap_convert_ip_to_string(&profile_info->ProfileInfo.Wlan.net_info.GatewayAddr);
 	if (*gateway_address == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;*/
+
+	const struct service_ipv4 *ipv4;
+	struct connman_service *service = ap;
+	if (!service)
+		return NET_ERR_INVALID_PARAM;
+
+	ipv4 = connman_service_get_ipv4_info(service);
+	*gateway_address = ipv4->gateway;
+	if (*gateway_address == NULL)
+		return WIFI_ERROR_OUT_OF_MEMORY;
 
 	return WIFI_ERROR_NONE;
 }

@@ -110,6 +110,24 @@ net_state_type_t _get_service_state_type(const char *state)
 		return NET_STATE_TYPE_UNKNOWN;
 }
 
+net_ip_config_type_t _get_ip_config_type(const char *config)
+{
+	net_ip_config_type_t config_type;
+
+	if (!g_strcmp0(config, "manual"))
+		config_type = NET_IP_CONFIG_TYPE_STATIC;
+	else if (!g_strcmp0(config, "dhcp"))
+		config_type = NET_IP_CONFIG_TYPE_AUTO_IP;
+	else if (!g_strcmp0(config, "fixed"))
+		config_type = NET_IP_CONFIG_TYPE_FIXED;
+	else if (!g_strcmp0(config, "off"))
+		config_type = NET_IP_CONFIG_TYPE_OFF;
+	else
+		config_type = NET_IP_CONFIG_TYPE_DYNAMIC;
+
+	return config_type;
+}
+
 const char *_get_ip_config_str(net_ip_config_type_t ip_config_type)
 {
 	switch (ip_config_type) {
