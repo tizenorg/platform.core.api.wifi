@@ -155,9 +155,9 @@ EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	*essid = g_strdup(connman_service_get_name(service));
 	if (*essid == NULL)
@@ -173,9 +173,9 @@ EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	*bssid = g_strdup(connman_service_get_bssid(service));
 	if (*bssid == NULL)
@@ -191,9 +191,9 @@ EXPORT_API int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	*rssi = connman_service_get_strength(service);
 
@@ -207,9 +207,9 @@ EXPORT_API int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	*frequency = connman_service_get_frequency(service);
 
@@ -223,9 +223,9 @@ EXPORT_API int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	*max_speed = connman_service_get_max_rate(service);
 
@@ -239,9 +239,9 @@ EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	*favorite = connman_service_get_favorite(service);
 
@@ -258,9 +258,9 @@ EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap,
 
 	enum connman_service_state_type state_type;
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	state_type = _wifi_get_service_state_type(
 					connman_service_get_state(service));
@@ -291,9 +291,9 @@ EXPORT_API int wifi_ap_wifi_get_ip_config_type(wifi_ap_h ap,
 	}
 
 	const struct service_ipv4 *ipv4_config;
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	ipv4_config = connman_service_get_ipv4_config(service);
 
@@ -338,9 +338,9 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap,
 
 	net_ip_config_type_t ip_config_type;
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	switch (type) {
 	case WIFI_IP_CONFIG_TYPE_STATIC:
@@ -390,9 +390,9 @@ EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap,
 	}
 
 	const struct service_ipv4 *ipv4;
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	ipv4 = connman_service_get_ipv4_info(service);
 	*ip_address = ipv4->address;
@@ -418,9 +418,9 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap,
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	struct service_ipv4 ipv4_config;
 	memset(&ipv4_config, 0, sizeof(struct service_ipv4));
@@ -452,9 +452,9 @@ EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap,
 	}
 
 	const struct service_ipv4 *ipv4;
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	ipv4 = connman_service_get_ipv4_info(service);
 	*subnet_mask = ipv4->netmask;
@@ -480,9 +480,9 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap,
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	struct service_ipv4 ipv4_config;
 	memset(&ipv4_config, 0, sizeof(struct service_ipv4));
@@ -514,9 +514,9 @@ EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap,
 	}
 
 	const struct service_ipv4 *ipv4;
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	ipv4 = connman_service_get_ipv4_info(service);
 	*gateway_address = ipv4->gateway;
@@ -542,9 +542,9 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap,
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	struct service_ipv4 ipv4_config;
 	memset(&ipv4_config, 0, sizeof(struct service_ipv4));
@@ -594,6 +594,28 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
+	struct service_proxy proxy_config;
+	memset(&proxy_config, 0, sizeof(struct service_proxy));
+
+	proxy_config.servers = g_try_new0(char*, 2);
+
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	proxy_config.method = connman_service_get_proxy_config(service)->method;
+
+	if (!g_strcmp0(proxy_config.method, "manual")) {
+		*proxy_config.servers = g_strdup(proxy_address);
+		connman_service_set_proxy_config(service, &proxy_config);
+		g_free(*proxy_config.servers);
+		g_free(proxy_config.servers);
+	} else if (!g_strcmp0(proxy_config.method, "auto")){
+		proxy_config.url = g_strdup(proxy_address);
+		connman_service_set_proxy_config(service, &proxy_config);
+		g_free(proxy_config.url);
+	}
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -614,6 +636,29 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap,
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
+
+	struct service_proxy proxy_config;
+	memset(&proxy_config, 0, sizeof(struct service_proxy));
+
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	switch (proxy_type) {
+	case WIFI_PROXY_TYPE_AUTO:
+		proxy_config.method = g_strdup("auto");
+		break;
+	case WIFI_PROXY_TYPE_MANUAL:
+		proxy_config.method = g_strdup("manual");
+		break;
+	case WIFI_PROXY_TYPE_DIRECT:
+		proxy_config.method = g_strdup("direct");
+		break;
+	}
+
+	connman_service_set_proxy_config(service, &proxy_config);
+
+	g_free(proxy_config.method);
 
 	return 0;
 }
@@ -684,7 +729,9 @@ EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	if (connman_service_get_favorite(service)) {
 		*required = false;
@@ -719,7 +766,10 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	struct connman_service* service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
 	net_wifi_connection_info_t wifi_conn_info;
 	memset(&wifi_conn_info, 0, sizeof(net_wifi_connection_info_t));
 

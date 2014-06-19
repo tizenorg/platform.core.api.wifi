@@ -232,11 +232,13 @@ static bool __test_found_ap_callback(wifi_ap_h ap, void *user_data)
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to get State [%s]\n", __test_convert_error_to_string(rv));
 		g_free(ap_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	printf("AP name : %s, state : %s\n", ap_name, __test_print_state(state));
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 
 	return true;
 }
@@ -268,6 +270,7 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 			if (rv != WIFI_ERROR_NONE) {
 				printf("Fail to set passphrase : %s\n", __test_convert_error_to_string(rv));
 				g_free(ap_name);
+				wifi_ap_destroy(ap);
 				return false;
 			}
 		}
@@ -279,10 +282,12 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 			printf("Success to connection request [%s]\n", ap_name);
 
 		g_free(ap_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -306,10 +311,12 @@ static bool __test_found_connect_wps_callback(wifi_ap_h ap, void *user_data)
 			printf("Success to connection request [%s]\n", ap_name);
 
 		g_free(ap_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -333,10 +340,12 @@ static bool __test_found_disconnect_ap_callback(wifi_ap_h ap, void *user_data)
 			printf("Success to disconnection request %s\n", ap_name);
 
 		g_free(ap_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -360,10 +369,12 @@ static bool __test_found_forget_ap_callback(wifi_ap_h ap, void *user_data)
 			printf("Success to forget [%s]\n", ap_name);
 
 		g_free(ap_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -400,6 +411,7 @@ static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)
 		if (rv != WIFI_ERROR_NONE) {
 			printf("Fail to set eap passphrase : %s\n", __test_convert_error_to_string(rv));
 			g_free(ap_name);
+			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -409,6 +421,7 @@ static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)
 		if (rv != WIFI_ERROR_NONE) {
 			printf("Fail to get eap passphrase : %s\n", __test_convert_error_to_string(rv));
 			g_free(ap_name);
+			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -422,10 +435,12 @@ static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)
 
 		g_free(ap_name);
 		g_free(inputed_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -449,6 +464,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		rv = scanf("%9d", &method);
 		if (rv <= 0) {
 			g_free(ap_name);
+			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -465,6 +481,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		default:
 			printf("Invalid input!\n");
 			g_free(ap_name);
+			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -534,10 +551,12 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		}
 
 		g_free(ap_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -563,6 +582,7 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 		rv = scanf("%9d", &method);
 		if (rv <= 0) {
 			g_free(ap_name);
+			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -579,6 +599,7 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 		default:
 			printf("Invalid input!\n");
 			g_free(ap_name);
+			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -606,10 +627,12 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 		}
 
 		g_free(ap_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -742,6 +765,7 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 
 		if (sec_type != WIFI_SECURITY_TYPE_EAP) {
 			g_free(ap_name);
+			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -782,10 +806,12 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 			printf("Fail to get EAP private key file\n");
 
 		g_free(ap_name);
+		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
+	wifi_ap_destroy(ap);
 	return true;
 }
 

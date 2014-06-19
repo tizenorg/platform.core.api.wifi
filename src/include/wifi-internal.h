@@ -77,8 +77,8 @@ bool _wifi_libnet_foreach_found_hidden_aps(wifi_found_ap_cb callback, void *user
 
 int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data);
 int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, void *user_data);
-int _wifi_libnet_connect_with_wps(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
-int _wifi_libnet_forget_ap(wifi_ap_h ap);
+int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data);
+int _wifi_libnet_forget_ap(wifi_ap_h ap_h);
 
 int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback, void *user_data);
 int _wifi_unset_power_on_off_cb(void);
@@ -97,6 +97,7 @@ net_wifi_connection_info_t *_wifi_get_conn_info(void);
 
 char *_wifi_get_ip_config_str(net_ip_config_type_t ip_config_type);
 net_ip_config_type_t _wifi_get_ip_config_type(const char *config);
+struct connman_service *_wifi_get_service_h(wifi_ap_h ap_h);
 
 #ifdef __cplusplus
 }

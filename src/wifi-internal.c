@@ -366,7 +366,7 @@ static int __net_dbus_set_agent_passphrase(const char *path,
 
 	if (NULL == passphrase || strlen(passphrase) <= 0) {
 		WIFI_LOG(WIFI_ERROR, "Invalid param \n");
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	service_id = g_strrstr(path, "/") + 1;
@@ -388,9 +388,9 @@ static int __net_dbus_connect_service(wifi_ap_h ap_h,
 {
 	net_err_t Error = NET_ERR_NONE;
 
-	struct connman_service *service = ap_h;
+	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	if (g_strcmp0(wifi_connection_info->security, "ieee8021x") == 0) {
 		/* Create the EAP config file
@@ -505,7 +505,7 @@ static int __net_open_connection_with_wifi_info(wifi_ap_h ap_h,
 	default:
 		WIFI_LOG(WIFI_ERROR, "Invalid security type\n");
 
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	Error = __net_dbus_connect_service(ap_h, &wifi_connection_info);
@@ -634,27 +634,17 @@ static void service_state_changed(struct connman_service *service,
 	WIFI_LOG(WIFI_INFO, "name %s, state, %s", name, new_state);
 
 	if (wifi_callbacks.connection_state_cb) {
-		GSList *list;
-		net_profile_info_t *info = NULL;
-		net_profile_info_t *profile_info = NULL;
 		wifi_connection_state_e state =
 				connection_state_string2type(new_state);
+		wifi_ap_h ap;
 
-		for (list = ap_handle_list; list; list = list->next) {
-
-			if (list == NULL)
-				break;
-
-			info = (net_profile_info_t *)list->data;
-			if (strcmp(info->essid, name) == 0) {
-				profile_info = info;
-				break;
-			}
-		}
+		wifi_ap_create(name, &ap);
 
 		wifi_callbacks.connection_state_cb(state,
-				(wifi_ap_h)profile_info,
+				ap,
 				wifi_callbacks.connection_state_user_data);
+
+		wifi_ap_destroy(ap);
 	}
 }
 
@@ -732,6 +722,24 @@ static void technology_added_callback(struct connman_technology *technology,
 						user_data);
 }
 
+static void __connman_technology_powered_on_cb(
+					enum connman_lib_err_e result,
+					void *user_data)
+{
+	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
+
+	__libnet_activated_cb(connman_lib2capi_result(result));
+}
+
+static void __connman_technology_powered_off_cb(
+					enum connman_lib_err_e result,
+					void *user_data)
+{
+	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
+
+	__libnet_deactivated_cb(connman_lib2capi_result(result));
+}
+
 bool _wifi_libnet_init(void)
 {
 	struct connman_technology *technology;
@@ -763,24 +771,6 @@ bool _wifi_libnet_deinit(void)
 	memset(&wifi_callbacks, 0, sizeof(struct _wifi_cb_s));
 	connman_lib_deinit();
 	return true;
-}
-
-static void __connman_technology_powered_on_cb(
-					enum connman_lib_err_e result,
-					void *user_data)
-{
-	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
-
-	__libnet_activated_cb(connman_lib2capi_result(result));
-}
-
-static void __connman_technology_powered_off_cb(
-					enum connman_lib_err_e result,
-					void *user_data)
-{
-	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
-
-	__libnet_deactivated_cb(connman_lib2capi_result(result));
 }
 
 int _wifi_activate(wifi_activated_cb callback, void *user_data)
@@ -823,9 +813,9 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 
 bool _wifi_libnet_check_ap_validity(wifi_ap_h ap_h)
 {
-	struct connman_service *service = ap_h;
+	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	const char *name = connman_service_get_name(service);
 
@@ -1043,7 +1033,14 @@ bool _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback, void *user_data)
 	}
 
 	for (iter = connman_services_list; iter != NULL; iter = iter->next) {
-		rv = callback((wifi_ap_h)(iter->data), user_data);
+		wifi_ap_h ap;
+		struct connman_service *service = iter->data;
+		const char *essid = connman_service_get_name(service);
+
+		WIFI_LOG(WIFI_INFO, "essid is %s", essid);
+
+		wifi_ap_create(essid, &ap);
+		rv = callback(ap, user_data);
 		if (rv == false) break;
 	}
 
@@ -1060,7 +1057,10 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback,
 							void *user_data)
 {
 	int rv = NET_ERR_NONE;
-	struct connman_service* service = ap_h;
+
+	struct connman_service *service = _wifi_get_service_h(ap_h);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	__libnet_set_connected_cb(callback, user_data);
 
@@ -1080,9 +1080,9 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback,
 int _wifi_libnet_close_profile(wifi_ap_h ap_h,
 			wifi_disconnected_cb callback, void *user_data)
 {
-	struct connman_service *service = ap_h;
+	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	__libnet_set_disconnected_cb(callback, user_data);
 	connman_service_disconnect(service,
@@ -1095,9 +1095,9 @@ int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h,
 				wifi_connected_cb callback, void *user_data)
 {
 	int rv = NET_ERR_NONE;
-	struct connman_service *service = ap_h;
+	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	__libnet_set_connected_cb(callback, user_data);
 
@@ -1113,13 +1113,13 @@ int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h,
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_libnet_forget_ap(wifi_ap_h ap)
+int _wifi_libnet_forget_ap(wifi_ap_h ap_h)
 {
 
 	int rv = NET_ERR_NONE;
-	struct connman_service *service = ap;
+	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
-		return NET_ERR_INVALID_PARAM;
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	connman_service_remove(service);
 
@@ -1196,4 +1196,14 @@ int _wifi_unset_connection_state_cb()
 	wifi_callbacks.connection_state_user_data = NULL;
 
 	return WIFI_ERROR_NONE;
+}
+
+struct connman_service *_wifi_get_service_h(wifi_ap_h ap_h)
+{
+       struct connman_service *service =
+	       connman_get_service(((net_profile_info_t *) ap_h)->essid);
+       if (!service)
+	       return NULL;
+
+       return service;
 }
