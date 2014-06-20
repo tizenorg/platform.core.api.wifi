@@ -30,7 +30,8 @@
 #include <wifi.h>
 #include <tizen_error.h>
 
-gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data);
+gboolean test_thread(GIOChannel *source, GIOCondition condition,
+							gpointer data);
 
 static const char *__test_convert_error_to_string(wifi_error_e err_type)
 {
@@ -68,7 +69,8 @@ static const char *__test_convert_error_to_string(wifi_error_e err_type)
 	return "UNKNOWN";
 }
 
-static void __test_device_state_callback(wifi_device_state_e state, void* user_data)
+static void __test_device_state_callback(wifi_device_state_e state,
+						void* user_data)
 {
 	printf("Device state changed callback");
 
@@ -78,19 +80,22 @@ static void __test_device_state_callback(wifi_device_state_e state, void* user_d
 		printf(", state : Deactivated\n");
 }
 
-static void __test_bg_scan_completed_callback(wifi_error_e error_code, void* user_data)
+static void __test_bg_scan_completed_callback(wifi_error_e error_code,
+						void* user_data)
 {
 	printf("Background Scan Completed, error code : %s\n",
 			__test_convert_error_to_string(error_code));
 }
 
-static void __test_scan_request_callback(wifi_error_e error_code, void* user_data)
+static void __test_scan_request_callback(wifi_error_e error_code,
+						void* user_data)
 {
 	printf("Scan Completed from scan request, error code : %s\n",
 			__test_convert_error_to_string(error_code));
 }
 
-static bool __test_found_hidden_aps_callback(wifi_ap_h ap, void *user_data)
+static bool __test_found_hidden_aps_callback(wifi_ap_h ap,
+						void *user_data)
 {
 	int rv;
 	char *ap_name;
@@ -98,7 +103,8 @@ static bool __test_found_hidden_aps_callback(wifi_ap_h ap, void *user_data)
 
 	rv = wifi_ap_get_essid(ap, &ap_name);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP name [%s]\n",
+				__test_convert_error_to_string(rv));
 		return false;
 	}
 
@@ -113,7 +119,8 @@ static bool __test_found_hidden_aps_callback(wifi_ap_h ap, void *user_data)
 	return true;
 }
 
-static void __test_scan_hidden_ap_callback(wifi_error_e error_code, void* user_data)
+static void __test_scan_hidden_ap_callback(wifi_error_e error_code,
+						void* user_data)
 {
 	int rv;
 
@@ -123,14 +130,17 @@ static void __test_scan_hidden_ap_callback(wifi_error_e error_code, void* user_d
 	if (error_code != WIFI_ERROR_NONE)
 		return;
 
-	rv = wifi_foreach_found_hidden_aps(__test_found_hidden_aps_callback, NULL);
+	rv = wifi_foreach_found_hidden_aps(
+				__test_found_hidden_aps_callback, NULL);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get hidden AP(can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get hidden AP(can't get AP list) [%s]\n",
+				__test_convert_error_to_string(rv));
 		return;
 	}
 }
 
-static void __test_connection_state_callback(wifi_connection_state_e state, wifi_ap_h ap, void* user_data)
+static void __test_connection_state_callback(
+		wifi_connection_state_e state, wifi_ap_h ap, void* user_data)
 {
 	int rv = 0;
 	char *ap_name = NULL;
@@ -156,46 +166,56 @@ static void __test_connection_state_callback(wifi_connection_state_e state, wifi
 
 	rv = wifi_ap_get_essid(ap, &ap_name);
 	if (rv != WIFI_ERROR_NONE)
-		printf(", Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf(", Fail to get AP name [%s]\n",
+				__test_convert_error_to_string(rv));
 	else {
 		printf(", AP name : %s\n", ap_name);
 		g_free(ap_name);
 	}
 }
 
-static void __test_activated_callback(wifi_error_e result, void* user_data)
+static void __test_activated_callback(wifi_error_e result,
+							void* user_data)
 {
 	if (result == WIFI_ERROR_NONE)
 		printf("Wi-Fi Activation Succeeded\n");
 	else
-		printf("Wi-Fi Activation Failed! error : %s", __test_convert_error_to_string(result));
+		printf("Wi-Fi Activation Failed! error : %s",
+				__test_convert_error_to_string(result));
 }
 
-static void __test_deactivated_callback(wifi_error_e result, void* user_data)
+static void __test_deactivated_callback(wifi_error_e result,
+							void* user_data)
 {
 	if (result == WIFI_ERROR_NONE)
 		printf("Wi-Fi Deactivation Succeeded\n");
 	else
-		printf("Wi-Fi Deactivation Failed! error : %s", __test_convert_error_to_string(result));
+		printf("Wi-Fi Deactivation Failed! error : %s",
+				__test_convert_error_to_string(result));
 }
 
-static void __test_connected_callback(wifi_error_e result, void* user_data)
+static void __test_connected_callback(wifi_error_e result,
+							void* user_data)
 {
 	if (result == WIFI_ERROR_NONE)
 		printf("Wi-Fi Connection Succeeded\n");
 	else
-		printf("Wi-Fi Connection Failed! error : %s", __test_convert_error_to_string(result));
+		printf("Wi-Fi Connection Failed! error : %s",
+				__test_convert_error_to_string(result));
 }
 
-static void __test_disconnected_callback(wifi_error_e result, void* user_data)
+static void __test_disconnected_callback(wifi_error_e result,
+							void* user_data)
 {
 	if (result == WIFI_ERROR_NONE)
 		printf("Wi-Fi Disconnection Succeeded\n");
 	else
-		printf("Wi-Fi Disconnection Failed! error : %s", __test_convert_error_to_string(result));
+		printf("Wi-Fi Disconnection Failed! error : %s",
+				__test_convert_error_to_string(result));
 }
 
-static void __test_rssi_level_callback(wifi_rssi_level_e rssi_level, void* user_data)
+static void __test_rssi_level_callback(wifi_rssi_level_e rssi_level,
+							void* user_data)
 {
 	printf("RSSI level changed callback, level = %d\n", rssi_level);
 }
@@ -224,19 +244,22 @@ static bool __test_found_ap_callback(wifi_ap_h ap, void *user_data)
 
 	rv = wifi_ap_get_essid(ap, &ap_name);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP name [%s]\n",
+				__test_convert_error_to_string(rv));
 		return false;
 	}
 
 	rv = wifi_ap_get_connection_state(ap, &state);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get State [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get State [%s]\n",
+				__test_convert_error_to_string(rv));
 		g_free(ap_name);
 		wifi_ap_destroy(ap);
 		return false;
 	}
 
-	printf("AP name : %s, state : %s\n", ap_name, __test_print_state(state));
+	printf("AP name : %s, state : %s\n", ap_name,
+					__test_print_state(state));
 	g_free(ap_name);
 	wifi_ap_destroy(ap);
 

@@ -27,7 +27,9 @@ extern "C"
 #endif /* __cplusplus */
 
 /**  \file network-pm-wlan.h
-     \brief This file contains constants, enums, tructs, and function prototypes that are used by Wlan related sources internally. This File defines the WLAN exported Data Structures.
+     \brief This file contains constants, enums, tructs, and function
+     prototypes that are used by Wlan related sources internally.
+     This File defines the WLAN exported Data Structures.
 
 */
 
@@ -109,9 +111,9 @@ extern "C"
  */
 #define NETPM_WLAN_PRIVATE_KEY_PASSWD_LEN     50
 
-/*==================================================================================================
+/*===========================================================================
                                              ENUMS
-==================================================================================================*/
+=============================================================================*/
 /*
  * Added:Begin
  */
@@ -199,7 +201,9 @@ typedef enum {
 	WIFI_CONNECTING,
 	/** Wi-Fi is connected to an AP(ready/online) */
 	WIFI_CONNECTED,
-	/** Trying to disconnect(connected, but disconnecting process is on going) */
+	/** Trying to disconnect(connected,
+	 * but disconnecting process is on going)
+	 */
 	WIFI_DISCONNECTING,
 } net_wifi_state_t;
 
@@ -409,15 +413,15 @@ typedef enum {
 } wlan_eap_auth_type_t;
 
 /*
-==================================================================================================
+========================================================================
                                             MACROS
-==================================================================================================
+========================================================================
 */
 
 
-/*==================================================================================================
+/*======================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
-==================================================================================================*/
+=====================================================++================*/
 
 /**
  * Below structure is used to export essid
@@ -466,7 +470,8 @@ typedef struct
 	 * Optional for EAP-TTLS and EAP-PEAP
 	 */
 	/**
-	 * For EAP-TTLS and EAP-PEAP only ca_cert_filename[] can also be provided
+	 * For EAP-TTLS and EAP-PEAP only ca_cert_filename[]
+	 * can also be provided
 	 */
 	/* Used to authenticate server */
 	char ca_cert_filename[NETPM_WLAN_CA_CERT_FILENAME_LEN+1];

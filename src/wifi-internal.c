@@ -148,55 +148,6 @@ char *_wifi_get_ip_config_str(net_ip_config_type_t ip_config_type)
 	return NULL;
 }
 
-static char *__convert_eap_type_to_string(gchar eap_type)
-{
-	switch (eap_type) {
-	case WLAN_SEC_EAP_TYPE_PEAP:
-		return "peap";
-
-	case WLAN_SEC_EAP_TYPE_TLS:
-		return "tls";
-
-	case WLAN_SEC_EAP_TYPE_TTLS:
-		return "ttls";
-
-	case WLAN_SEC_EAP_TYPE_SIM:
-		return "sim";
-
-	case WLAN_SEC_EAP_TYPE_AKA:
-		return "aka";
-
-	default:
-		return NULL;
-	}
-}
-
-static char *__convert_eap_auth_to_string(gchar eap_auth)
-{
-	switch (eap_auth) {
-	case WLAN_SEC_EAP_AUTH_NONE:
-		return "NONE";
-
-	case WLAN_SEC_EAP_AUTH_PAP:
-		return "PAP";
-
-	case WLAN_SEC_EAP_AUTH_MSCHAP:
-		return "MSCHAP";
-
-	case WLAN_SEC_EAP_AUTH_MSCHAPV2:
-		return "MSCHAPV2";
-
-	case WLAN_SEC_EAP_AUTH_GTC:
-		return "GTC";
-
-	case WLAN_SEC_EAP_AUTH_MD5:
-		return "MD5";
-
-	default:
-		return NULL;
-	}
-}
-
 char* _net_print_error(net_err_t error)
 {
 	switch (error) {
@@ -468,39 +419,6 @@ static int __net_open_connection_with_wifi_info(wifi_ap_h ap_h,
 		break;
 
 	case WLAN_SEC_MODE_IEEE8021X:
-		wifi_connection_info.security = g_strdup("ieee8021x");
-
-		wifi_connection_info.eap_type = g_strdup(
-				__convert_eap_type_to_string(
-						wifi_info->security_info.authentication.eap.eap_type));
-		wifi_connection_info.eap_auth = g_strdup(
-				__convert_eap_auth_to_string(
-						wifi_info->security_info.authentication.eap.eap_auth));
-
-		if (wifi_info->security_info.authentication.eap.username[0] != '\0')
-			wifi_connection_info.identity =
-					g_strdup(wifi_info->security_info.authentication.eap.username);
-
-		if (wifi_info->security_info.authentication.eap.password[0] != '\0')
-			wifi_connection_info.password =
-					g_strdup(wifi_info->security_info.authentication.eap.password);
-
-		if (wifi_info->security_info.authentication.eap.ca_cert_filename[0] != '\0')
-			wifi_connection_info.ca_cert_file =
-					g_strdup(wifi_info->security_info.authentication.eap.ca_cert_filename);
-
-		if (wifi_info->security_info.authentication.eap.client_cert_filename[0] != '\0')
-			wifi_connection_info.client_cert_file =
-					g_strdup(wifi_info->security_info.authentication.eap.client_cert_filename);
-
-		if (wifi_info->security_info.authentication.eap.private_key_filename[0] != '\0')
-			wifi_connection_info.private_key_file =
-					g_strdup(wifi_info->security_info.authentication.eap.private_key_filename);
-
-		if (wifi_info->security_info.authentication.eap.private_key_passwd[0] != '\0')
-			wifi_connection_info.private_key_password =
-					g_strdup(wifi_info->security_info.authentication.eap.private_key_passwd);
-
 		break;
 	default:
 		WIFI_LOG(WIFI_ERROR, "Invalid security type\n");
@@ -594,15 +512,6 @@ static void __libnet_set_scan_request_cb(wifi_disconnected_cb user_cb,
 		wifi_callbacks.scan_request_user_data = user_data;
 	}
 }
-
-/*static void __libnet_scan_request_cb(wifi_error_e result)
-{
-	if (wifi_callbacks.scan_request_cb)
-		wifi_callbacks.scan_request_cb(result, wifi_callbacks.scan_request_user_data);
-
-	wifi_callbacks.scan_request_cb = NULL;
-	wifi_callbacks.scan_request_user_data = NULL;
-}*/
 
 wifi_connection_state_e connection_state_string2type(const char *str)
 {
@@ -707,8 +616,9 @@ static void technology_powered_changed(struct connman_technology *technology,
 	}
 }
 
-static void technology_added_callback(struct connman_technology *technology,
-							void *user_data)
+static void technology_added_callback(
+				struct connman_technology *technology,
+				void *user_data)
 {
 	enum connman_technology_type type =
 				connman_get_technology_type(technology);
@@ -851,7 +761,7 @@ bool _wifi_libnet_check_profile_name_validity(const char *profile_name)
 
 	while (profile_name[i] != '\0') {
 		if (isgraph(profile_name[i]) == 0) {
-			WIFI_LOG(WIFI_ERROR, "Error!!! Profile name is invalid\n");
+			WIFI_LOG(WIFI_ERROR, "Profile name is invalid\n");
 			return false;
 		}
 		i++;
@@ -938,7 +848,8 @@ int _wifi_libnet_get_intf_name(char** name)
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void *user_data)
+int _wifi_libnet_scan_request(wifi_scan_finished_cb callback,
+						void *user_data)
 {
 	int rv = NET_ERR_NONE;
 	struct connman_technology *technology =
@@ -957,7 +868,8 @@ int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void *user_data)
 }
 
 int _wifi_libnet_scan_hidden_ap(const char *essid,
-					wifi_scan_finished_cb callback, void *user_data)
+				wifi_scan_finished_cb callback,
+				void *user_data)
 {
 	int rv = NET_ERR_NONE;
 
@@ -1015,7 +927,8 @@ int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
 	return WIFI_ERROR_NONE;
 }
 
-bool _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback, void *user_data)
+bool _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback,
+							void *user_data)
 {
 	bool rv = true;
 	GList *iter;
