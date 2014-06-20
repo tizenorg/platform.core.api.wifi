@@ -94,51 +94,6 @@ static void __test_scan_request_callback(wifi_error_e error_code,
 			__test_convert_error_to_string(error_code));
 }
 
-static bool __test_found_hidden_aps_callback(wifi_ap_h ap,
-						void *user_data)
-{
-	int rv;
-	char *ap_name;
-	wifi_security_type_e sec_type;
-
-	rv = wifi_ap_get_essid(ap, &ap_name);
-	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n",
-				__test_convert_error_to_string(rv));
-		return false;
-	}
-
-	printf("AP name : %s\n", ap_name);
-
-	if (wifi_ap_get_security_type(ap, &sec_type) == WIFI_ERROR_NONE)
-		printf("Security type : %d\n", sec_type);
-	else
-		printf("Fail to get Security type\n");
-
-	g_free(ap_name);
-	return true;
-}
-
-static void __test_scan_hidden_ap_callback(wifi_error_e error_code,
-						void* user_data)
-{
-	int rv;
-
-	printf("Hidden scan Completed from scan request, error code : %s\n",
-			__test_convert_error_to_string(error_code));
-
-	if (error_code != WIFI_ERROR_NONE)
-		return;
-
-	rv = wifi_foreach_found_hidden_aps(
-				__test_found_hidden_aps_callback, NULL);
-	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get hidden AP(can't get AP list) [%s]\n",
-				__test_convert_error_to_string(rv));
-		return;
-	}
-}
-
 static void __test_connection_state_callback(
 		wifi_connection_state_e state, wifi_ap_h ap, void* user_data)
 {
@@ -314,35 +269,6 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 	return true;
 }
 
-static bool __test_found_connect_wps_callback(wifi_ap_h ap, void *user_data)
-{
-	int rv = 0;
-	char *ap_name = NULL;
-	char *ap_name_part = (char*)user_data;
-
-	rv = wifi_ap_get_essid(ap, &ap_name);
-	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
-		return false;
-	}
-
-	if (strstr(ap_name, ap_name_part) != NULL) {
-		rv = wifi_connect(ap, __test_connected_callback, NULL);
-		if (rv != WIFI_ERROR_NONE)
-			printf("Fail to connection request [%s] : %s\n", ap_name, __test_convert_error_to_string(rv));
-		else
-			printf("Success to connection request [%s]\n", ap_name);
-
-		g_free(ap_name);
-		wifi_ap_destroy(ap);
-		return false;
-	}
-
-	g_free(ap_name);
-	wifi_ap_destroy(ap);
-	return true;
-}
-
 static bool __test_found_disconnect_ap_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv = 0;
@@ -392,72 +318,6 @@ static bool __test_found_forget_ap_callback(wifi_ap_h ap, void *user_data)
 			printf("Success to forget [%s]\n", ap_name);
 
 		g_free(ap_name);
-		wifi_ap_destroy(ap);
-		return false;
-	}
-
-	g_free(ap_name);
-	wifi_ap_destroy(ap);
-	return true;
-}
-
-static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)
-{
-	int rv = 0;
-	char *ap_name = NULL;
-	char *ap_name_part = (char*)user_data;
-
-	rv = wifi_ap_get_essid(ap, &ap_name);
-	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
-		return false;
-	}
-
-	if (strstr(ap_name, ap_name_part) != NULL) {
-		wifi_security_type_e type;;
-		wifi_ap_get_security_type(ap, &type);
-
-		if (type != WIFI_SECURITY_TYPE_EAP) {
-			g_free(ap_name);
-			return false;
-		}
-
-		char input_str1[100];
-		printf("Input user name for %s : ", ap_name);
-		rv = scanf("%99s", input_str1);
-
-		char input_str2[100];
-		printf("Input password for %s : ", ap_name);
-		rv = scanf("%99s", input_str2);
-
-		rv = wifi_ap_set_eap_passphrase(ap, input_str1, input_str2);
-		if (rv != WIFI_ERROR_NONE) {
-			printf("Fail to set eap passphrase : %s\n", __test_convert_error_to_string(rv));
-			g_free(ap_name);
-			wifi_ap_destroy(ap);
-			return false;
-		}
-
-		char *inputed_name = NULL;
-		bool is_pass_set;
-		rv = wifi_ap_get_eap_passphrase(ap, &inputed_name, &is_pass_set);
-		if (rv != WIFI_ERROR_NONE) {
-			printf("Fail to get eap passphrase : %s\n", __test_convert_error_to_string(rv));
-			g_free(ap_name);
-			wifi_ap_destroy(ap);
-			return false;
-		}
-
-		printf("name : %s, is password set : %s\n", inputed_name, is_pass_set ? "TRUE" : "FALSE");
-
-		rv = wifi_connect(ap, __test_connected_callback, NULL);
-		if (rv != WIFI_ERROR_NONE)
-			printf("Fail to connection request [%s] : %s\n", ap_name, __test_convert_error_to_string(rv));
-		else
-			printf("Success to connection request [%s]\n", ap_name);
-
-		g_free(ap_name);
-		g_free(inputed_name);
 		wifi_ap_destroy(ap);
 		return false;
 	}
@@ -1092,29 +952,6 @@ int test_disconnect_ap(void)
 	return 1;
 }
 
-int test_connect_wps(void)
-{
-	int rv = 0;
-	char ap_name[33];
-	bool state = false;
-
-	wifi_is_activated(&state);
-	if (state == false)
-		return -1;
-
-	printf("Input a part of AP name to connect by wps : ");
-	rv = scanf("%32s", ap_name);
-
-	rv = wifi_foreach_found_aps(__test_found_connect_wps_callback, ap_name);
-	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to connect (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
-		return -1;
-	}
-
-	printf("Connection step finished\n");
-	return 1;
-}
-
 int test_forget_ap(void)
 {
 	int rv = 0;
@@ -1135,29 +972,6 @@ int test_forget_ap(void)
 	}
 
 	printf("Forget AP finished\n");
-	return 1;
-}
-
-int test_connect_eap_ap(void)
-{
-	int rv = 0;
-	char ap_name[33];
-	bool state = false;
-
-	wifi_is_activated(&state);
-	if (state == false)
-		return -1;
-
-	printf("Input a part of AP name to connect : ");
-	rv = scanf("%32s", ap_name);
-
-	rv = wifi_foreach_found_aps(__test_found_eap_ap_callback, ap_name);
-	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to connect (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
-		return -1;
-	}
-
-	printf("Connection step finished\n");
 	return 1;
 }
 
@@ -1233,27 +1047,6 @@ int test_get_ap_info(void)
 	}
 
 	printf("AP info printing finished\n");
-	return 1;
-}
-
-int test_scan_hidden_ap(void)
-{
-	int rv;
-	char ap_name[33];
-
-	printf("Input a part of hidden AP name to find : ");
-	rv = scanf("%32s", ap_name);
-	if (rv <= 0)
-		return -1;
-
-	rv = wifi_scan_hidden_ap(ap_name, __test_scan_hidden_ap_callback, NULL);
-
-	if (rv != WIFI_ERROR_NONE) {
-		printf("Scan request failed [%s]\n", __test_convert_error_to_string(rv));
-		return -1;
-	}
-
-	printf("Scan hidden AP succeeded\n");
 	return 1;
 }
 
@@ -1358,14 +1151,8 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 	case 'd':
 		rv = test_disconnect_ap();
 		break;
-	case 'e':
-		rv = test_connect_wps();
-		break;
 	case 'f':
 		rv = test_forget_ap();
-		break;
-	case 'g':
-		rv = test_connect_eap_ap();
 		break;
 	case 'h':
 		rv = test_set_ip_method();
@@ -1375,9 +1162,6 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		break;
 	case 'j':
 		rv = test_get_ap_info();
-		break;
-	case 'k':
-		rv = test_scan_hidden_ap();
 		break;
 	default:
 		break;
