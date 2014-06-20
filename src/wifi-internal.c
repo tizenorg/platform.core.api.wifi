@@ -466,44 +466,6 @@ static int __libnet_connect_with_wifi_info(wifi_ap_h ap_h,
 	return WIFI_ERROR_NONE;
 }
 
-static void __libnet_set_activated_cb(wifi_activated_cb user_cb,
-							void *user_data)
-{
-	if (user_cb) {
-		wifi_callbacks.activated_cb = user_cb;
-		wifi_callbacks.activated_user_data = user_data;
-	}
-}
-
-static void __libnet_activated_cb(wifi_error_e result)
-{
-	if (wifi_callbacks.activated_cb)
-		wifi_callbacks.activated_cb(result,
-				wifi_callbacks.activated_user_data);
-
-	wifi_callbacks.activated_cb = NULL;
-	wifi_callbacks.activated_user_data = NULL;
-}
-
-static void __libnet_set_deactivated_cb(wifi_disconnected_cb user_cb,
-							void *user_data)
-{
-	if (user_cb) {
-		wifi_callbacks.deactivated_cb = user_cb;
-		wifi_callbacks.deactivated_user_data = user_data;
-	}
-}
-
-static void __libnet_deactivated_cb(wifi_error_e result)
-{
-	if (wifi_callbacks.deactivated_cb)
-		wifi_callbacks.deactivated_cb(result,
-				wifi_callbacks.deactivated_user_data);
-
-	wifi_callbacks.deactivated_cb = NULL;
-	wifi_callbacks.deactivated_user_data = NULL;
-}
-
 static void __libnet_set_scan_request_cb(wifi_disconnected_cb user_cb,
 							void *user_data)
 {
@@ -632,24 +594,6 @@ static void technology_added_callback(
 						user_data);
 }
 
-static void __connman_technology_powered_on_cb(
-					enum connman_lib_err_e result,
-					void *user_data)
-{
-	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
-
-	__libnet_activated_cb(connman_lib2capi_result(result));
-}
-
-static void __connman_technology_powered_off_cb(
-					enum connman_lib_err_e result,
-					void *user_data)
-{
-	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
-
-	__libnet_deactivated_cb(connman_lib2capi_result(result));
-}
-
 bool _wifi_libnet_init(void)
 {
 	struct connman_technology *technology;
@@ -693,11 +637,7 @@ int _wifi_activate(wifi_activated_cb callback, void *user_data)
 	if (!technology)
 		return WIFI_ERROR_OPERATION_FAILED;
 
-	__libnet_set_activated_cb(callback, user_data);
-
-	connman_enable_technology(technology,
-					__connman_technology_powered_on_cb,
-					NULL);
+	connman_enable_technology(technology);
 
 	return WIFI_ERROR_NONE;
 }
@@ -709,11 +649,7 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 	if (!technology)
 		return WIFI_ERROR_OPERATION_FAILED;
 
-	__libnet_set_deactivated_cb(callback, user_data);
-
-	connman_disable_technology(technology,
-					__connman_technology_powered_off_cb,
-					NULL);
+	connman_disable_technology(technology);
 
 	if (winet_wifi_set_work_mode(WIFI_WORK_MODE_OFF) < 0)
 		return WIFI_ERROR_OPERATION_FAILED;

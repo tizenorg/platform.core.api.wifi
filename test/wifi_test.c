@@ -527,11 +527,6 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 	int int_value;
 	wifi_connection_state_e conn_state;
 	wifi_ip_config_type_e ip_type;
-	wifi_proxy_type_e proxy_type;
-	wifi_security_type_e sec_type;
-	wifi_encryption_type_e enc_type;
-	wifi_eap_type_e eap_type;
-	wifi_eap_auth_type_e eap_auth_type;
 	bool bool_value;
 	char *ap_name_part = (char*)user_data;
 
@@ -601,92 +596,6 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 			g_free(str_value);
 		} else
 			printf("Fail to get Gateway\n");
-
-		if (wifi_ap_get_proxy_type(ap, &proxy_type) == WIFI_ERROR_NONE)
-			printf("Proxy type : %d\n", proxy_type);
-		else
-			printf("Fail to get Proxy type\n");
-
-/*		if (wifi_ap_get_proxy_address(ap, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
-			printf("Proxy : %s\n", str_value);
-			g_free(str_value);
-		} else
-			printf("Fail to get Proxy\n");
-
-		if (wifi_ap_get_dns_address(ap, 1, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
-			printf("DNS1 : %s\n", str_value);
-			g_free(str_value);
-		} else
-			printf("Fail to get DNS1\n");
-
-		if (wifi_ap_get_dns_address(ap, 2, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
-			printf("DNS2 : %s\n", str_value);
-			g_free(str_value);
-		} else
-			printf("Fail to get DNS2\n");*/
-
-		/* Security info */
-		if (wifi_ap_get_security_type(ap, &sec_type) == WIFI_ERROR_NONE)
-			printf("Security type : %d\n", sec_type);
-		else
-			printf("Fail to get Security type\n");
-
-		if (wifi_ap_get_encryption_type(ap, &enc_type) == WIFI_ERROR_NONE)
-			printf("Encryption type : %d\n", enc_type);
-		else
-			printf("Fail to get Encryption type\n");
-
-		if (wifi_ap_is_passphrase_required(ap, &bool_value) == WIFI_ERROR_NONE)
-			printf("Passphrase required : %s\n", bool_value ? "TRUE" : "FALSE");
-		else
-			printf("Fail to get Passphrase required\n");
-
-		if (wifi_ap_is_wps_supported(ap, &bool_value) == WIFI_ERROR_NONE)
-			printf("WPS supported : %s\n", bool_value ? "TRUE" : "FALSE");
-		else
-			printf("Fail to get WPS supported\n");
-
-		if (sec_type != WIFI_SECURITY_TYPE_EAP) {
-			g_free(ap_name);
-			wifi_ap_destroy(ap);
-			return false;
-		}
-
-		/* EAP info */
-		if (wifi_ap_get_eap_type(ap, &eap_type) == WIFI_ERROR_NONE)
-			printf("EAP type : %d\n", eap_type);
-		else
-			printf("Fail to get EAP type\n");
-
-		if (wifi_ap_get_eap_auth_type(ap, &eap_auth_type) == WIFI_ERROR_NONE)
-			printf("EAP auth type : %d\n", eap_auth_type);
-		else
-			printf("Fail to get EAP auth type\n");
-
-		if (wifi_ap_get_eap_passphrase(ap, &str_value, &bool_value) == WIFI_ERROR_NONE) {
-			printf("EAP user name : %s\n", str_value);
-			printf("EAP is password setted : %s\n", bool_value ? "TRUE" : "FALSE");
-			g_free(str_value);
-		} else
-			printf("Fail to get EAP passphrase(user name/password)\n");
-
-		if (wifi_ap_get_eap_ca_cert_file(ap, &str_value) == WIFI_ERROR_NONE) {
-			printf("EAP ca cert file : %s\n", str_value);
-			g_free(str_value);
-		} else
-			printf("Fail to get EAP ca cert file\n");
-
-		if (wifi_ap_get_eap_client_cert_file(ap, &str_value) == WIFI_ERROR_NONE) {
-			printf("EAP client cert file : %s\n", str_value);
-			g_free(str_value);
-		} else
-			printf("Fail to get EAP client cert file\n");
-
-		if (wifi_ap_get_eap_private_key_file(ap, &str_value) == WIFI_ERROR_NONE) {
-			printf("EAP private key file : %s\n", str_value);
-			g_free(str_value);
-		} else
-			printf("Fail to get EAP private key file\n");
 
 		g_free(ap_name);
 		wifi_ap_destroy(ap);
@@ -1092,20 +1001,15 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("4 	- Deactivate Wi-Fi device\n");
 		printf("5 	- Is Wi-Fi activated?\n");
 		printf("6	- Get connection state\n");
-		printf("7 	- Get MAC address\n");
-		printf("8 	- Get Wi-Fi interface name\n");
-		printf("9 	- Scan request\n");
+		printf("7 	- Scan request\n");
 		printf("a 	- Get Connected AP\n");
 		printf("b 	- Get AP list\n");
 		printf("c 	- Connect\n");
 		printf("d 	- Disconnect\n");
-		printf("e 	- Connect by wps pbc\n");
 		printf("f 	- Forget an AP\n");
-		printf("g 	- Set & connect EAP\n");
 		printf("h 	- Set IP method type\n");
 		printf("i 	- Set Proxy method type\n");
 		printf("j 	- Get AP info\n");
-		printf("k 	- Scan hidden AP\n");
 		printf("0 	- Exit \n");
 
 		printf("ENTER  - Show options menu.......\n");
@@ -1131,12 +1035,6 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		rv = test_get_connection_state();
 		break;
 	case '7':
-		rv = test_get_mac_address(); /*TODO*/
-		break;
-	case '8':
-		rv = test_get_interface_name(); /*TODO*/
-		break;
-	case '9':
 		rv = test_scan_request();
 		break;
 	case 'a':
