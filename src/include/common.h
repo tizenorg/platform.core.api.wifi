@@ -550,6 +550,7 @@ typedef struct
 {
 	/** Profile name */
 	char *essid;
+	wifi_proxy_type_e proxy_type;
 } net_profile_info_t;
 
 /**

@@ -57,6 +57,7 @@ static void __wifi_init_ap(net_profile_info_t *profile_info,
 							const char *essid)
 {
 	profile_info->essid = g_strdup(essid);
+	profile_info->proxy_type = WIFI_PROXY_TYPE_AUTO;
 }
 
 wifi_connection_state_e _wifi_convert_to_ap_state(
@@ -597,22 +598,26 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 	struct service_proxy proxy_config;
 	memset(&proxy_config, 0, sizeof(struct service_proxy));
 
-	proxy_config.servers = g_try_new0(char*, 2);
+	proxy_config.servers = g_try_malloc0(sizeof(char*));
 
 	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
-	proxy_config.method = connman_service_get_proxy_config(service)->method;
-
-	if (!g_strcmp0(proxy_config.method, "manual")) {
+	if (((net_profile_info_t *) ap)->proxy_type ==
+					WIFI_PROXY_TYPE_MANUAL) {
+		proxy_config.method = g_strdup("manual");
 		*proxy_config.servers = g_strdup(proxy_address);
 		connman_service_set_proxy_config(service, &proxy_config);
+		g_free(proxy_config.method);
 		g_free(*proxy_config.servers);
 		g_free(proxy_config.servers);
-	} else if (!g_strcmp0(proxy_config.method, "auto")){
+	} else if (((net_profile_info_t *) ap)->proxy_type ==
+					WIFI_PROXY_TYPE_AUTO) {
+		proxy_config.method = g_strdup("auto");
 		proxy_config.url = g_strdup(proxy_address);
 		connman_service_set_proxy_config(service, &proxy_config);
+		g_free(proxy_config.method);
 		g_free(proxy_config.url);
 	}
 
@@ -656,9 +661,12 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap,
 		break;
 	}
 
-	connman_service_set_proxy_config(service, &proxy_config);
-
-	g_free(proxy_config.method);
+	if (proxy_type == WIFI_PROXY_TYPE_DIRECT) {
+		connman_service_set_proxy_config(service, &proxy_config);
+		g_free(proxy_config.method);
+	} else {
+		((net_profile_info_t *) ap)->proxy_type = proxy_type;
+	}
 
 	return 0;
 }
