@@ -70,4 +70,4 @@ cp LICENSE.APLv2 %{buildroot}%{_datadir}/license/capi-network-wifi
 
 %files test
 %manifest %{name}.manifest
-%{_libdir}/wifi_test/wifi_test
+%{_libdir}/winet-capi-test/capi-wifi-test
