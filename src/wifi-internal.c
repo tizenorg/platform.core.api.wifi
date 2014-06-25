@@ -282,7 +282,7 @@ static void __libnet_disconnected_cb(wifi_error_e result)
 	wifi_callbacks.disconnected_user_data = NULL;
 }
 
-wifi_error_e connman_lib2capi_result(enum connman_lib_err_e result)
+static wifi_error_e connman_lib2capi_result(enum connman_lib_err_e result)
 {
 	/*
 	 * TODO:
@@ -475,7 +475,7 @@ static void __libnet_set_scan_request_cb(wifi_disconnected_cb user_cb,
 	}
 }
 
-wifi_connection_state_e connection_state_string2type(const char *str)
+static wifi_connection_state_e connection_state_string2type(const char *str)
 {
 	if (strcmp(str, "idle") == 0)
 		return WIFI_CONNECTION_STATE_DISCONNECTED;
@@ -519,13 +519,19 @@ static void service_state_changed(struct connman_service *service,
 	}
 }
 
-static void service_strength_changed(struct connman_service *service,
-							void *user_data)
+static void unregister_service_monitor(gpointer data, gpointer user_data)
 {
-	const char *name = connman_service_get_name(service);
-	int strength = connman_service_get_strength(service);
+	struct connman_service *service = data;
 
-	WIFI_LOG(WIFI_INFO, "name %s, strength, %d", name, strength);
+	const char *path = connman_service_get_path(service);
+	const char *type = connman_service_get_type(service);
+
+	WIFI_LOG(WIFI_INFO, "path %s, type %s", path, type);
+
+	if (strcmp(type, "wifi") != 0)
+		return;
+
+	connman_service_unset_property_changed_cb(service, SERVICE_PROP_STATE);
 }
 
 static void register_service_monitor(gpointer data, gpointer user_data)
@@ -541,26 +547,40 @@ static void register_service_monitor(gpointer data, gpointer user_data)
 		return;
 
 	connman_service_set_property_changed_cb(service, SERVICE_PROP_STATE,
-					service_state_changed, user_data);
-
-	connman_service_set_property_changed_cb(service, SERVICE_PROP_STRENGTH,
-					service_strength_changed, user_data);
+						service_state_changed,
+						user_data);
 }
 
-static void service_changed_callback(struct connman_manager *manager,
-							void *user_data)
+static void unregister_all_serivces_monitor()
 {
 	GList *services;
 
-	WIFI_LOG(WIFI_INFO, "service changed");
+	services = connman_get_services();
+
+	g_list_foreach(services, unregister_service_monitor, NULL);
+}
+
+static void register_all_serivces_monitor()
+{
+	GList *services;
 
 	services = connman_get_services();
 
 	g_list_foreach(services, register_service_monitor, NULL);
 }
 
-static void technology_powered_changed(struct connman_technology *technology,
+static void service_changed_callback(struct connman_manager *manager,
 							void *user_data)
+{
+	WIFI_LOG(WIFI_INFO, "service changed");
+
+	if (wifi_callbacks.connection_state_cb)
+		register_all_serivces_monitor();
+}
+
+static void technology_powered_changed(
+					struct connman_technology *technology,
+					void *user_data)
 {
 	gboolean powered = connman_get_technology_powered(technology);
 	enum connman_technology_type type =
@@ -587,16 +607,47 @@ static void technology_added_callback(
 
 	WIFI_LOG(WIFI_INFO, "technology %d added", type);
 
-	if (type == TECH_TYPE_WIFI)
+	if (type == TECH_TYPE_WIFI && wifi_callbacks.device_state_cb)
 		connman_technology_set_property_changed_cb(technology,
 						TECH_PROP_POWERED,
 						technology_powered_changed,
 						user_data);
 }
 
-bool _wifi_libnet_init(void)
+static void __wifi_set_technology_power_changed_cb()
 {
 	struct connman_technology *technology;
+
+	technology = connman_get_technology(TECH_TYPE_WIFI);
+	if (technology)
+		connman_technology_set_property_changed_cb(technology,
+						TECH_PROP_POWERED,
+						technology_powered_changed,
+						NULL);
+}
+
+static void __wifi_unset_technology_power_changed_cb()
+{
+	struct connman_technology *technology;
+
+	technology = connman_get_technology(TECH_TYPE_WIFI);
+	if (technology)
+		connman_technology_unset_property_changed_cb(technology,
+						TECH_PROP_POWERED);
+}
+
+static void __wifi_set_service_connection_changed_cb()
+{
+	register_all_serivces_monitor();
+}
+
+static void __wifi_unset_service_connection_changed_cb()
+{
+	unregister_all_serivces_monitor();
+}
+
+bool _wifi_libnet_init(void)
+{
 	int rv = NET_ERR_NONE;
 
 	connman_lib_init();
@@ -607,13 +658,6 @@ bool _wifi_libnet_init(void)
 	connman_set_services_changed_cb(service_changed_callback, NULL);
 
 	connman_set_technology_added_cb(technology_added_callback, NULL);
-
-	technology = connman_get_technology(TECH_TYPE_WIFI);
-	if (technology)
-		connman_technology_set_property_changed_cb(technology,
-						TECH_PROP_POWERED,
-						technology_powered_changed,
-						NULL);
 
 	return true;
 }
@@ -726,7 +770,7 @@ bool _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)
 	return true;
 }
 
-bool _wifi_libnet_get_wifi_state(wifi_connection_state_e* connection_state)
+bool _wifi_libnet_get_wifi_state(wifi_connection_state_e *connection_state)
 {
 	struct connman_technology *technology;
 	gboolean wifi_powered;
@@ -987,6 +1031,8 @@ int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback,
 	wifi_callbacks.device_state_cb = callback;
 	wifi_callbacks.device_state_user_data = user_data;
 
+	__wifi_set_technology_power_changed_cb();
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -997,6 +1043,8 @@ int _wifi_unset_power_on_off_cb(void)
 
 	wifi_callbacks.device_state_cb = NULL;
 	wifi_callbacks.device_state_user_data = NULL;
+
+	__wifi_unset_technology_power_changed_cb();
 
 	return WIFI_ERROR_NONE;
 }
@@ -1033,6 +1081,8 @@ int _wifi_set_connection_state_cb(
 	wifi_callbacks.connection_state_cb = callback;
 	wifi_callbacks.connection_state_user_data = user_data;
 
+	__wifi_set_service_connection_changed_cb();
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -1043,6 +1093,8 @@ int _wifi_unset_connection_state_cb()
 
 	wifi_callbacks.connection_state_cb = NULL;
 	wifi_callbacks.connection_state_user_data = NULL;
+
+	__wifi_unset_service_connection_changed_cb();
 
 	return WIFI_ERROR_NONE;
 }
