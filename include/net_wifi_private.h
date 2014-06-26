@@ -18,8 +18,8 @@
 #define __NET_CONNECTION_PRIVATE_H__
 
 #include <dlog.h>
-#include <network-cm-intf.h>
-#include <network-wifi-intf.h>
+
+#include <connman_lib.h>
 
 #include "wifi.h"
 
@@ -81,8 +81,11 @@ int _wifi_unset_background_scan_cb(void);
 int _wifi_set_connection_state_cb(wifi_connection_state_changed_cb callback, void *user_data);
 int _wifi_unset_connection_state_cb();
 
-int _wifi_update_ap_info(net_profile_info_t *ap_info);
-wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state);
+/*int _wifi_update_ap_info(net_profile_info_t *ap_info);*/
+wifi_connection_state_e _wifi_convert_to_ap_state(
+					net_state_type_t state);
+
+net_state_type_t _get_service_state_type(const char *state);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

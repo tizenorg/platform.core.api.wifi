@@ -30,7 +30,6 @@
 #include <wifi.h>
 #include <tizen_error.h>
 
-
 gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data);
 
 static const char *__test_convert_error_to_string(wifi_error_e err_type)
@@ -253,6 +252,8 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
 		return false;
 	}
+
+	printf(" get AP ap_name_part %s, AP name [%s]\n",ap_name_part, ap_name);
 
 	if (strstr(ap_name, ap_name_part) != NULL) {
 		bool required = false;
@@ -970,13 +971,13 @@ int test_get_connected_ap(void)
 	rv = wifi_ap_get_essid(ap_h, &ap_name);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to get essid [%s]\n", __test_convert_error_to_string(rv));
-		wifi_ap_destroy(ap_h);
+		/*wifi_ap_destroy(ap_h);*/
 		return -1;
 	}
 
 	printf("Connected AP : %s\n", ap_name);
 	g_free(ap_name);
-	wifi_ap_destroy(ap_h);
+	/*wifi_ap_destroy(ap_h);*/
 
 	return 1;
 }
@@ -1285,13 +1286,13 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		rv = test_is_activated();
 		break;
 	case '6':
-		rv = test_get_connection_state();
+		rv = test_get_connection_state();  /*TODO*/
 		break;
 	case '7':
-		rv = test_get_mac_address();
+		rv = test_get_mac_address(); /*TODO*/
 		break;
 	case '8':
-		rv = test_get_interface_name();
+		rv = test_get_interface_name(); /*TODO*/
 		break;
 	case '9':
 		rv = test_scan_request();

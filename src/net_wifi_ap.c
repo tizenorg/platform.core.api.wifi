@@ -20,7 +20,7 @@
 #include <glib.h>
 #include "net_wifi_private.h"
 
-static char* __ap_convert_ip_to_string(net_addr_t *ip_addr)
+/*static char* __ap_convert_ip_to_string(net_addr_t *ip_addr)
 {
 	unsigned char *ipaddr = (unsigned char *)&ip_addr->Data.Ipv4.s_addr;
 
@@ -31,9 +31,9 @@ static char* __ap_convert_ip_to_string(net_addr_t *ip_addr)
 	g_snprintf(ipstr, 16, "%d.%d.%d.%d", ipaddr[0], ipaddr[1], ipaddr[2], ipaddr[3]);
 
 	return ipstr;
-}
+}*/
 
-static void __wifi_init_ap(net_profile_info_t *profile_info, const char *essid)
+/*static void __wifi_init_ap(net_profile_info_t *profile_info, const char *essid)
 {
 	profile_info->profile_type = NET_DEVICE_WIFI;
 	profile_info->ProfileState = NET_STATE_TYPE_IDLE;
@@ -43,9 +43,10 @@ static void __wifi_init_ap(net_profile_info_t *profile_info, const char *essid)
 	profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_NONE;
 	profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_NONE;
 	g_strlcpy(profile_info->ProfileInfo.Wlan.essid, essid, NET_WLAN_ESSID_LEN+1);
-}
+}*/
 
-wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)
+wifi_connection_state_e _wifi_convert_to_ap_state(
+				net_state_type_t state)
 {
 	wifi_connection_state_e ap_state;
 
@@ -67,6 +68,7 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)
 		break;
 	default:
 		ap_state = -1;
+		break;
 	}
 
 	return ap_state;
@@ -80,14 +82,14 @@ EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
+/*	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
 	if (ap_info == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
 	__wifi_init_ap(ap_info, essid);
 
 	_wifi_libnet_add_to_ap_list((wifi_ap_h)ap_info);
-	*ap = (wifi_ap_h)ap_info;
+	*ap = (wifi_ap_h)ap_info;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -111,29 +113,31 @@ EXPORT_API int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
+	/*net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
 	if (ap_info == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
 	memcpy(ap_info, origin, sizeof(net_profile_info_t));
 
 	_wifi_libnet_add_to_ap_list((wifi_ap_h)ap_info);
-	*cloned_ap = (wifi_ap_h)ap_info;
+	*cloned_ap = (wifi_ap_h)ap_info;*/
 
 	return WIFI_ERROR_NONE;
 }
 
 EXPORT_API int wifi_ap_refresh(wifi_ap_h ap)
 {
-	net_profile_info_t ap_info_local;
-	net_profile_info_t *ap_info = ap;
+	/*net_profile_info_t ap_info_local;*/
 
-	if (net_get_profile_info(ap_info->ProfileName, &ap_info_local) != NET_ERR_NONE) {
+
+	// DELETE:
+/*net_profile_info_t *ap_info = ap;
+ * if (net_get_profile_info(ap_info->ProfileName, &ap_info_local) != NET_ERR_NONE) {
 		WIFI_LOG(WIFI_ERROR, "Error!!! net_get_profile_info() failed\n");
 		return WIFI_ERROR_OPERATION_FAILED;
-	}
+	}*/
 
-	memcpy(ap, &ap_info_local, sizeof(net_profile_info_t));
+	/*memcpy(ap, &ap_info_local, sizeof(net_profile_info_t));*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -146,8 +150,8 @@ EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
-	*essid = g_strdup(profile_info->ProfileInfo.Wlan.essid);
+	struct connman_service *service = ap;
+	*essid = g_strdup(connman_service_get_name(service));
 	if (*essid == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
@@ -161,10 +165,10 @@ EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	*bssid = g_strdup(profile_info->ProfileInfo.Wlan.bssid);
 	if (*bssid == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -176,8 +180,8 @@ EXPORT_API int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
-	*rssi = (int)profile_info->ProfileInfo.Wlan.Strength;
+/*	net_profile_info_t *profile_info = ap;
+	*rssi = (int)profile_info->ProfileInfo.Wlan.Strength;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -189,8 +193,8 @@ EXPORT_API int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
-	*frequency = (int)profile_info->ProfileInfo.Wlan.frequency;
+/*	net_profile_info_t *profile_info = ap;
+	*frequency = (int)profile_info->ProfileInfo.Wlan.frequency;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -202,8 +206,8 @@ EXPORT_API int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
-	*max_speed = (int)profile_info->ProfileInfo.Wlan.max_rate / 1000000;
+/*	net_profile_info_t *profile_info = ap;
+	*max_speed = (int)profile_info->ProfileInfo.Wlan.max_rate / 1000000;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -215,12 +219,12 @@ EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	if (profile_info->Favourite)
 		*favorite = true;
 	else
-		*favorite = false;
+		*favorite = false;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -232,9 +236,13 @@ EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+	struct connman_service *service = ap;
+	enum connman_service_state_type state_type;
 
-	*state = _wifi_convert_to_ap_state(profile_info->ProfileState);
+	state_type = _get_service_state_type(
+					connman_service_get_state(service));
+
+	*state = _wifi_convert_to_ap_state(state_type);
 
 	if (*state < 0)
 		return WIFI_ERROR_OPERATION_FAILED;
@@ -257,7 +265,7 @@ EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.net_info.IpConfigType) {
 	case NET_IP_CONFIG_TYPE_STATIC:
@@ -277,7 +285,7 @@ EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -296,7 +304,7 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	switch (type) {
 	case WIFI_IP_CONFIG_TYPE_STATIC:
@@ -319,9 +327,9 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 	}
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
-		return WIFI_ERROR_NONE;
+		return WIFI_ERROR_NONE;*/
 
-	return _wifi_update_ap_info(profile_info);
+	return WIFI_ERROR_NONE/*_wifi_update_ap_info(profile_info)*/;
 }
 
 EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, char** ip_address)
@@ -339,10 +347,10 @@ EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	*ip_address = __ap_convert_ip_to_string(&profile_info->ProfileInfo.Wlan.net_info.IpAddr);
 	if (*ip_address == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -361,7 +369,7 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	if (ip_address == NULL)
 		profile_info->ProfileInfo.Wlan.net_info.IpAddr.Data.Ipv4.s_addr = 0;
@@ -369,9 +377,9 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 		return WIFI_ERROR_INVALID_PARAMETER;
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
-		return WIFI_ERROR_NONE;
+		return WIFI_ERROR_NONE;*/
 
-	return _wifi_update_ap_info(profile_info);
+	return WIFI_ERROR_NONE/*_wifi_update_ap_info(profile_info)*/;
 }
 
 EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, char** subnet_mask)
@@ -389,10 +397,10 @@ EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	*subnet_mask = __ap_convert_ip_to_string(&profile_info->ProfileInfo.Wlan.net_info.SubnetMask);
 	if (*subnet_mask == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -411,7 +419,7 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	if (subnet_mask == NULL)
 		profile_info->ProfileInfo.Wlan.net_info.SubnetMask.Data.Ipv4.s_addr = 0;
@@ -419,9 +427,9 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 		return WIFI_ERROR_INVALID_PARAMETER;
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
-		return WIFI_ERROR_NONE;
+		return WIFI_ERROR_NONE;*/
 
-	return _wifi_update_ap_info(profile_info);
+	return WIFI_ERROR_NONE/*_wifi_update_ap_info(profile_info)*/;
 }
 
 EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, char** gateway_address)
@@ -439,10 +447,10 @@ EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	*gateway_address = __ap_convert_ip_to_string(&profile_info->ProfileInfo.Wlan.net_info.GatewayAddr);
 	if (*gateway_address == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -461,6 +469,7 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
+/*
 	net_profile_info_t *profile_info = ap;
 
 	if (gateway_address == NULL)
@@ -470,8 +479,9 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
 		return WIFI_ERROR_NONE;
+*/
 
-	return _wifi_update_ap_info(profile_info);
+	return WIFI_ERROR_NONE/*_wifi_update_ap_info(profile_info)*/;
 }
 
 EXPORT_API int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, char** proxy_address)
@@ -489,10 +499,10 @@ EXPORT_API int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e add
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	*proxy_address = g_strdup(profile_info->ProfileInfo.Wlan.net_info.ProxyAddr);
 	if (*proxy_address == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -511,6 +521,7 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e add
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
+/*
 	net_profile_info_t *profile_info = ap;
 
 	if (proxy_address == NULL)
@@ -521,8 +532,9 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e add
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
 		return WIFI_ERROR_NONE;
+*/
 
-	return _wifi_update_ap_info(profile_info);
+	return WIFI_ERROR_NONE/*_wifi_update_ap_info(profile_info)*/;
 }
 
 EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
@@ -532,7 +544,7 @@ EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.net_info.ProxyMethod) {
 	case NET_PROXY_TYPE_DIRECT:
@@ -549,7 +561,7 @@ EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -560,7 +572,7 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
-
+/*
 	net_profile_info_t *profile_info = ap;
 	int rv;
 
@@ -578,23 +590,23 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
-	}
-
+	}*/
+/*
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
 		return WIFI_ERROR_NONE;
 
-	rv =_wifi_update_ap_info(profile_info);
+	rv = WIFI_ERROR_NONE;_wifi_update_ap_info(profile_info);
 	if (rv != NET_ERR_NONE && proxy_type == WIFI_PROXY_TYPE_MANUAL) {
 		g_strlcpy(profile_info->ProfileInfo.Wlan.net_info.ProxyAddr, "0.0.0.0:8080", 15);
 		rv = _wifi_update_ap_info(profile_info);
-	}
+	}*/
 
-	return rv;
+	return 0;
 }
 
 EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, char** dns_address)
 {
-	if (_wifi_libnet_check_ap_validity(ap) == false ||
+/*	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
 	    dns_address == NULL ||
@@ -607,20 +619,20 @@ EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
 		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
-	}
+	}*/
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	*dns_address = __ap_convert_ip_to_string(&profile_info->ProfileInfo.Wlan.net_info.DnsAddr[order-1]);
 	if (*dns_address == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
 
 EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, const char* dns_address)
 {
-	if (_wifi_libnet_check_ap_validity(ap) == false ||
+/*	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
 	    order <= 0 ||
@@ -632,9 +644,9 @@ EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
 		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
-	}
+	}*/
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	if (dns_address == NULL)
 		profile_info->ProfileInfo.Wlan.net_info.DnsAddr[order-1].Data.Ipv4.s_addr = 0;
@@ -645,9 +657,9 @@ EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 		profile_info->ProfileInfo.Wlan.net_info.DnsCount = order;
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
-		return WIFI_ERROR_NONE;
+		return WIFI_ERROR_NONE;*/
 
-	return _wifi_update_ap_info(profile_info);
+	return WIFI_ERROR_NONE/*_wifi_update_ap_info(profile_info)*/;
 }
 
 /* Wi-Fi security information ************************************************/
@@ -658,7 +670,7 @@ EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* typ
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.sec_mode) {
 	case WLAN_SEC_MODE_NONE:
@@ -678,7 +690,7 @@ EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* typ
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -690,7 +702,7 @@ EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	switch (type) {
 	case WIFI_SECURITY_TYPE_NONE:
@@ -710,7 +722,7 @@ EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -722,7 +734,7 @@ EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e*
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.enc_mode) {
 	case WLAN_ENC_MODE_NONE:
@@ -742,7 +754,7 @@ EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e*
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -754,7 +766,7 @@ EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e 
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	switch (type) {
 	case WIFI_ENCRYPTION_TYPE_NONE:
@@ -774,9 +786,38 @@ EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e 
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
+}
+
+/*
+ * Added by Chengyi
+ */
+void convert_wifi_security(wlan_security_info_t *security_info, char **security)
+{
+	while (*security) {
+		if (g_strcmp0(*security, "none") == 0 &&
+		    security_info->sec_mode < WLAN_SEC_MODE_NONE)
+			security_info->sec_mode = WLAN_SEC_MODE_NONE;
+		else if (!g_strcmp0(*security, "wep"))
+			security_info->sec_mode = WLAN_SEC_MODE_WEP;
+		else if (!g_strcmp0(*security, "psk"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
+		else if (!g_strcmp0(*security, "ieee8021x"))
+			security_info->sec_mode = WLAN_SEC_MODE_IEEE8021X;
+		else if (!g_strcmp0(*security, "wpa"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
+		else if (!g_strcmp0(*security, "rsn"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA2_PSK;
+		else if (!g_strcmp0(*security, "wps"))
+			security_info->wps_support = TRUE;
+		else
+			security_info->sec_mode = WLAN_SEC_MODE_NONE;
+
+		security++;
+	}
+
 }
 
 EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
@@ -786,14 +827,17 @@ EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+	struct connman_service *service = ap;
 
-	if (profile_info->Favourite) {
+	if (connman_service_get_favorite(service)) {
 		*required = false;
 		return WIFI_ERROR_NONE;
 	}
 
-	switch (profile_info->ProfileInfo.Wlan.security_info.sec_mode) {
+	wlan_security_info_t sec_info;
+	convert_wifi_security(&sec_info, connman_service_get_security(service));
+
+	switch (sec_info.sec_mode) {
 	case WLAN_SEC_MODE_NONE:
 		*required = false;
 		break;
@@ -817,7 +861,7 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.sec_mode) {
 	case WLAN_SEC_MODE_WEP:
@@ -833,7 +877,41 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 	case WLAN_SEC_MODE_IEEE8021X:
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
+	}*/
+
+	struct connman_service* service = ap;
+	net_wifi_connection_info_t wifi_conn_info;
+	memset(&wifi_conn_info, 0, sizeof(net_wifi_connection_info_t));
+
+	wlan_security_info_t sec_info;
+	convert_wifi_security(&sec_info, connman_service_get_security(service));
+
+	switch (sec_info.sec_mode) {
+	case WLAN_SEC_MODE_WEP:
+		g_strlcpy(
+			wifi_conn_info.security_info.authentication.wep.wepKey,
+			passphrase,
+			NETPM_WLAN_MAX_WEP_KEY_LEN+1);
+		break;
+	case WLAN_SEC_MODE_WPA_PSK:
+	case WLAN_SEC_MODE_WPA2_PSK:
+		g_strlcpy(
+			wifi_conn_info.security_info.authentication.psk.pskKey,
+			passphrase,
+			NETPM_WLAN_MAX_PSK_PASSPHRASE_LEN+1);
+		break;
+	case WLAN_SEC_MODE_NONE:
+	case WLAN_SEC_MODE_IEEE8021X:
+	default:
+		return WIFI_ERROR_OPERATION_FAILED;
 	}
+
+	g_strlcpy(
+		wifi_conn_info.essid,
+		connman_service_get_name(service),
+		NET_WLAN_ESSID_LEN + 1);
+
+	connman_service_set_wifi_conn_info(service, &wifi_conn_info);
 
 	return WIFI_ERROR_NONE;
 }
@@ -845,12 +923,12 @@ EXPORT_API int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 
 	if (profile_info->ProfileInfo.Wlan.security_info.wps_support)
 		*supported = true;
 	else
-		*supported = false;
+		*supported = false;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -863,7 +941,7 @@ EXPORT_API int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, c
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -873,7 +951,7 @@ EXPORT_API int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, c
 
 	if (password)
 		g_strlcpy(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.password,
-				password, NETPM_WLAN_PASSWORD_LEN+1);
+				password, NETPM_WLAN_PASSWORD_LEN+1);*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -885,7 +963,7 @@ EXPORT_API int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* 
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -896,7 +974,7 @@ EXPORT_API int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* 
 	if (strlen(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.password) > 0)
 		*is_password_set = true;
 	else
-		*is_password_set = false;
+		*is_password_set = false;*/
 
 
 	return WIFI_ERROR_NONE;
@@ -909,13 +987,13 @@ EXPORT_API int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	*file = g_strdup(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.ca_cert_filename);
 	if (*file == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -927,12 +1005,12 @@ EXPORT_API int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	g_strlcpy(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.ca_cert_filename,
-			file, NETPM_WLAN_CA_CERT_FILENAME_LEN+1);
+			file, NETPM_WLAN_CA_CERT_FILENAME_LEN+1);*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -944,13 +1022,13 @@ EXPORT_API int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	*file = g_strdup(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.client_cert_filename);
 	if (*file == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -962,12 +1040,12 @@ EXPORT_API int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	g_strlcpy(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.client_cert_filename,
-			file, NETPM_WLAN_CLIENT_CERT_FILENAME_LEN+1);
+			file, NETPM_WLAN_CLIENT_CERT_FILENAME_LEN+1);*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -979,13 +1057,13 @@ EXPORT_API int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	*file = g_strdup(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.private_key_filename);
 	if (*file == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY;*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -997,7 +1075,7 @@ EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, 
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -1007,7 +1085,7 @@ EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, 
 	if (password) {
 		g_strlcpy(profile_info->ProfileInfo.Wlan.security_info.authentication.eap.private_key_passwd,
 				password, NETPM_WLAN_PRIVATE_KEY_PASSWD_LEN+1);
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -1019,7 +1097,7 @@ EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -1041,7 +1119,7 @@ EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -1053,7 +1131,7 @@ EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -1075,7 +1153,7 @@ EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -1087,7 +1165,7 @@ EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* typ
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -1112,7 +1190,7 @@ EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* typ
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }
@@ -1124,7 +1202,7 @@ EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+/*	net_profile_info_t *profile_info = ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -1149,7 +1227,7 @@ EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
-	}
+	}*/
 
 	return WIFI_ERROR_NONE;
 }

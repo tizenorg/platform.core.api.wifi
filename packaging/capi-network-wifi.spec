@@ -11,7 +11,7 @@ BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(vconf)
 BuildRequires:  pkgconfig(capi-base-common)
-BuildRequires:  pkgconfig(network)
+BuildRequires:  pkgconfig(connman-lib)
 
 %description
 Network Wi-Fi library in Tizen C API
@@ -23,6 +23,14 @@ Requires: %{name} = %{version}-%{release}
 
 %description devel
 Network Wi-Fi library in Tizen C API (Development)
+
+%package test
+Summary:    Test case for wifi (DEV)
+Requires:   %{name} = %{version}
+
+%description test
+Test case for wifi (DEV). Some test programs to test the APIs
+and interfaces about wifi or other inner code.
 
 %prep
 %setup -q
@@ -58,3 +66,7 @@ cp LICENSE.APLv2 %{buildroot}%{_datadir}/license/capi-network-wifi
 %{_includedir}/network/*.h
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/libcapi-network-wifi.so
+
+%files test
+%manifest %{name}.manifest
+%{_libdir}/wifi_test/wifi_test

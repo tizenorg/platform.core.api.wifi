@@ -80,6 +80,8 @@ EXPORT_API int wifi_activate(wifi_activated_cb callback, void* user_data)
 	}
 
 	rv = _wifi_activate(callback, user_data);
+
+	/*rv = connman_technology_set_powered_on_wifi(callback, user_data);*/
 	if (rv != WIFI_ERROR_NONE)
 		WIFI_LOG(WIFI_ERROR, "Error!! Wi-Fi Activation failed.\n");
 
@@ -96,6 +98,8 @@ EXPORT_API int wifi_deactivate(wifi_deactivated_cb callback, void* user_data)
 	}
 
 	rv = _wifi_deactivate(callback, user_data);
+
+	/*rv = connman_technology_set_powered_off_wifi(callback, user_data);*/
 	if (rv != WIFI_ERROR_NONE)
 		WIFI_LOG(WIFI_ERROR, "Error!! Wi-Fi Deactivation failed.\n");
 
@@ -322,6 +326,8 @@ EXPORT_API int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb cal
 	}
 
 	return _wifi_set_power_on_off_cb(callback, user_data);
+
+	/*return wifi_set_power_on_off_cb(callback, user_data);*/
 }
 
 EXPORT_API int wifi_unset_device_state_changed_cb(void)
