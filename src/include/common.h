@@ -294,29 +294,6 @@ typedef enum
 	NET_STATE_TYPE_DISCONNECT,
 } net_state_type_t;
 
-/**
- * @enum connman_service_state_type
- * This enumeration defines the service state type for adaptering CAPI
- */
-enum connman_service_state_type
-{
-	/** Not defined */
-	SERVICE_STATE_UNKNOWN	= 0x00,
-	/** Idle state */
-	SERVICE_STATE_IDLE,
-	/** Failure state */
-	SERVICE_STATE_FAILURE,
-	/** Association state */
-	SERVICE_STATE_ASSOCIATION,
-	/** Configuration state */
-	SERVICE_STATE_CONFIGURATION,
-	/** Ready state */
-	SERVICE_STATE_READY,
-	/** Online state */
-	SERVICE_STATE_ONLINE,
-	/** Login state */
-	SERVICE_STATE_DISCONNECT,
-};
 /*
  * Added:End
  */

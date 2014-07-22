@@ -257,7 +257,7 @@ EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap,
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	enum connman_service_state_type state_type;
+	net_state_type_t state_type;
 
 	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
