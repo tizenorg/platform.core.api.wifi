@@ -282,7 +282,7 @@ static void __libnet_disconnected_cb(wifi_error_e result)
 	wifi_callbacks.disconnected_user_data = NULL;
 }
 
-static wifi_error_e connman_lib2capi_result(enum connman_lib_err_e result)
+static wifi_error_e connman_lib2capi_result(enum connman_lib_err result)
 {
 	/*
 	 * TODO:
@@ -291,18 +291,16 @@ static wifi_error_e connman_lib2capi_result(enum connman_lib_err_e result)
 	return tmp;
 }
 
-static void connman_service_connect_cb(
-					enum connman_lib_err_e result,
-					void *user_data)
+static void connman_service_connect_cb(enum connman_lib_err result,
+				       void *user_data)
 {
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
 
 	__libnet_connected_cb(connman_lib2capi_result(result));
 }
 
-static void connman_service_disconnect_cb(
-					enum connman_lib_err_e result,
-					void *user_data)
+static void connman_service_disconnect_cb(enum connman_lib_err result,
+					  void *user_data)
 {
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
 
@@ -570,7 +568,9 @@ static void register_all_serivces_monitor()
 }
 
 static void service_changed_callback(struct connman_manager *manager,
-							void *user_data)
+				     GList *added_service_list,
+				     GList *all_services_list,
+				     void *user_data)
 {
 	WIFI_LOG(WIFI_INFO, "service changed");
 
