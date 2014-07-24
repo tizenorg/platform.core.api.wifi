@@ -160,7 +160,11 @@ EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
-	*essid = g_strdup(connman_service_get_name(service));
+	const gchar *service_essid = connman_service_get_name(service);
+	if (service_essid == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	*essid = g_strdup(service_essid);
 	if (*essid == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
@@ -178,7 +182,11 @@ EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
-	*bssid = g_strdup(connman_service_get_bssid(service));
+	const gchar *service_bssid = connman_service_get_bssid(service);
+	if (service_bssid == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	*bssid = g_strdup(service_bssid);
 	if (*bssid == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
@@ -400,7 +408,10 @@ EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap,
 		return WIFI_ERROR_INVALID_PARAMETER;
 
 	ipv4 = connman_service_get_ipv4_info(service);
-	*ip_address = ipv4->address;
+	if (ipv4->address == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	*ip_address = g_strdup(ipv4->address);
 	if (*ip_address == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
@@ -467,7 +478,10 @@ EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap,
 		return WIFI_ERROR_INVALID_PARAMETER;
 
 	ipv4 = connman_service_get_ipv4_info(service);
-	*subnet_mask = ipv4->netmask;
+	if (ipv4->netmask == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	*subnet_mask = g_strdup(ipv4->netmask);
 	if (*subnet_mask == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
@@ -534,7 +548,10 @@ EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap,
 		return WIFI_ERROR_INVALID_PARAMETER;
 
 	ipv4 = connman_service_get_ipv4_info(service);
-	*gateway_address = ipv4->gateway;
+	if (ipv4->gateway == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	*gateway_address = g_strdup(ipv4->gateway);
 	if (*gateway_address == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
@@ -627,18 +644,16 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 
 	if (((net_profile_info_t *) ap)->proxy_type ==
 					WIFI_PROXY_TYPE_MANUAL) {
-		proxy_config.method = g_strdup("manual");
+		proxy_config.method = "manual";
 		*proxy_config.servers = g_strdup(proxy_address);
 		err = connman_service_set_proxy_config(service, &proxy_config);
-		g_free(proxy_config.method);
 		g_free(*proxy_config.servers);
 		g_free(proxy_config.servers);
 	} else if (((net_profile_info_t *) ap)->proxy_type ==
 					WIFI_PROXY_TYPE_AUTO) {
-		proxy_config.method = g_strdup("auto");
+		proxy_config.method = "auto";
 		proxy_config.url = g_strdup(proxy_address);
 		err = connman_service_set_proxy_config(service, &proxy_config);
-		g_free(proxy_config.method);
 		g_free(proxy_config.url);
 	}
 
@@ -677,13 +692,13 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap,
 
 	switch (proxy_type) {
 	case WIFI_PROXY_TYPE_AUTO:
-		proxy_config.method = g_strdup("auto");
+		proxy_config.method = "auto";
 		break;
 	case WIFI_PROXY_TYPE_MANUAL:
-		proxy_config.method = g_strdup("manual");
+		proxy_config.method = "manual";
 		break;
 	case WIFI_PROXY_TYPE_DIRECT:
-		proxy_config.method = g_strdup("direct");
+		proxy_config.method = "direct";
 		break;
 	}
 
@@ -692,8 +707,6 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap,
 	} else {
 		((net_profile_info_t *) ap)->proxy_type = proxy_type;
 	}
-
-	g_free(proxy_config.method);
 
 	if (err != CONNMAN_LIB_ERR_NONE)
 		return _wifi_connman_lib_error2wifi_error(err);
