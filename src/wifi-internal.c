@@ -244,6 +244,32 @@ char* _net_print_error(net_err_t error)
 	}
 }
 
+
+wifi_error_e _wifi_connman_lib_error2wifi_error(enum connman_lib_err err_type)
+{
+	switch (err_type) {
+	case CONNMAN_LIB_ERR_NONE:
+		return WIFI_ERROR_NONE;
+	case CONNMAN_LIB_ERR_ALREADY_EXISTS:
+		return WIFI_ERROR_INVALID_OPERATION;
+	case CONNMAN_LIB_ERR_NOT_REGISTERED:
+		return WIFI_ERROR_INVALID_OPERATION;
+	case CONNMAN_LIB_ERR_NOT_CONNECTED:
+		return WIFI_ERROR_NO_CONNECTION;
+	case CONNMAN_LIB_ERR_ALREADY_CONNECTED:
+		return WIFI_ERROR_ALREADY_EXISTS;
+	case CONNMAN_LIB_ERR_IN_PROGRESS:
+		return WIFI_ERROR_NOW_IN_PROGRESS;
+	case CONNMAN_LIB_ERR_OPERATION_ABORTED:
+		return WIFI_ERROR_OPERATION_ABORTED;
+	case CONNMAN_LIB_ERR_OPERATION_TIMEOUT:
+	case CONNMAN_LIB_ERR_TIMEOUT:
+		return WIFI_ERROR_NO_REPLY;
+	default:
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+}
+
 static void __libnet_set_connected_cb(wifi_connected_cb user_cb,
 						void *user_data)
 {
@@ -282,21 +308,12 @@ static void __libnet_disconnected_cb(wifi_error_e result)
 	wifi_callbacks.disconnected_user_data = NULL;
 }
 
-static wifi_error_e connman_lib2capi_result(enum connman_lib_err result)
-{
-	/*
-	 * TODO:
-	 */
-	wifi_error_e tmp = WIFI_ERROR_NONE;
-	return tmp;
-}
-
 static void connman_service_connect_cb(enum connman_lib_err result,
 				       void *user_data)
 {
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
 
-	__libnet_connected_cb(connman_lib2capi_result(result));
+	__libnet_connected_cb(_wifi_connman_lib_error2wifi_error(result));
 }
 
 static void connman_service_disconnect_cb(enum connman_lib_err result,
@@ -304,13 +321,13 @@ static void connman_service_disconnect_cb(enum connman_lib_err result,
 {
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
 
-	__libnet_disconnected_cb(connman_lib2capi_result(result));
+	__libnet_disconnected_cb(_wifi_connman_lib_error2wifi_error(result));
 }
 
 static int __net_dbus_set_agent_passphrase(const char *path,
 						 const char *passphrase)
 {
-	int ret_val;
+	int rv;
 	char *service_id;
 
 	if (NULL == passphrase || strlen(passphrase) <= 0) {
@@ -319,23 +336,24 @@ static int __net_dbus_set_agent_passphrase(const char *path,
 	}
 
 	service_id = g_strrstr(path, "/") + 1;
-	ret_val = winet_wifi_update_agent_passphrase(service_id, passphrase);
-	if (NET_ERR_NONE != ret_val) {
+	rv = winet_wifi_update_agent_passphrase(service_id, passphrase);
+	if (rv != 0) {
 		WIFI_LOG(WIFI_ERROR,
-			"__net_dbus_set_agent_field failed. Error = %d \n",
-			ret_val);
-		return ret_val;
+			"winet_wifi_update_agent_passphrase failed. Error=%d\n",
+			rv);
+		return WIFI_ERROR_OPERATION_FAILED;
 	}
 
 	WIFI_LOG(WIFI_ERROR, "Successfully sent passphrase\n");
 
-	return NET_ERR_NONE;
+	return WIFI_ERROR_NONE;
 }
 
 static int __net_dbus_connect_service(wifi_ap_h ap_h,
 		const net_wifi_connect_service_info_t *wifi_connection_info)
 {
-	net_err_t Error = NET_ERR_NONE;
+	int rv = WIFI_ERROR_NONE;
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
 
 	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
@@ -346,34 +364,35 @@ static int __net_dbus_connect_service(wifi_ap_h ap_h,
 		 * TODO:
 		 */
 		/*_net_dbus_set_eap_config_fields(wifi_connection_info);*/
-		if (NET_ERR_NONE != Error) {
+		if (rv != WIFI_ERROR_NONE) {
 			WIFI_LOG(WIFI_ERROR, "Fail to create eap_config\n");
 
 			goto done;
 		}
 	} else if (g_strcmp0(wifi_connection_info->security, "none") != 0) {
-		Error = __net_dbus_set_agent_passphrase(
+		rv = __net_dbus_set_agent_passphrase(
 				connman_service_get_path(service),
 				wifi_connection_info->passphrase);
-		if (NET_ERR_NONE != Error) {
+		if (rv != WIFI_ERROR_NONE) {
 			WIFI_LOG(WIFI_ERROR, "Fail to set agent_passphrase\n");
 
 			goto done;
 		}
 	}
 
-	connman_service_connect(service, connman_service_connect_cb, NULL);
+	err = connman_service_connect(service, connman_service_connect_cb,
+									NULL);
+	rv = _wifi_connman_lib_error2wifi_error(err);
 
 done:
-	return Error;
+	return rv;
 }
 
 /** This function is used only to open Wi-Fi connection with hidden APs */
 static int __net_open_connection_with_wifi_info(wifi_ap_h ap_h,
 				const net_wifi_connection_info_t* wifi_info)
 {
-	net_err_t Error = NET_ERR_NONE;
-
+	int rv = WIFI_ERROR_NONE;
 	net_wifi_connect_service_info_t wifi_connection_info;
 	memset(&wifi_connection_info, 0,
 			sizeof(net_wifi_connect_service_info_t));
@@ -421,18 +440,19 @@ static int __net_open_connection_with_wifi_info(wifi_ap_h ap_h,
 	default:
 		WIFI_LOG(WIFI_ERROR, "Invalid security type\n");
 
-		return WIFI_ERROR_INVALID_PARAMETER;
+		rv = WIFI_ERROR_INVALID_OPERATION;
+		goto done;
 	}
 
-	Error = __net_dbus_connect_service(ap_h, &wifi_connection_info);
-	if (Error != NET_ERR_NONE)
+	rv = __net_dbus_connect_service(ap_h, &wifi_connection_info);
+	if (rv != WIFI_ERROR_NONE)
 		WIFI_LOG(WIFI_ERROR,
-			"Failed to request connect service. Error [%s]\n",
-				_net_print_error(Error));
+			"Failed to request connect service. Error [%d]\n", rv);
 	else
 		WIFI_LOG(WIFI_ERROR,
 				"Successfully requested to connect service\n");
 
+done:
 	g_free(wifi_connection_info.type);
 	g_free(wifi_connection_info.mode);
 	g_free(wifi_connection_info.ssid);
@@ -447,7 +467,7 @@ static int __net_open_connection_with_wifi_info(wifi_ap_h ap_h,
 	g_free(wifi_connection_info.private_key_file);
 	g_free(wifi_connection_info.private_key_password);
 
-	return Error;
+	return rv;
 }
 
 static int __libnet_connect_with_wifi_info(wifi_ap_h ap_h,
@@ -457,11 +477,7 @@ static int __libnet_connect_with_wifi_info(wifi_ap_h ap_h,
 
 	wifi_info = _wifi_get_conn_info();
 
-	if (__net_open_connection_with_wifi_info(ap_h,
-						wifi_info) != NET_ERR_NONE)
-		return WIFI_ERROR_OPERATION_FAILED;
-
-	return WIFI_ERROR_NONE;
+	return __net_open_connection_with_wifi_info(ap_h, wifi_info);
 }
 
 static void __libnet_set_scan_request_cb(wifi_disconnected_cb user_cb,
@@ -498,7 +514,6 @@ static void service_state_changed(struct connman_service *service,
 {
 	const char *name = connman_service_get_name(service);
 	const char *new_state = connman_service_get_state(service);
-
 
 	WIFI_LOG(WIFI_INFO, "name %s, state, %s", name, new_state);
 
@@ -648,11 +663,11 @@ static void __wifi_unset_service_connection_changed_cb()
 
 bool _wifi_libnet_init(void)
 {
-	int rv = NET_ERR_NONE;
+	int rv;
 
-	connman_lib_init();
+	rv = connman_lib_init();
 
-	if (rv != NET_ERR_NONE)
+	if (rv != 0)
 		return false;
 
 	connman_set_services_changed_cb(service_changed_callback, NULL);
@@ -673,30 +688,34 @@ bool _wifi_libnet_deinit(void)
 
 int _wifi_activate(wifi_activated_cb callback, void *user_data)
 {
-	if (winet_wifi_set_work_mode(WIFI_WORK_MODE_STATION) < 0)
-		return WIFI_ERROR_OPERATION_FAILED;
-
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
 	struct connman_technology *technology =
 					connman_get_technology(TECH_TYPE_WIFI);
 	if (!technology)
-		return WIFI_ERROR_OPERATION_FAILED;
+		return WIFI_ERROR_INVALID_OPERATION;
 
-	connman_enable_technology(technology);
+	winet_wifi_set_work_mode(WIFI_WORK_MODE_STATION);
+
+	err = connman_enable_technology(technology);
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
 
 int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 {
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
 	struct connman_technology *technology =
 					connman_get_technology(TECH_TYPE_WIFI);
 	if (!technology)
-		return WIFI_ERROR_OPERATION_FAILED;
+		return WIFI_ERROR_INVALID_OPERATION;
 
-	connman_disable_technology(technology);
+	err = connman_disable_technology(technology);
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
-	if (winet_wifi_set_work_mode(WIFI_WORK_MODE_OFF) < 0)
-		return WIFI_ERROR_OPERATION_FAILED;
+	winet_wifi_set_work_mode(WIFI_WORK_MODE_OFF);
 
 	return WIFI_ERROR_NONE;
 }
@@ -705,7 +724,7 @@ bool _wifi_libnet_check_ap_validity(wifi_ap_h ap_h)
 {
 	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
-		return WIFI_ERROR_INVALID_PARAMETER;
+		return false;
 
 	const char *name = connman_service_get_name(service);
 
@@ -756,9 +775,10 @@ bool _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)
 	bool powered = false;
 
 	technology = connman_get_technology(TECH_TYPE_WIFI);
+	if (!technology)
+		return false;
 
-	if (technology)
-		powered = connman_get_technology_powered(technology);
+	powered = connman_get_technology_powered(technology);
 
 	if (powered)
 		*device_state = WIFI_DEVICE_STATE_ACTIVATED;
@@ -778,6 +798,9 @@ bool _wifi_libnet_get_wifi_state(wifi_connection_state_e *connection_state)
 	GList *list;
 
 	technology = connman_get_technology(TECH_TYPE_WIFI);
+	if (!technology)
+		return false;
+
 	wifi_powered = connman_get_technology_powered(technology);
 
 	if (!wifi_powered) {
@@ -831,36 +854,38 @@ int _wifi_libnet_get_intf_name(char** name)
 int _wifi_libnet_scan_request(wifi_scan_finished_cb callback,
 						void *user_data)
 {
-	int rv = NET_ERR_NONE;
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
 	struct connman_technology *technology =
 				connman_get_technology(TECH_TYPE_WIFI);
+	if (!technology)
+		return WIFI_ERROR_INVALID_OPERATION;
 
 	__libnet_set_scan_request_cb(callback, user_data);
 
-	rv = connman_scan_technology(technology);
+	err = connman_scan_technology(technology);
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
-	if (rv == NET_ERR_NONE) {
-		return WIFI_ERROR_NONE;
-	} else if (rv == NET_ERR_INVALID_OPERATION)
-		return WIFI_ERROR_INVALID_OPERATION;
-
-	return WIFI_ERROR_OPERATION_FAILED;
+	return WIFI_ERROR_NONE;
 }
 
 int _wifi_libnet_scan_hidden_ap(const char *essid,
 				wifi_scan_finished_cb callback,
 				void *user_data)
 {
-	int rv = NET_ERR_NONE;
+	int rv = WIFI_ERROR_NONE;
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+	/*err = net_specific_scan_wifi(essid);*/
 
-	if (rv == NET_ERR_NONE) {
+	if (err == CONNMAN_LIB_ERR_NONE) {
 		wifi_callbacks.scan_hidden_ap_cb = callback;
 		wifi_callbacks.scan_hidden_ap_user_data = user_data;
-		return WIFI_ERROR_NONE;
-	} else if (rv == NET_ERR_INVALID_OPERATION)
-		return WIFI_ERROR_INVALID_OPERATION;
+		rv = WIFI_ERROR_NONE;
+	} else {
+		rv = _wifi_connman_lib_error2wifi_error(err);
+	}
 
-	return WIFI_ERROR_OPERATION_FAILED;
+	return rv;
 }
 
 int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
@@ -949,8 +974,7 @@ bool _wifi_libnet_foreach_found_hidden_aps(wifi_found_ap_cb callback,
 int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback,
 							void *user_data)
 {
-	int rv = NET_ERR_NONE;
-
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
 	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -958,13 +982,14 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback,
 	__libnet_set_connected_cb(callback, user_data);
 
 	if (connman_service_get_favorite(service))
-		connman_service_connect(service,
-				connman_service_connect_cb, NULL);
+		err = connman_service_connect(service,
+					connman_service_connect_cb, NULL);
 	else
-		rv = __libnet_connect_with_wifi_info(ap_h, callback, user_data);
+		return __libnet_connect_with_wifi_info(ap_h, callback,
+								user_data);
 
-	if (rv != NET_ERR_NONE)
-		return WIFI_ERROR_OPERATION_FAILED;
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 
@@ -973,13 +998,16 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback,
 int _wifi_libnet_close_profile(wifi_ap_h ap_h,
 			wifi_disconnected_cb callback, void *user_data)
 {
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
 	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
 	__libnet_set_disconnected_cb(callback, user_data);
-	connman_service_disconnect(service,
+	err = connman_service_disconnect(service,
 				connman_service_disconnect_cb, NULL);
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
@@ -987,7 +1015,7 @@ int _wifi_libnet_close_profile(wifi_ap_h ap_h,
 int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h,
 				wifi_connected_cb callback, void *user_data)
 {
-	int rv = NET_ERR_NONE;
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
 	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -995,29 +1023,28 @@ int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h,
 	__libnet_set_connected_cb(callback, user_data);
 
 	if (connman_service_get_favorite(service))
-		connman_service_connect(service,
-				connman_service_connect_cb, NULL);
+		err = connman_service_connect(service,
+					connman_service_connect_cb, NULL);
 	else
-		rv = __libnet_connect_with_wifi_info(ap_h, callback, user_data);
+		return __libnet_connect_with_wifi_info(ap_h, callback,
+								user_data);
 
-	if (rv != NET_ERR_NONE)
-		return WIFI_ERROR_OPERATION_FAILED;
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
 
 int _wifi_libnet_forget_ap(wifi_ap_h ap_h)
 {
-
-	int rv = NET_ERR_NONE;
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
 	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
-	connman_service_remove(service);
-
-	if (rv != NET_ERR_NONE)
-		return WIFI_ERROR_OPERATION_FAILED;
+	err = connman_service_remove(service);
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
@@ -1101,10 +1128,10 @@ int _wifi_unset_connection_state_cb()
 
 struct connman_service *_wifi_get_service_h(wifi_ap_h ap_h)
 {
-       struct connman_service *service =
-	       connman_get_service(((net_profile_info_t *) ap_h)->essid);
-       if (!service)
-	       return NULL;
+	struct connman_service *service =
+		connman_get_service(((net_profile_info_t *) ap_h)->essid);
+	if (!service)
+		return NULL;
 
-       return service;
+	return service;
 }
