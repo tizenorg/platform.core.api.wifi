@@ -20,6 +20,8 @@
 #ifndef __NET_CONNECTION_PRIVATE_H__
 #define __NET_CONNECTION_PRIVATE_H__
 
+#include <connman-lib-common.h>
+
 #include "wifi.h"
 #include "common.h"
 
@@ -111,6 +113,7 @@ net_wifi_connection_info_t *_wifi_get_conn_info(void);
 char *_wifi_get_ip_config_str(net_ip_config_type_t ip_config_type);
 net_ip_config_type_t _wifi_get_ip_config_type(const char *config);
 struct connman_service *_wifi_get_service_h(wifi_ap_h ap_h);
+wifi_error_e _wifi_connman_lib_error2wifi_error(enum connman_lib_err err_type);
 
 #ifdef __cplusplus
 }
