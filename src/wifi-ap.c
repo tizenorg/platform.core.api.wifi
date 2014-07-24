@@ -325,6 +325,8 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap,
 				wifi_address_family_e address_family,
 				wifi_ip_config_type_e type)
 {
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
@@ -367,8 +369,10 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap,
 	memset(&ipv4_config, 0, sizeof(struct service_ipv4));
 	ipv4_config.method = _wifi_get_ip_config_str(ip_config_type);
 
-	connman_service_set_ipv4_config(service,
-			&ipv4_config);
+	err = connman_service_set_ipv4_config(service, &ipv4_config);
+
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
@@ -407,6 +411,8 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap,
 				wifi_address_family_e address_family,
 				const char* ip_address)
 {
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
@@ -428,9 +434,12 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap,
 	ipv4_config.method = "manual";
 	ipv4_config.address = g_strdup(ip_address);
 
-	connman_service_set_ipv4_config(service, &ipv4_config);
+	err = connman_service_set_ipv4_config(service, &ipv4_config);
 
 	g_free(ipv4_config.address);
+
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
@@ -469,6 +478,8 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap,
 				wifi_address_family_e address_family,
 				const char* subnet_mask)
 {
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
@@ -490,9 +501,12 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap,
 	ipv4_config.method = "manual";
 	ipv4_config.netmask = g_strdup(subnet_mask);
 
-	connman_service_set_ipv4_config(service, &ipv4_config);
+	err = connman_service_set_ipv4_config(service, &ipv4_config);
 
 	g_free(ipv4_config.netmask);
+
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
@@ -531,6 +545,8 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap,
 				wifi_address_family_e address_family,
 				const char* gateway_address)
 {
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
@@ -552,9 +568,12 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap,
 	ipv4_config.method = "manual";
 	ipv4_config.gateway = g_strdup(gateway_address);
 
-	connman_service_set_ipv4_config(service, &ipv4_config);
+	err = connman_service_set_ipv4_config(service, &ipv4_config);
 
 	g_free(ipv4_config.gateway);
+
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
@@ -583,6 +602,8 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 				wifi_address_family_e address_family,
 				const char* proxy_address)
 {
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
@@ -608,7 +629,7 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 					WIFI_PROXY_TYPE_MANUAL) {
 		proxy_config.method = g_strdup("manual");
 		*proxy_config.servers = g_strdup(proxy_address);
-		connman_service_set_proxy_config(service, &proxy_config);
+		err = connman_service_set_proxy_config(service, &proxy_config);
 		g_free(proxy_config.method);
 		g_free(*proxy_config.servers);
 		g_free(proxy_config.servers);
@@ -616,10 +637,13 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 					WIFI_PROXY_TYPE_AUTO) {
 		proxy_config.method = g_strdup("auto");
 		proxy_config.url = g_strdup(proxy_address);
-		connman_service_set_proxy_config(service, &proxy_config);
+		err = connman_service_set_proxy_config(service, &proxy_config);
 		g_free(proxy_config.method);
 		g_free(proxy_config.url);
 	}
+
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
 
 	return WIFI_ERROR_NONE;
 }
@@ -637,6 +661,8 @@ EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap,
 					wifi_proxy_type_e proxy_type)
 {
+	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -662,13 +688,17 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap,
 	}
 
 	if (proxy_type == WIFI_PROXY_TYPE_DIRECT) {
-		connman_service_set_proxy_config(service, &proxy_config);
-		g_free(proxy_config.method);
+		err = connman_service_set_proxy_config(service, &proxy_config);
 	} else {
 		((net_profile_info_t *) ap)->proxy_type = proxy_type;
 	}
 
-	return 0;
+	g_free(proxy_config.method);
+
+	if (err != CONNMAN_LIB_ERR_NONE)
+		return _wifi_connman_lib_error2wifi_error(err);
+
+	return WIFI_ERROR_NONE;
 }
 
 EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order,
