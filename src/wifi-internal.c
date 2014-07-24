@@ -597,8 +597,7 @@ int _wifi_activate(wifi_activated_cb callback, void *user_data)
 	if (!technology)
 		return WIFI_ERROR_INVALID_OPERATION;
 
-	if (winet_wifi_set_work_mode(WIFI_WORK_MODE_STATION) < 0)
-		return WIFI_ERROR_OPERATION_FAILED;
+	winet_wifi_set_work_mode(WIFI_WORK_MODE_STATION);
 
 	err = connman_enable_technology(technology);
 	if (err != CONNMAN_LIB_ERR_NONE)
@@ -619,8 +618,7 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 	if (err != CONNMAN_LIB_ERR_NONE)
 		return _wifi_connman_lib_error2wifi_error(err);
 
-	if (winet_wifi_set_work_mode(WIFI_WORK_MODE_OFF) < 0)
-		return WIFI_ERROR_OPERATION_FAILED;
+	winet_wifi_set_work_mode(WIFI_WORK_MODE_OFF);
 
 	return WIFI_ERROR_NONE;
 }
