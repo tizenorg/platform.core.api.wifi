@@ -452,6 +452,10 @@ typedef struct
 {
 	/** Profile name */
 	char *profile_name;
+	/** Infrastucture / ad-hoc / auto mode */
+	wlan_connection_mode_type_t wlan_mode;
+	/** security mode type */
+	wlan_security_mode_type_t sec_mode;
 	char *essid;
 	wifi_proxy_type_e proxy_type;
 } net_profile_info_t;

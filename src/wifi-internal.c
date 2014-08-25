@@ -173,6 +173,143 @@ wifi_error_e _wifi_connman_lib_error2wifi_error(enum connman_lib_err err_type)
 	}
 }
 
+static unsigned int __wifi_essid_strlen(const char *s)
+{
+	const char *p = s;
+	while (*p)
+		p++;
+	return p - s;
+}
+
+static const char *__mode2string(wlan_connection_mode_type_t wlan_mode)
+{
+	switch (wlan_mode) {
+	case NETPM_WLAN_CONNMODE_AUTO:
+		break;
+	case NETPM_WLAN_CONNMODE_INFRA:
+		return "managed";
+	case NETPM_WLAN_CONNMODE_ADHOC:
+		return "adhoc";
+	}
+
+	return NULL;
+}
+
+static const char *__security2string(wlan_security_mode_type_t sec_mode)
+{
+	switch (sec_mode) {
+	case WLAN_SEC_MODE_NONE:
+		return "none";
+	case WLAN_SEC_MODE_WEP:
+		return "wep";
+	case WLAN_SEC_MODE_WPA_PSK:
+	case WLAN_SEC_MODE_WPA2_PSK:
+		return "psk";
+	case WLAN_SEC_MODE_IEEE8021X:
+		return "ieee8021x";
+	}
+
+	return NULL;
+}
+
+static wifi_security_type_e __string2security(char **security)
+{
+	wifi_security_type_e sec_mode = WIFI_SECURITY_TYPE_NONE;
+
+	while (*security) {
+		WIFI_LOG(WIFI_INFO, "security is %s\n", *security);
+		if (!g_strcmp0(*security, "none"))
+			sec_mode = WIFI_SECURITY_TYPE_NONE;
+		else if (!g_strcmp0(*security, "wep"))
+			sec_mode = WIFI_SECURITY_TYPE_WEP;
+		else if (!g_strcmp0(*security, "psk"))
+			sec_mode = WIFI_SECURITY_TYPE_WPA_PSK;
+		else if (!g_strcmp0(*security, "ieee8021x"))
+			sec_mode = WIFI_SECURITY_TYPE_EAP;
+		else if (!g_strcmp0(*security, "wpa"))
+			sec_mode = WIFI_SECURITY_TYPE_WPA_PSK;
+		else if (!g_strcmp0(*security, "rsn"))
+			sec_mode = WIFI_SECURITY_TYPE_WPA2_PSK;
+		else if (!g_strcmp0(*security, "wps")) {
+			security++;
+			continue;
+		} else
+			sec_mode = WIFI_SECURITY_TYPE_NONE;
+
+		security++;
+	}
+
+	return sec_mode;
+}
+
+static char *__create_group(net_profile_info_t *profile_info)
+{
+	GString *str;
+	unsigned int i;
+	unsigned int essid_len;
+
+	const char *mode;
+	const char *security;
+
+	essid_len = __wifi_essid_strlen(profile_info->essid);
+	if (essid_len == 0)
+		return NULL;
+
+	str = g_string_sized_new((essid_len * 2) + 24);
+	if (!str)
+		return NULL;
+
+	if (essid_len > 0 && profile_info->essid[0] != '\0') {
+		for (i = 0; i < essid_len; i++)
+			g_string_append_printf(str, "%02x",
+						profile_info->essid[i]);
+	} else
+		g_string_append_printf(str, "hidden");
+
+	mode = __mode2string(profile_info->wlan_mode);
+	if (mode)
+		g_string_append_printf(str, "_%s", mode);
+
+	security = __security2string(profile_info->sec_mode);
+	if (security)
+		g_string_append_printf(str, "_%s", security);
+
+	return g_string_free(str, FALSE);
+}
+
+struct connman_service *__get_connman_service(net_profile_info_t *profile_info)
+{
+	char *grp_name;
+	const char *path;
+	GList *iter;
+	GList *connman_services_list = NULL;
+
+	WIFI_LOG(WIFI_INFO, "%s\n", profile_info->essid);
+	WIFI_LOG(WIFI_INFO, "%d\n", profile_info->sec_mode);
+
+	grp_name = __create_group(profile_info);
+	if (grp_name == NULL)
+		return NULL;
+
+	WIFI_LOG(WIFI_INFO, "grp_name is %s\n", grp_name);
+
+	connman_services_list = connman_get_services();
+
+	for (iter = connman_services_list; iter != NULL; iter = iter->next) {
+		struct connman_service *service =
+			(struct connman_service *)(iter->data);
+		path = connman_service_get_path(service);
+
+		if (g_str_has_suffix(path, grp_name)) {
+			g_free(profile_info->profile_name);
+			profile_info->profile_name = g_strdup(path);
+			return service;
+		}
+	}
+
+	return NULL;
+}
+
 static void __libnet_set_connected_cb(wifi_connected_cb user_cb,
 						void *user_data)
 {
@@ -417,6 +554,7 @@ static void service_state_changed(struct connman_service *service,
 {
 	const char *name = connman_service_get_name(service);
 	const char *new_state = connman_service_get_state(service);
+	char **security = connman_service_get_security(service);
 
 	WIFI_LOG(WIFI_INFO, "name %s, state, %s", name, new_state);
 
@@ -426,6 +564,8 @@ static void service_state_changed(struct connman_service *service,
 		wifi_ap_h ap;
 
 		wifi_ap_create(name, &ap);
+		wifi_ap_set_security_type(ap,
+					__string2security(security));
 
 		wifi_callbacks.connection_state_cb(state,
 				ap,
@@ -625,16 +765,14 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 
 bool _wifi_libnet_check_ap_validity(wifi_ap_h ap_h)
 {
-	struct connman_service *service = _wifi_get_service_h(ap_h);
-	if (!service)
-		return false;
+	GSList *iter;
 
-	const char *name = connman_service_get_name(service);
+	for (iter = ap_handle_list; iter != NULL; iter = iter->next) {
+		if (ap_h == iter->data)
+			return true;
+	}
 
-	if (!name)
-		return false;
-
-	return true;
+	return false;
 }
 
 void _wifi_libnet_add_to_ap_list(wifi_ap_h ap_h)
@@ -855,15 +993,21 @@ bool _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback,
 	}
 
 	for (iter = connman_services_list; iter != NULL; iter = iter->next) {
-		wifi_ap_h ap;
 		struct connman_service *service = iter->data;
-		const char *essid = connman_service_get_name(service);
+		if (!g_strcmp0(connman_service_get_type(service), "wifi")) {
+			wifi_ap_h ap;
+			const char *essid = connman_service_get_name(service);
+			char **security = connman_service_get_security(service);
 
-		WIFI_LOG(WIFI_INFO, "essid is %s", essid);
+			WIFI_LOG(WIFI_INFO, "essid is %s", essid);
 
-		wifi_ap_create(essid, &ap);
-		rv = callback(ap, user_data);
-		if (rv == false) break;
+			wifi_ap_create(essid, &ap);
+			wifi_ap_set_security_type(ap,
+						__string2security(security));
+			rv = callback(ap, user_data);
+			if (rv == false)
+				break;
+		}
 	}
 
 	return true;
@@ -1032,10 +1176,13 @@ int _wifi_unset_connection_state_cb()
 
 struct connman_service *_wifi_get_service_h(wifi_ap_h ap_h)
 {
-	struct connman_service *service =
-		connman_get_service(((net_profile_info_t *) ap_h)->essid);
-	if (!service)
-		return NULL;
+	struct connman_service *service;
+
+	net_profile_info_t *profile_info = ap_h;
+	if (profile_info->profile_name == NULL)
+		service = __get_connman_service(profile_info);
+	else
+		service = connman_get_service(profile_info->profile_name);
 
 	return service;
 }
