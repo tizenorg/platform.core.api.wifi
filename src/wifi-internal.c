@@ -646,6 +646,7 @@ void _wifi_libnet_remove_from_ap_list(wifi_ap_h ap_h)
 {
 	net_profile_info_t *ap_info = ap_h;
 	ap_handle_list = g_slist_remove(ap_handle_list, ap_info);
+	g_free(ap_info->profile_name);
 	g_free(ap_info->essid);
 	g_free(ap_h);
 }

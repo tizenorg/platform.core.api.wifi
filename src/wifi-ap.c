@@ -57,6 +57,7 @@ static void __wifi_init_ap(net_profile_info_t *profile_info,
 							const char *essid)
 {
 	profile_info->essid = g_strdup(essid);
+	profile_info->profile_name = NULL;
 	profile_info->proxy_type = WIFI_PROXY_TYPE_AUTO;
 }
 
