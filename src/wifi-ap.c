@@ -58,6 +58,8 @@ static void __wifi_init_ap(net_profile_info_t *profile_info,
 {
 	profile_info->essid = g_strdup(essid);
 	profile_info->profile_name = NULL;
+	profile_info->wlan_mode = NETPM_WLAN_CONNMODE_INFRA;
+	profile_info->sec_mode = WLAN_SEC_MODE_NONE;
 	profile_info->proxy_type = WIFI_PROXY_TYPE_AUTO;
 }
 
@@ -746,6 +748,29 @@ EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap,
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	net_profile_info_t *profile_info = ap;
+
+	switch (type) {
+	case WIFI_SECURITY_TYPE_NONE:
+		profile_info->sec_mode = WLAN_SEC_MODE_NONE;
+		break;
+	case WIFI_SECURITY_TYPE_WEP:
+		profile_info->sec_mode = WLAN_SEC_MODE_WEP;
+		break;
+	case WIFI_SECURITY_TYPE_EAP:
+		profile_info->sec_mode = WLAN_SEC_MODE_IEEE8021X;
+		break;
+	case WIFI_SECURITY_TYPE_WPA_PSK:
+		profile_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
+		break;
+	case WIFI_SECURITY_TYPE_WPA2_PSK:
+		profile_info->sec_mode = WLAN_SEC_MODE_WPA2_PSK;
+		break;
+	default:
+		profile_info->sec_mode = WLAN_SEC_MODE_NONE;
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
