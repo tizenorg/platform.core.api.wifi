@@ -1005,6 +1005,8 @@ bool _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback,
 			wifi_ap_set_security_type(ap,
 						__string2security(security));
 			rv = callback(ap, user_data);
+			wifi_ap_destroy(ap);
+
 			if (rv == false)
 				break;
 		}

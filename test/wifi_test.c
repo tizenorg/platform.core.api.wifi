@@ -209,14 +209,12 @@ static bool __test_found_ap_callback(wifi_ap_h ap, void *user_data)
 		printf("Fail to get State [%s]\n",
 				__test_convert_error_to_string(rv));
 		g_free(ap_name);
-		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	printf("AP name : %s, state : %s\n", ap_name,
 					__test_print_state(state));
 	g_free(ap_name);
-	wifi_ap_destroy(ap);
 
 	return true;
 }
@@ -248,7 +246,6 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 			if (rv != WIFI_ERROR_NONE) {
 				printf("Fail to set passphrase : %s\n", __test_convert_error_to_string(rv));
 				g_free(ap_name);
-				wifi_ap_destroy(ap);
 				return false;
 			}
 		}
@@ -260,12 +257,10 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 			printf("Success to connection request [%s]\n", ap_name);
 
 		g_free(ap_name);
-		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
-	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -289,12 +284,10 @@ static bool __test_found_disconnect_ap_callback(wifi_ap_h ap, void *user_data)
 			printf("Success to disconnection request %s\n", ap_name);
 
 		g_free(ap_name);
-		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
-	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -318,12 +311,10 @@ static bool __test_found_forget_ap_callback(wifi_ap_h ap, void *user_data)
 			printf("Success to forget [%s]\n", ap_name);
 
 		g_free(ap_name);
-		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
-	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -347,7 +338,6 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		rv = scanf("%9d", &method);
 		if (rv <= 0) {
 			g_free(ap_name);
-			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -364,7 +354,6 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		default:
 			printf("Invalid input!\n");
 			g_free(ap_name);
-			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -434,12 +423,10 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		}
 
 		g_free(ap_name);
-		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
-	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -465,7 +452,6 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 		rv = scanf("%9d", &method);
 		if (rv <= 0) {
 			g_free(ap_name);
-			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -482,7 +468,6 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 		default:
 			printf("Invalid input!\n");
 			g_free(ap_name);
-			wifi_ap_destroy(ap);
 			return false;
 		}
 
@@ -510,12 +495,10 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 		}
 
 		g_free(ap_name);
-		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
-	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -598,12 +581,10 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 			printf("Fail to get Gateway\n");
 
 		g_free(ap_name);
-		wifi_ap_destroy(ap);
 		return false;
 	}
 
 	g_free(ap_name);
-	wifi_ap_destroy(ap);
 	return true;
 }
 
@@ -789,13 +770,13 @@ int test_get_connected_ap(void)
 	rv = wifi_ap_get_essid(ap_h, &ap_name);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to get essid [%s]\n", __test_convert_error_to_string(rv));
-		/*wifi_ap_destroy(ap_h);*/
+		wifi_ap_destroy(ap_h);
 		return -1;
 	}
 
 	printf("Connected AP : %s\n", ap_name);
 	g_free(ap_name);
-	/*wifi_ap_destroy(ap_h);*/
+	wifi_ap_destroy(ap_h);
 
 	return 1;
 }
