@@ -224,30 +224,30 @@ static bool __test_found_ap_callback(wifi_ap_h ap, void *user_data)
 static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv = 0;
-	char *ap_name = NULL;
-	char *ap_name_part = (char*)user_data;
+	char *ap_bssid = NULL;
+	char *ap_bssid_part = (char*)user_data;
 
-	rv = wifi_ap_get_essid(ap, &ap_name);
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP bssid [%s]\n", __test_convert_error_to_string(rv));
 		return false;
 	}
 
-	printf(" get AP ap_name_part %s, AP name [%s]\n",ap_name_part, ap_name);
+	printf(" get AP ap_bssid_part %s, AP name [%s]\n",ap_bssid_part, ap_bssid);
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (strstr(ap_bssid, ap_bssid_part) != NULL) {
 		bool required = false;
 		wifi_ap_is_passphrase_required(ap, &required);
 
 		if (required) {
 			char passphrase[100];
-			printf("Input passphrase for %s : ", ap_name);
+			printf("Input passphrase for %s : ", ap_bssid);
 			rv = scanf("%99s", passphrase);
 
 			rv = wifi_ap_set_passphrase(ap, passphrase);
 			if (rv != WIFI_ERROR_NONE) {
 				printf("Fail to set passphrase : %s\n", __test_convert_error_to_string(rv));
-				g_free(ap_name);
+				g_free(ap_bssid);
 				wifi_ap_destroy(ap);
 				return false;
 			}
@@ -255,16 +255,16 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 
 		rv = wifi_connect(ap, __test_connected_callback, NULL);
 		if (rv != WIFI_ERROR_NONE)
-			printf("Fail to connection request [%s] : %s\n", ap_name, __test_convert_error_to_string(rv));
+			printf("Fail to connection request [%s] : %s\n", ap_bssid, __test_convert_error_to_string(rv));
 		else
-			printf("Success to connection request [%s]\n", ap_name);
+			printf("Success to connection request [%s]\n", ap_bssid);
 
-		g_free(ap_name);
+		g_free(ap_bssid);
 		wifi_ap_destroy(ap);
 		return false;
 	}
 
-	g_free(ap_name);
+	g_free(ap_bssid);
 	wifi_ap_destroy(ap);
 	return true;
 }
@@ -272,28 +272,28 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 static bool __test_found_disconnect_ap_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv = 0;
-	char *ap_name = NULL;
-	char *ap_name_part = (char*)user_data;
+	char *ap_bssid = NULL;
+	char *ap_bssid_part = (char*)user_data;
 
-	rv = wifi_ap_get_essid(ap, &ap_name);
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP bssid [%s]\n", __test_convert_error_to_string(rv));
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (strstr(ap_bssid, ap_bssid_part) != NULL) {
 		rv = wifi_disconnect(ap, __test_disconnected_callback, NULL);
 		if (rv != WIFI_ERROR_NONE)
-			printf("Fail to disconnection reqeust %s : [%s]\n", ap_name, __test_convert_error_to_string(rv));
+			printf("Fail to disconnection reqeust %s : [%s]\n", ap_bssid, __test_convert_error_to_string(rv));
 		else
-			printf("Success to disconnection request %s\n", ap_name);
+			printf("Success to disconnection request %s\n", ap_bssid);
 
-		g_free(ap_name);
+		g_free(ap_bssid);
 		wifi_ap_destroy(ap);
 		return false;
 	}
 
-	g_free(ap_name);
+	g_free(ap_bssid);
 	wifi_ap_destroy(ap);
 	return true;
 }
@@ -301,28 +301,28 @@ static bool __test_found_disconnect_ap_callback(wifi_ap_h ap, void *user_data)
 static bool __test_found_forget_ap_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv = 0;
-	char *ap_name = NULL;
-	char *ap_name_part = (char*)user_data;
+	char *ap_bssid = NULL;
+	char *ap_bssid_part = (char*)user_data;
 
-	rv = wifi_ap_get_essid(ap, &ap_name);
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP bssid [%s]\n", __test_convert_error_to_string(rv));
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (strstr(ap_bssid, ap_bssid_part) != NULL) {
 		rv = wifi_forget_ap(ap);
 		if (rv != WIFI_ERROR_NONE)
-			printf("Fail to forget [%s] : %s\n", ap_name, __test_convert_error_to_string(rv));
+			printf("Fail to forget [%s] : %s\n", ap_bssid, __test_convert_error_to_string(rv));
 		else
-			printf("Success to forget [%s]\n", ap_name);
+			printf("Success to forget [%s]\n", ap_bssid);
 
-		g_free(ap_name);
+		g_free(ap_bssid);
 		wifi_ap_destroy(ap);
 		return false;
 	}
 
-	g_free(ap_name);
+	g_free(ap_bssid);
 	wifi_ap_destroy(ap);
 	return true;
 }
@@ -330,23 +330,23 @@ static bool __test_found_forget_ap_callback(wifi_ap_h ap, void *user_data)
 static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv;
-	char *ap_name;
-	char *ap_name_part = (char*)user_data;
+	char *ap_bssid;
+	char *ap_bssid_part = (char*)user_data;
 
-	rv = wifi_ap_get_essid(ap, &ap_name);
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP bssid [%s]\n", __test_convert_error_to_string(rv));
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (strstr(ap_bssid, ap_bssid_part) != NULL) {
 		wifi_ip_config_type_e type;
 		int method;
 
 		printf("Input new method type (1:dhcp, 2:manual, 3:auto) :\n");
 		rv = scanf("%9d", &method);
 		if (rv <= 0) {
-			g_free(ap_name);
+			g_free(ap_bssid);
 			wifi_ap_destroy(ap);
 			return false;
 		}
@@ -363,7 +363,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 			break;
 		default:
 			printf("Invalid input!\n");
-			g_free(ap_name);
+			g_free(ap_bssid);
 			wifi_ap_destroy(ap);
 			return false;
 		}
@@ -433,12 +433,12 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 			}
 		}
 
-		g_free(ap_name);
+		g_free(ap_bssid);
 		wifi_ap_destroy(ap);
 		return false;
 	}
 
-	g_free(ap_name);
+	g_free(ap_bssid);
 	wifi_ap_destroy(ap);
 	return true;
 }
@@ -446,17 +446,17 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv;
-	char *ap_name;
-	char *ap_name_part = (char*)user_data;
+	char *ap_bssid;
+	char *ap_bssid_part = (char*)user_data;
 
-	rv = wifi_ap_get_essid(ap, &ap_name);
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP bssid [%s]\n", __test_convert_error_to_string(rv));
 		return false;
 	}
 
-	printf("ap_name %s, user input name %s\n", ap_name, ap_name_part);
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	printf("ap_bssid %s, user input name %s\n", ap_bssid, ap_bssid_part);
+	if (strstr(ap_bssid, ap_bssid_part) != NULL) {
 		wifi_proxy_type_e type;
 		char proxy_addr[65];
 		int method;
@@ -464,7 +464,7 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 		printf("Input new method type (1:direct, 2:manual, 3:auto) :\n");
 		rv = scanf("%9d", &method);
 		if (rv <= 0) {
-			g_free(ap_name);
+			g_free(ap_bssid);
 			wifi_ap_destroy(ap);
 			return false;
 		}
@@ -481,7 +481,7 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 			break;
 		default:
 			printf("Invalid input!\n");
-			g_free(ap_name);
+			g_free(ap_bssid);
 			wifi_ap_destroy(ap);
 			return false;
 		}
@@ -509,12 +509,12 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 				printf("Fail to set proxy address[%s]\n", __test_convert_error_to_string(rv));
 		}
 
-		g_free(ap_name);
+		g_free(ap_bssid);
 		wifi_ap_destroy(ap);
 		return false;
 	}
 
-	g_free(ap_name);
+	g_free(ap_bssid);
 	wifi_ap_destroy(ap);
 	return true;
 }
@@ -522,25 +522,27 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv;
-	char *ap_name;
+	char *ap_bssid;
+	char *ap_essid;
 	char *str_value;
 	int int_value;
 	wifi_connection_state_e conn_state;
 	wifi_ip_config_type_e ip_type;
 	bool bool_value;
-	char *ap_name_part = (char*)user_data;
+	char *ap_bssid_part = (char*)user_data;
 
-	rv = wifi_ap_get_essid(ap, &ap_name);
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP name [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP bssid [%s]\n", __test_convert_error_to_string(rv));
 		return false;
 	}
 
-	printf("ap_name %s, user input name %s\n", ap_name, ap_name_part);
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	printf("ap_bssid %s, user input name %s\n", ap_bssid, ap_bssid_part);
+	if (strstr(ap_bssid, ap_bssid_part) != NULL) {
 
 		/* Basic info */
-		printf("ESSID : %s\n", ap_name);
+		wifi_ap_get_essid(ap, &ap_essid);
+		printf("ESSID : %s\n", ap_essid);
 
 		if (wifi_ap_get_bssid(ap, &str_value) == WIFI_ERROR_NONE) {
 			printf("BSSID : %s\n", str_value);
@@ -597,12 +599,12 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 		} else
 			printf("Fail to get Gateway\n");
 
-		g_free(ap_name);
+		g_free(ap_bssid);
 		wifi_ap_destroy(ap);
 		return false;
 	}
 
-	g_free(ap_name);
+	g_free(ap_bssid);
 	wifi_ap_destroy(ap);
 	return true;
 }
@@ -1066,9 +1068,9 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 	}
 
 	if (rv == 1)
-		printf("Operation succeeded!\n");
+		printf("Operation finished!\n");
 	else
-		printf("Operation filed!\n");
+		printf("Operation failed!\n");
 
 	return TRUE;
 }
