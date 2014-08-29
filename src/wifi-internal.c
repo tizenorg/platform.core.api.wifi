@@ -415,17 +415,18 @@ static wifi_connection_state_e connection_state_string2type(const char *str)
 static void service_state_changed(struct connman_service *service,
 							void *user_data)
 {
-	const char *name = connman_service_get_name(service);
+	const char *bssid = connman_service_get_bssid(service);
 	const char *new_state = connman_service_get_state(service);
 
-	WIFI_LOG(WIFI_INFO, "name %s, state, %s", name, new_state);
+	WIFI_LOG(WIFI_INFO, "bssid %s, state, %s", bssid, new_state);
 
 	if (wifi_callbacks.connection_state_cb) {
 		wifi_connection_state_e state =
 				connection_state_string2type(new_state);
 		wifi_ap_h ap;
 
-		wifi_ap_create(name, &ap);
+		if (wifi_ap_create(bssid, &ap) != WIFI_ERROR_NONE)
+			return;
 
 		wifi_callbacks.connection_state_cb(state,
 				ap,
@@ -625,16 +626,14 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 
 bool _wifi_libnet_check_ap_validity(wifi_ap_h ap_h)
 {
-	struct connman_service *service = _wifi_get_service_h(ap_h);
-	if (!service)
-		return false;
+	GSList *iter;
 
-	const char *name = connman_service_get_name(service);
+	for (iter = ap_handle_list; iter != NULL; iter = iter->next) {
+		if (ap_h == iter->data)
+			return true;
+	}
 
-	if (!name)
-		return false;
-
-	return true;
+	return false;
 }
 
 void _wifi_libnet_add_to_ap_list(wifi_ap_h ap_h)
@@ -646,7 +645,7 @@ void _wifi_libnet_remove_from_ap_list(wifi_ap_h ap_h)
 {
 	net_profile_info_t *ap_info = ap_h;
 	ap_handle_list = g_slist_remove(ap_handle_list, ap_info);
-	g_free(ap_info->essid);
+	g_free(ap_info->bssid);
 	g_free(ap_h);
 }
 
@@ -827,8 +826,8 @@ int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
 	if (*ap == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
-	((net_profile_info_t *) (*ap))->essid =
-				g_strdup(connman_service_get_name(ap_h));
+	((net_profile_info_t *) (*ap))->bssid =
+				g_strdup(connman_service_get_bssid(ap_h));
 
 	_wifi_libnet_add_to_ap_list(*ap);
 
@@ -854,15 +853,21 @@ bool _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback,
 	}
 
 	for (iter = connman_services_list; iter != NULL; iter = iter->next) {
-		wifi_ap_h ap;
 		struct connman_service *service = iter->data;
-		const char *essid = connman_service_get_name(service);
+		if (!g_strcmp0(connman_service_get_type(service), "wifi")) {
+			wifi_ap_h ap;
+			struct connman_service *service = iter->data;
+			const char *bssid = connman_service_get_bssid(service);
 
-		WIFI_LOG(WIFI_INFO, "essid is %s", essid);
+			WIFI_LOG(WIFI_INFO, "bssid is %s", bssid);
 
-		wifi_ap_create(essid, &ap);
-		rv = callback(ap, user_data);
-		if (rv == false) break;
+			if (wifi_ap_create(bssid, &ap) != WIFI_ERROR_NONE)
+				continue;
+
+			rv = callback(ap, user_data);
+			if (rv == false)
+				break;
+		}
 	}
 
 	return true;
@@ -1032,7 +1037,7 @@ int _wifi_unset_connection_state_cb()
 struct connman_service *_wifi_get_service_h(wifi_ap_h ap_h)
 {
 	struct connman_service *service =
-		connman_get_service(((net_profile_info_t *) ap_h)->essid);
+		connman_get_service(((net_profile_info_t *) ap_h)->bssid);
 	if (!service)
 		return NULL;
 

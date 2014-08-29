@@ -662,7 +662,7 @@ int wifi_unset_rssi_level_changed_cb(void);
 /**
 * @brief Creates the handle of access point.
 * @remarks @a ap must be released with wifi_ap_destroy().
-* @param[in] essid  The ESSID(Extended Service Set Identifier)
+* @param[in] bssid  The BSSID(Basic Service Set Identifier)
 * @param[out] ap  The handle of access point
 * @return 0 on success, otherwise negative error value.
 * @retval #WIFI_ERROR_NONE  Successful
@@ -670,7 +670,7 @@ int wifi_unset_rssi_level_changed_cb(void);
 * @retval #WIFI_ERROR_OUT_OF_MEMORY  Out of memory
 * @see wifi_ap_destroy()
 */
-int wifi_ap_create(const char* essid, wifi_ap_h* ap);
+int wifi_ap_create(const char* bssid, wifi_ap_h* ap);
 
 /**
 * @brief Destroys the handle of access point.

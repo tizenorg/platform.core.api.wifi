@@ -54,9 +54,9 @@ static void convert_wifi_security(wlan_security_info_t *security_info,
 }
 
 static void __wifi_init_ap(net_profile_info_t *profile_info,
-							const char *essid)
+							const char *bssid)
 {
-	profile_info->essid = g_strdup(essid);
+	profile_info->bssid = g_strdup(bssid);
 	profile_info->proxy_type = WIFI_PROXY_TYPE_AUTO;
 }
 
@@ -90,9 +90,9 @@ wifi_connection_state_e _wifi_convert_to_ap_state(
 }
 
 /* Wi-Fi AP ******************************************************************/
-EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
+EXPORT_API int wifi_ap_create(const char* bssid, wifi_ap_h* ap)
 {
-	if (essid == NULL || ap == NULL) {
+	if (bssid == NULL || ap == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
@@ -102,7 +102,7 @@ EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 	if (ap_info == NULL)
 		return WIFI_ERROR_OUT_OF_MEMORY;
 
-	__wifi_init_ap(ap_info, essid);
+	__wifi_init_ap(ap_info, bssid);
 
 	_wifi_libnet_add_to_ap_list((wifi_ap_h)ap_info);
 	*ap = (wifi_ap_h)ap_info;
