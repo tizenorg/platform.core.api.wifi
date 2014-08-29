@@ -865,6 +865,7 @@ bool _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback,
 				continue;
 
 			rv = callback(ap, user_data);
+			wifi_ap_destroy(ap);
 			if (rv == false)
 				break;
 		}
