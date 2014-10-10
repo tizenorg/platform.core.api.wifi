@@ -148,6 +148,22 @@ char *_wifi_get_ip_config_str(net_ip_config_type_t ip_config_type)
 	return NULL;
 }
 
+net_proxy_type_t _wifi_get_proxy_type(const char *proxy)
+{
+	net_proxy_type_t proxy_type;
+
+	if (!g_strcmp0(proxy, "direct"))
+		proxy_type = NET_PROXY_TYPE_DIRECT;
+	else if (!g_strcmp0(proxy, "manual"))
+		proxy_type = NET_PROXY_TYPE_MANUAL;
+	else if (!g_strcmp0(proxy, "auto"))
+		proxy_type = NET_PROXY_TYPE_AUTO;
+	else
+		proxy_type = NET_PROXY_TYPE_UNKNOWN;
+
+	return proxy_type;
+}
+
 wifi_error_e _wifi_connman_lib_error2wifi_error(enum connman_lib_err err_type)
 {
 	switch (err_type) {
