@@ -612,6 +612,27 @@ EXPORT_API int wifi_ap_get_proxy_address(wifi_ap_h ap,
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
+	const struct service_proxy *proxy;
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	proxy = connman_service_get_proxy_info(service);
+	if(proxy->method == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	net_proxy_type_t proxy_type = _wifi_get_proxy_type(proxy->method);
+
+	if(proxy_type == NET_PROXY_TYPE_AUTO && proxy->url != NULL)
+		*proxy_address = g_strdup(proxy->url);
+	else if(proxy_type == NET_PROXY_TYPE_MANUAL && proxy->servers != NULL)
+		*proxy_address = g_strdup(proxy->servers[0]);
+	else
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	if(*proxy_address == NULL)
+		return WIFI_ERROR_OUT_OF_MEMORY;
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -668,6 +689,29 @@ EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	const struct service_proxy *proxy;
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	proxy = connman_service_get_proxy_info(service);
+	if(proxy->method == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	switch(_wifi_get_proxy_type(proxy->method)) {
+		case NET_PROXY_TYPE_DIRECT:
+			*type = WIFI_PROXY_TYPE_DIRECT;
+			break;
+		case NET_PROXY_TYPE_MANUAL:
+			*type = WIFI_PROXY_TYPE_MANUAL;
+			break;
+		case NET_PROXY_TYPE_AUTO:
+			*type = WIFI_PROXY_TYPE_AUTO;
+			break;
+		default:
+			return WIFI_ERROR_OPERATION_FAILED;
 	}
 
 	return WIFI_ERROR_NONE;
