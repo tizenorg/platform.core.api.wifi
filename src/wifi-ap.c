@@ -676,7 +676,8 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 		proxy_config.url = g_strdup(proxy_address);
 		err = connman_service_set_proxy_config(service, &proxy_config);
 		g_free(proxy_config.url);
-	}
+	} else
+		return WIFI_ERROR_INVALID_PARAMETER;
 
 	if (err != CONNMAN_LIB_ERR_NONE)
 		return _wifi_connman_lib_error2wifi_error(err);
