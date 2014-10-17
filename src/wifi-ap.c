@@ -782,6 +782,37 @@ EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap,
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	char **security = connman_service_get_security(service);
+	if(!security)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	wlan_security_info_t sec_info;
+	convert_wifi_security(&sec_info, security);
+
+	switch (sec_info.sec_mode) {
+		case WLAN_SEC_MODE_NONE:
+			*type = WIFI_SECURITY_TYPE_NONE;
+			break;
+		case WLAN_SEC_MODE_WEP:
+			*type = WIFI_SECURITY_TYPE_WEP;
+			break;
+		case WLAN_SEC_MODE_WPA_PSK:
+			*type = WIFI_SECURITY_TYPE_WPA_PSK;
+			break;
+		case WLAN_SEC_MODE_WPA2_PSK:
+			*type = WIFI_SECURITY_TYPE_WPA2_PSK;
+			break;
+		case WLAN_SEC_MODE_IEEE8021X:
+			*type = WIFI_SECURITY_TYPE_EAP;
+			break;
+		default:
+			return WIFI_ERROR_OPERATION_FAILED;
+	}
+
 	return WIFI_ERROR_NONE;
 }
 
