@@ -227,11 +227,11 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 
 	rv = wifi_ap_get_bssid(ap, &ap_bssid);
 	if (rv != WIFI_ERROR_NONE) {
-		printf("Fail to get AP bssid [%s]\n", __test_convert_error_to_string(rv));
+		printf("Fail to get AP BSSID [%s]\n", __test_convert_error_to_string(rv));
 		return false;
 	}
 
-	printf(" get AP ap_bssid_part %s, AP name [%s]\n",ap_bssid_part, ap_bssid);
+	printf(" get AP ap_bssid_part %s, BSSID name [%s]\n",ap_bssid_part, ap_bssid);
 
 	if (strstr(ap_bssid, ap_bssid_part) != NULL) {
 		bool required = false;
@@ -891,17 +891,17 @@ int test_foreach_found_aps(void)
 int test_connect_ap(void)
 {
 	int rv = 0;
-	char ap_name[33];
+	char ap_bssid_name[33];
 	bool state = false;
 
 	wifi_is_activated(&state);
 	if (state == false)
 		return -1;
 
-	printf("Input a part of AP name to connect : ");
-	rv = scanf("%32s", ap_name);
+	printf("Input a part of BSSID name to connect : ");
+	rv = scanf("%32s", ap_bssid_name);
 
-	rv = wifi_foreach_found_aps(__test_found_connect_ap_callback, ap_name);
+	rv = wifi_foreach_found_aps(__test_found_connect_ap_callback, ap_bssid_name);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to connect (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
@@ -914,17 +914,17 @@ int test_connect_ap(void)
 int test_disconnect_ap(void)
 {
 	int rv = 0;
-	char ap_name[33];
+	char ap_bssid_name[33];
 	bool state = false;
 
 	wifi_is_activated(&state);
 	if (state == false)
 		return -1;
 
-	printf("Input a part of AP name to disconnect : ");
-	rv = scanf("%32s", ap_name);
+	printf("Input a part of BSSID name to disconnect : ");
+	rv = scanf("%32s", ap_bssid_name);
 
-	rv = wifi_foreach_found_aps(__test_found_disconnect_ap_callback, ap_name);
+	rv = wifi_foreach_found_aps(__test_found_disconnect_ap_callback, ap_bssid_name);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to disconnect (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
@@ -937,17 +937,17 @@ int test_disconnect_ap(void)
 int test_forget_ap(void)
 {
 	int rv = 0;
-	char ap_name[33];
+	char ap_bssid_name[33];
 	bool state = false;
 
 	wifi_is_activated(&state);
 	if (state == false)
 		return -1;
 
-	printf("Input a part of AP name to forget : ");
-	rv = scanf("%32s", ap_name);
+	printf("Input a part of BSSID name to forget : ");
+	rv = scanf("%32s", ap_bssid_name);
 
-	rv = wifi_foreach_found_aps(__test_found_forget_ap_callback, ap_name);
+	rv = wifi_foreach_found_aps(__test_found_forget_ap_callback, ap_bssid_name);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to forget (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
@@ -960,19 +960,19 @@ int test_forget_ap(void)
 int test_set_ip_method(void)
 {
 	int rv;
-	char ap_name[33];
+	char ap_bssid_name[33];
 	bool state;
 
 	rv = wifi_is_activated(&state);
 	if (rv != WIFI_ERROR_NONE || state == false)
 		return -1;
 
-	printf("Input a part of AP name to change IP method : ");
-	rv = scanf("%32s", ap_name);
+	printf("Input a part of BSSID name to change IP method : ");
+	rv = scanf("%32s", ap_bssid_name);
 	if (rv <= 0)
 		return -1;
 
-	rv = wifi_foreach_found_aps(__test_found_change_ip_method_callback, ap_name);
+	rv = wifi_foreach_found_aps(__test_found_change_ip_method_callback, ap_bssid_name);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to change (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
@@ -985,19 +985,19 @@ int test_set_ip_method(void)
 int test_set_proxy_method(void)
 {
 	int rv;
-	char ap_name[33];
+	char ap_bssid_name[33];
 	bool state;
 
 	rv = wifi_is_activated(&state);
 	if (rv != WIFI_ERROR_NONE || state == false)
 		return -1;
 
-	printf("Input a part of AP name to change Proxy method : ");
-	rv = scanf("%32s", ap_name);
+	printf("Input a part of BSSID name to change Proxy method : ");
+	rv = scanf("%32s", ap_bssid_name);
 	if (rv <= 0)
 		return -1;
 
-	rv = wifi_foreach_found_aps(__test_found_change_proxy_method_callback, ap_name);
+	rv = wifi_foreach_found_aps(__test_found_change_proxy_method_callback, ap_bssid_name);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to change (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
@@ -1010,19 +1010,19 @@ int test_set_proxy_method(void)
 int test_get_ap_info(void)
 {
 	int rv;
-	char ap_name[33];
+	char ap_bssid_name[33];
 	bool state;
 
 	rv = wifi_is_activated(&state);
 	if (rv != WIFI_ERROR_NONE || state == false)
 		return -1;
 
-	printf("Input a part of AP name to get detailed info : ");
-	rv = scanf("%32s", ap_name);
+	printf("Input a part of BSSID name to get detailed info : ");
+	rv = scanf("%32s", ap_bssid_name);
 	if (rv <= 0)
 		return -1;
 
-	rv = wifi_foreach_found_aps(__test_found_print_ap_info_callback, ap_name);
+	rv = wifi_foreach_found_aps(__test_found_print_ap_info_callback, ap_bssid_name);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to get AP info (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
