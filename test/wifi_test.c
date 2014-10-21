@@ -99,6 +99,7 @@ static void __test_connection_state_callback(
 {
 	int rv = 0;
 	char *ap_name = NULL;
+	char *ap_bssid = NULL;
 
 	printf("Connection state changed callback");
 
@@ -126,6 +127,15 @@ static void __test_connection_state_callback(
 	else {
 		printf(", AP name : %s\n", ap_name);
 		g_free(ap_name);
+	}
+
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
+	if (rv != WIFI_ERROR_NONE)
+		printf(", Fail to get AP BSSID [%s]\n",
+				__test_convert_error_to_string(rv));
+	else {
+		printf(", AP BSSID : %s\n", ap_bssid);
+		g_free(ap_bssid);
 	}
 }
 
@@ -195,6 +205,7 @@ static bool __test_found_ap_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv = 0;
 	char *ap_name = NULL;
+	char *ap_bssid = NULL;
 	wifi_connection_state_e state;
 
 	rv = wifi_ap_get_essid(ap, &ap_name);
@@ -204,17 +215,27 @@ static bool __test_found_ap_callback(wifi_ap_h ap, void *user_data)
 		return false;
 	}
 
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
+	if (rv != WIFI_ERROR_NONE) {
+		printf("Fail to get AP BSSID [%s]\n",
+				__test_convert_error_to_string(rv));
+		return false;
+	}
+
 	rv = wifi_ap_get_connection_state(ap, &state);
 	if (rv != WIFI_ERROR_NONE) {
 		printf("Fail to get State [%s]\n",
 				__test_convert_error_to_string(rv));
 		g_free(ap_name);
+		g_free(ap_bssid);
 		return false;
 	}
 
-	printf("AP name : %s, state : %s\n", ap_name,
+	printf("AP name : %s \n", ap_name);
+	printf(", AP BSSID : %s, state : %s\n", ap_bssid,
 					__test_print_state(state));
 	g_free(ap_name);
+	g_free(ap_bssid);
 
 	return true;
 }
@@ -506,7 +527,6 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv;
 	char *ap_bssid;
-	char *ap_essid;
 	char *str_value;
 	int int_value;
 	wifi_connection_state_e conn_state;
@@ -529,8 +549,11 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 	if (strstr(ap_bssid, ap_bssid_part) != NULL) {
 
 		/* Basic info */
-		wifi_ap_get_essid(ap, &ap_essid);
-		printf("ESSID : %s\n", ap_essid);
+		if (wifi_ap_get_essid(ap, &str_value) == WIFI_ERROR_NONE) {
+			printf("ESSID : %s\n", str_value);
+			g_free(str_value);
+		} else
+			printf("Fail to get ESSID\n");
 
 		if (wifi_ap_get_bssid(ap, &str_value) == WIFI_ERROR_NONE) {
 			printf("BSSID : %s\n", str_value);
@@ -851,6 +874,7 @@ int test_get_connected_ap(void)
 {
 	int rv = 0;
 	char *ap_name = NULL;
+	char *ap_bssid = NULL;
 	wifi_ap_h ap_h;
 
 	rv = wifi_get_connected_ap(&ap_h);
@@ -866,8 +890,17 @@ int test_get_connected_ap(void)
 		return -1;
 	}
 
+	rv = wifi_ap_get_bssid(ap_h, &ap_bssid);
+	if (rv != WIFI_ERROR_NONE) {
+		printf("Fail to get BSSID [%s]\n", __test_convert_error_to_string(rv));
+		wifi_ap_destroy(ap_h);
+		return -1;
+	}
+
 	printf("Connected AP : %s\n", ap_name);
+	printf(", AP BSSID : %s\n", ap_bssid);
 	g_free(ap_name);
+	g_free(ap_bssid);
 	wifi_ap_destroy(ap_h);
 
 	return 1;
