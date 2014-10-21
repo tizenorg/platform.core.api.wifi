@@ -282,7 +282,7 @@ EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap,
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_ap_wifi_get_ip_config_type(wifi_ap_h ap,
+EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap,
 				wifi_address_family_e address_family,
 				wifi_ip_config_type_e* type)
 {
