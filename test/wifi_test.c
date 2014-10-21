@@ -341,6 +341,46 @@ static bool __test_found_forget_ap_callback(wifi_ap_h ap, void *user_data)
 	return true;
 }
 
+static bool __test_found_change_dns_method_callback(wifi_ap_h ap, void *user_data)
+{
+	int rv;
+	char *ap_bssid;
+	char *ap_bssid_input = (char *) user_data;
+
+	rv = wifi_ap_get_bssid(ap, &ap_bssid);
+	if (rv != WIFI_ERROR_NONE) {
+		printf("Fail to get AP bssid [%s]\n", __test_convert_error_to_string(rv));
+		return false;
+	}
+
+	if (strstr(ap_bssid, ap_bssid_input) != NULL) {
+		int order;
+		char ip_addr[16];
+
+		printf("Input a new DNS order (1:DNS1, 2:DNS2) :\n");
+		rv = scanf("%9d", &order);
+		if (rv <= 0) {
+			g_free(ap_bssid);
+			return false;
+		}
+
+		printf("Input a new DNS address :\n");
+		rv = scanf("%15s", ip_addr);
+		if (rv > 0) {
+			rv = wifi_ap_set_dns_address(ap, order, WIFI_ADDRESS_FAMILY_IPV4, ip_addr);
+				if (rv != WIFI_ERROR_NONE)
+					printf("Fail to set DNS method[%s]\n",
+						__test_convert_error_to_string(rv));
+		}
+
+		g_free(ap_bssid);
+		return false;
+	}
+
+	g_free(ap_bssid);
+	return true;
+}
+
 static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv;
@@ -353,7 +393,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		return false;
 	}
 
-	if (!g_strcmp0(ap_bssid, ap_bssid_input) != NULL) {
+	if (!g_strcmp0(ap_bssid, ap_bssid_input)) {
 		wifi_ip_config_type_e type;
 		int method;
 
@@ -466,7 +506,7 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 	}
 
 	printf("ap_bssid %s, user input name %s\n", ap_bssid, ap_bssid_input);
-	if (!g_strcmp0(ap_bssid, ap_bssid_input) != NULL) {
+	if (!g_strcmp0(ap_bssid, ap_bssid_input)) {
 		wifi_proxy_type_e type;
 		char proxy_addr[65];
 		int method;
@@ -548,7 +588,7 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 	}
 
 	printf("ap_bssid %s, user input name %s\n", ap_bssid, ap_bssid_input);
-	if (!g_strcmp0(ap_bssid, ap_bssid_input) != NULL) {
+	if (!g_strcmp0(ap_bssid, ap_bssid_input)) {
 
 		/* Basic info */
 		if (wifi_ap_get_essid(ap, &str_value) == WIFI_ERROR_NONE) {
@@ -993,6 +1033,31 @@ int test_forget_ap(void)
 	return 1;
 }
 
+int test_set_dns_method(void)
+{
+	int rv;
+	char ap_bssid[NET_MAX_BSSID_LEN];
+	bool state;
+
+	rv = wifi_is_activated(&state);
+	if (rv != WIFI_ERROR_NONE || state == false)
+		return -1;
+
+	printf("Input a BSSID to change DNS method : ");
+	rv = scanf("%17s", ap_bssid);
+	if (rv <= 0)
+		return -1;
+
+	rv = wifi_foreach_found_aps(__test_found_change_dns_method_callback, ap_bssid);
+	if (rv != WIFI_ERROR_NONE) {
+		printf("Fail to change (can't get AP list) [%s]\n", __test_convert_error_to_string(rv));
+		return -1;
+	}
+
+	printf("dns method changing finished\n");
+	return 1;
+}
+
 int test_set_ip_method(void)
 {
 	int rv;
@@ -1116,6 +1181,7 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("c 	- Connect\n");
 		printf("d 	- Disconnect\n");
 		printf("f 	- Forget an AP\n");
+		printf("g 	- Set DNS address\n");
 		printf("h 	- Set IP method type\n");
 		printf("i 	- Set Proxy method type\n");
 		printf("j 	- Get AP info\n");
@@ -1160,6 +1226,9 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		break;
 	case 'f':
 		rv = test_forget_ap();
+		break;
+	case 'g':
+		rv = test_set_dns_method();
 		break;
 	case 'h':
 		rv = test_set_ip_method();
