@@ -43,6 +43,8 @@ extern "C"
                                            CONSTANTS
 ==================================================================================================
 */
+/** MAX number of DNS Address */
+#define	NET_DNS_ADDR_MAX 2
 
 /** Maximum length of MAC address  */
 #define	NET_MAX_MAC_ADDR_LEN 32   /*ADDED:*/
