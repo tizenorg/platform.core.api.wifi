@@ -763,6 +763,48 @@ EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order,
 				wifi_address_family_e address_family,
 				char** dns_address)
 {
+	if (_wifi_libnet_check_ap_validity(ap) == false ||
+	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
+	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
+	    dns_address == NULL ||
+	    order <= 0 ||
+	    order > NET_DNS_ADDR_MAX) {
+		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
+		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
+	}
+
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	int count = 0;
+	char **iter;
+	char **nameservers = connman_service_get_nameservers(service);
+	if (!nameservers)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	iter = nameservers;
+	while (*iter) {
+		if (count == (order - 1)) {
+			*dns_address = g_strdup(*iter);
+			if (*dns_address == NULL)
+				return WIFI_ERROR_OUT_OF_MEMORY;
+
+			break;
+		}
+
+		iter++;
+		count++;
+	}
+
+	if (*dns_address == NULL)
+		return WIFI_ERROR_OPERATION_FAILED;
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -770,6 +812,53 @@ EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order,
 				wifi_address_family_e address_family,
 				const char* dns_address)
 {
+	if (_wifi_libnet_check_ap_validity(ap) == false ||
+	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
+	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
+	    order <= 0 ||
+	    order > NET_DNS_ADDR_MAX) {
+		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
+		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
+	}
+
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	int count = 0;
+	char **new_nameservers;
+	char **old_nameservers;
+
+	new_nameservers = g_try_new0(char *, NET_DNS_ADDR_MAX + 1);
+	old_nameservers = connman_service_get_nameservers(service);
+	if (!old_nameservers)
+		new_nameservers[count] = g_strdup(dns_address);
+
+	while (*old_nameservers) {
+		if (count == (order - 1)) {
+			new_nameservers[count] = g_strdup(dns_address);
+			old_nameservers++;
+			count++;
+
+			continue;
+		}
+
+		new_nameservers[count] = g_strdup(*old_nameservers);
+
+		old_nameservers++;
+		count++;
+	}
+
+	connman_service_set_nameservers_config(service,
+					(const char **) new_nameservers);
+
+	g_strfreev(new_nameservers);
+
 	return WIFI_ERROR_NONE;
 }
 
