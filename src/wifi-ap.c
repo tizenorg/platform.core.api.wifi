@@ -944,6 +944,21 @@ EXPORT_API int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	char **security = connman_service_get_security(service);
+	if (!security)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	wlan_security_info_t sec_info;
+	convert_wifi_security(&sec_info, security);
+	if (sec_info.wps_support)
+		*supported = true;
+	else
+		*supported = false;
+
 	return WIFI_ERROR_NONE;
 }
 
