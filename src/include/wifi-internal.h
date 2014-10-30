@@ -113,6 +113,8 @@ net_wifi_connection_info_t *_wifi_get_conn_info(void);
 char *_wifi_get_ip_config_str(net_ip_config_type_t ip_config_type);
 net_ip_config_type_t _wifi_get_ip_config_type(const char *config);
 net_proxy_type_t _wifi_get_proxy_type(const char *proxy);
+wlan_encryption_mode_type_t _wifi_get_encryption_type
+					(const char *encryption_mode);
 struct connman_service *_wifi_get_service_h(wifi_ap_h ap_h);
 wifi_error_e _wifi_connman_lib_error2wifi_error(enum connman_lib_err err_type);
 

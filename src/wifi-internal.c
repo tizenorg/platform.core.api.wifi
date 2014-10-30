@@ -164,6 +164,27 @@ net_proxy_type_t _wifi_get_proxy_type(const char *proxy)
 	return proxy_type;
 }
 
+wlan_encryption_mode_type_t _wifi_get_encryption_type(
+						const char *encryption_mode)
+{
+	wlan_encryption_mode_type_t encryption_mode_type;
+
+	if (!g_strcmp0(encryption_mode, "none"))
+		encryption_mode_type = WLAN_ENC_MODE_NONE;
+	else if (!g_strcmp0(encryption_mode, "wep"))
+		encryption_mode_type = WLAN_ENC_MODE_WEP;
+	else if (!g_strcmp0(encryption_mode, "tkip"))
+		encryption_mode_type = WLAN_ENC_MODE_TKIP;
+	else if (!g_strcmp0(encryption_mode, "aes"))
+		encryption_mode_type = WLAN_ENC_MODE_AES;
+	else if (!g_strcmp0(encryption_mode, "mixed"))
+		encryption_mode_type = WLAN_ENC_MODE_TKIP_AES_MIXED;
+	else
+		encryption_mode_type = WLAN_ENC_MODE_UNKNOWN;
+
+	return encryption_mode_type;
+}
+
 wifi_error_e _wifi_connman_lib_error2wifi_error(enum connman_lib_err err_type)
 {
 	switch (err_type) {
