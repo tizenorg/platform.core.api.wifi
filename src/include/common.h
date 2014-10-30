@@ -257,8 +257,10 @@ typedef enum
  */
 typedef enum
 {
+	/** Not defined */
+	WLAN_ENC_MODE_UNKNOWN = 0x00,
 	/** Encryption disabled */
-	WLAN_ENC_MODE_NONE = 0x01,
+	WLAN_ENC_MODE_NONE,
 	/** WEP */
 	WLAN_ENC_MODE_WEP,
 	/** TKIP */
