@@ -929,6 +929,35 @@ EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap,
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	const char *encryption_mode;
+	struct connman_service *service = _wifi_get_service_h(ap);
+	if (!service)
+		return WIFI_ERROR_INVALID_PARAMETER;
+
+	encryption_mode = connman_service_get_encryption_mode(service);
+	if (encryption_mode == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	switch (_wifi_get_encryption_type(encryption_mode)) {
+	case WLAN_ENC_MODE_NONE:
+		*type = WIFI_ENCRYPTION_TYPE_NONE;
+		break;
+	case WLAN_ENC_MODE_WEP:
+		*type = WIFI_ENCRYPTION_TYPE_WEP;
+		break;
+	case WLAN_ENC_MODE_TKIP:
+		*type = WIFI_ENCRYPTION_TYPE_TKIP;
+		break;
+	case WLAN_ENC_MODE_AES:
+		*type = WIFI_ENCRYPTION_TYPE_AES;
+		break;
+	case WLAN_ENC_MODE_TKIP_AES_MIXED:
+		*type = WIFI_ENCRYPTION_TYPE_TKIP_AES_MIXED;
+		break;
+	default:
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+
 	return WIFI_ERROR_NONE;
 }
 
@@ -940,7 +969,7 @@ EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap,
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	return WIFI_ERROR_NONE;
+	return WIFI_ERROR_INVALID_OPERATION;
 }
 
 EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
