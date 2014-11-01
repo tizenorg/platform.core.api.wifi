@@ -48,7 +48,7 @@ extern "C"
 #define	NET_MAX_MAC_ADDR_LEN 32   /*ADDED:*/
 
 /** Length of essid */
-#define NET_WLAN_ESSID_LEN      128
+#define NET_WLAN_ESSID_LEN  32 /* As per  IEEE802.11 standard , SSID Length should be 32 Char*/
 
 /**
  * Length of WPS PIN code
