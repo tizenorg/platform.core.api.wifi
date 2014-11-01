@@ -44,8 +44,9 @@ extern "C"
 ==================================================================================================
 */
 
-/** Maximum length of MAC address  */
-#define	NET_MAX_MAC_ADDR_LEN 32   /*ADDED:*/
+/** Maximum length of MAC address:
+ * As per IEEE802.11 spec,  BSSID format: xx:xx:xx:xx:xx:xx*/
+#define NET_MAX_MAC_ADDR_LEN 17
 
 /** Length of essid */
 #define NET_WLAN_ESSID_LEN  32 /* As per  IEEE802.11 standard , SSID Length should be 32 Char*/
