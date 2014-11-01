@@ -353,7 +353,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		return false;
 	}
 
-	if (!g_strcmp0(ap_bssid, ap_bssid_input) != NULL) {
+	if (!g_strcmp0(ap_bssid, ap_bssid_input)) {
 		wifi_ip_config_type_e type;
 		int method;
 
@@ -466,7 +466,7 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 	}
 
 	printf("ap_bssid %s, user input name %s\n", ap_bssid, ap_bssid_input);
-	if (!g_strcmp0(ap_bssid, ap_bssid_input) != NULL) {
+	if (!g_strcmp0(ap_bssid, ap_bssid_input)) {
 		wifi_proxy_type_e type;
 		char proxy_addr[65];
 		int method;
@@ -548,7 +548,7 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 	}
 
 	printf("ap_bssid %s, user input name %s\n", ap_bssid, ap_bssid_input);
-	if (!g_strcmp0(ap_bssid, ap_bssid_input) != NULL) {
+	if (!g_strcmp0(ap_bssid, ap_bssid_input)) {
 
 		/* Basic info */
 		if (wifi_ap_get_essid(ap, &str_value) == WIFI_ERROR_NONE) {
