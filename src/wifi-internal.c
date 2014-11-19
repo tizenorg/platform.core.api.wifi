@@ -927,7 +927,7 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback,
 
 	__libnet_set_connected_cb(callback, user_data);
 
-	if (connman_service_get_favorite(service))
+	if (!connman_service_get_passphrase_required(service))
 		err = connman_service_connect(service,
 					connman_service_connect_cb, NULL);
 	else
@@ -968,7 +968,7 @@ int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h,
 
 	__libnet_set_connected_cb(callback, user_data);
 
-	if (connman_service_get_favorite(service))
+	if (!connman_service_get_passphrase_required(service))
 		err = connman_service_connect(service,
 					connman_service_connect_cb, NULL);
 	else

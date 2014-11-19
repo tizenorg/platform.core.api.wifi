@@ -983,7 +983,7 @@ EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
-	if (connman_service_get_favorite(service)) {
+	if (!connman_service_get_passphrase_required(service)) {
 		*required = false;
 		return WIFI_ERROR_NONE;
 	}
