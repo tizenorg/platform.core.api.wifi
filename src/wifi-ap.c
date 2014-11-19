@@ -26,33 +26,6 @@
 
 #include "wifi-internal.h"
 
-static void convert_wifi_security(wlan_security_info_t *security_info,
-							char **security)
-{
-	while (*security) {
-		if (g_strcmp0(*security, "none") == 0 &&
-		    security_info->sec_mode < WLAN_SEC_MODE_NONE)
-			security_info->sec_mode = WLAN_SEC_MODE_NONE;
-		else if (!g_strcmp0(*security, "wep"))
-			security_info->sec_mode = WLAN_SEC_MODE_WEP;
-		else if (!g_strcmp0(*security, "psk"))
-			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
-		else if (!g_strcmp0(*security, "ieee8021x"))
-			security_info->sec_mode = WLAN_SEC_MODE_IEEE8021X;
-		else if (!g_strcmp0(*security, "wpa"))
-			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
-		else if (!g_strcmp0(*security, "rsn"))
-			security_info->sec_mode = WLAN_SEC_MODE_WPA2_PSK;
-		else if (!g_strcmp0(*security, "wps"))
-			security_info->wps_support = TRUE;
-		else
-			security_info->sec_mode = WLAN_SEC_MODE_NONE;
-
-		security++;
-	}
-
-}
-
 static void __wifi_init_ap(net_profile_info_t *profile_info,
 							const char *bssid)
 {
@@ -983,7 +956,7 @@ EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
-	if (connman_service_get_favorite(service)) {
+	if (connman_service_get_user_favorite(service)) {
 		*required = false;
 		return WIFI_ERROR_NONE;
 	}

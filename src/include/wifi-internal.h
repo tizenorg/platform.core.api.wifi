@@ -109,7 +109,8 @@ net_state_type_t _wifi_get_service_state_type(const char *state);
 /*For connection which CAPI send some message to WiNet daemon*/
 void _wifi_set_conn_info(net_wifi_connection_info_t *wifi_conn_info);
 net_wifi_connection_info_t *_wifi_get_conn_info(void);
-
+void convert_wifi_security(wlan_security_info_t *security_info,
+							char **security);
 char *_wifi_get_ip_config_str(net_ip_config_type_t ip_config_type);
 net_ip_config_type_t _wifi_get_ip_config_type(const char *config);
 net_proxy_type_t _wifi_get_proxy_type(const char *proxy);

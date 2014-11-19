@@ -92,6 +92,31 @@ net_wifi_connection_info_t *_wifi_get_conn_info(void)
 	return &net_wifi_conn_info;
 }
 
+void convert_wifi_security(wlan_security_info_t *security_info, char **security)
+{
+	while (*security) {
+		if (g_strcmp0(*security, "none") == 0 &&
+		    security_info->sec_mode < WLAN_SEC_MODE_NONE)
+			security_info->sec_mode = WLAN_SEC_MODE_NONE;
+		else if (!g_strcmp0(*security, "wep"))
+			security_info->sec_mode = WLAN_SEC_MODE_WEP;
+		else if (!g_strcmp0(*security, "psk"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
+		else if (!g_strcmp0(*security, "ieee8021x"))
+			security_info->sec_mode = WLAN_SEC_MODE_IEEE8021X;
+		else if (!g_strcmp0(*security, "wpa"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA_PSK;
+		else if (!g_strcmp0(*security, "rsn"))
+			security_info->sec_mode = WLAN_SEC_MODE_WPA2_PSK;
+		else if (!g_strcmp0(*security, "wps"))
+			security_info->wps_support = TRUE;
+		else
+			security_info->sec_mode = WLAN_SEC_MODE_NONE;
+
+		security++;
+	}
+}
+
 net_state_type_t _wifi_get_service_state_type(const char *state)
 {
 	if (!g_strcmp0(state, "idle"))
@@ -921,13 +946,23 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback,
 							void *user_data)
 {
 	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+	wlan_security_info_t sec_info;
+	char **security;
+
 	struct connman_service *service = _wifi_get_service_h(ap_h);
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
 	__libnet_set_connected_cb(callback, user_data);
 
-	if (connman_service_get_favorite(service))
+	security = connman_service_get_security(service);
+	if (!security)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	convert_wifi_security(&sec_info, security);
+
+	if (sec_info.sec_mode == WLAN_SEC_MODE_NONE ||
+				connman_service_get_user_favorite(service))
 		err = connman_service_connect(service,
 					connman_service_connect_cb, NULL);
 	else
@@ -968,12 +1003,7 @@ int _wifi_libnet_connect_with_wps(wifi_ap_h ap_h,
 
 	__libnet_set_connected_cb(callback, user_data);
 
-	if (connman_service_get_favorite(service))
-		err = connman_service_connect(service,
-					connman_service_connect_cb, NULL);
-	else
-		return __libnet_connect_with_wifi_info(ap_h, callback,
-								user_data);
+	return __libnet_connect_with_wifi_info(ap_h, callback, user_data);
 
 	if (err != CONNMAN_LIB_ERR_NONE)
 		return _wifi_connman_lib_error2wifi_error(err);
