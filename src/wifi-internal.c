@@ -68,9 +68,13 @@ struct _wifi_cb_s {
 	void *connected_user_data;
 	wifi_disconnected_cb disconnected_cb;
 	void *disconnected_user_data;
+	wifi_rssi_level_changed_cb rssi_level_changed_cb;
+	void *rssi_level_changed_user_data;
 };
 
 static struct _wifi_cb_s wifi_callbacks = {0,};
+
+static char last_connected_bssid[NET_MAX_MAC_ADDR_LEN + 1] = {0};
 
 /*For connection which CAPI send some message to WiNet daemon*/
 static net_wifi_connection_info_t net_wifi_conn_info;
@@ -287,6 +291,115 @@ static void connman_service_disconnect_cb(enum connman_lib_err result,
 	WIFI_LOG(WIFI_INFO, "callback: %d\n", result);
 
 	__libnet_disconnected_cb(_wifi_connman_lib_error2wifi_error(result));
+}
+
+static void __libnet_rssi_level_changed_cb(struct connman_service *service,
+								void *user_data)
+{
+	/*
+	 * The correction factor of 'strength' is based on
+	 * the implementation method of ConnMan,
+	 * 'strength' has been added 120 in ConnMan.
+	 */
+	const int CORRECTION_FACTOR = 120;
+
+	int rssi_level = 0;
+	unsigned char strength = connman_service_get_strength(service);
+
+	/*
+	 * Wi-Fi Signal Strength Display (dB)
+	 *
+	 * Excellent :	-63 ~
+	 * Good:	-74 ~ -64
+	 * Weak:	-82 ~ -75
+	 * Very weak:	~ -83
+	 */
+	if (strength >= -63 + CORRECTION_FACTOR)
+		rssi_level = 4;
+	else if (strength >= -74 + CORRECTION_FACTOR)
+		rssi_level = 3;
+	else if (strength >= -82 + CORRECTION_FACTOR)
+		rssi_level = 2;
+	else
+		rssi_level = 1;
+
+	wifi_callbacks.rssi_level_changed_cb(rssi_level,
+				wifi_callbacks.rssi_level_changed_user_data);
+}
+
+static int __libnet_get_connected_wifi_service(GList *services_list,
+				struct connman_service **connected_service)
+{
+	GList *iter;
+	struct connman_service *service;
+	const char *type;
+	net_state_type_t profile_state;
+
+	for (iter = services_list; iter != NULL; iter = iter->next) {
+		service = (struct connman_service *)(iter->data);
+		type = connman_service_get_type(service);
+		if (g_strcmp0(type, "wifi") == 0) {
+			profile_state = _wifi_get_service_state_type(
+						connman_service_get_state(
+								service));
+			if ((profile_state == NET_STATE_TYPE_READY ||
+				profile_state == NET_STATE_TYPE_ONLINE)) {
+				*connected_service = service;
+
+				return WIFI_ERROR_NONE;
+			}
+
+			return WIFI_ERROR_NO_CONNECTION;
+		}
+	}
+
+	return WIFI_ERROR_NO_CONNECTION;
+}
+
+static void __libnet_unset_connected_rssi_level_changed_cb()
+{
+	if (strlen(last_connected_bssid) == 0)
+		return;
+
+	struct connman_service *service = connman_get_service(
+							last_connected_bssid);
+	if (!service)
+		return;
+
+	connman_service_unset_property_changed_cb(service,
+							SERVICE_PROP_STRENGTH);
+}
+
+static void __libnet_set_connected_rssi_level_changed_cb(
+				struct connman_service *connected_service)
+{
+	const char *bssid;
+
+	bssid = connman_service_get_bssid(connected_service);
+	if (g_strcmp0(bssid, last_connected_bssid) != 0) {
+		__libnet_unset_connected_rssi_level_changed_cb();
+
+		connman_service_set_property_changed_cb(connected_service,
+						SERVICE_PROP_STRENGTH,
+						__libnet_rssi_level_changed_cb,
+						NULL);
+		memset(last_connected_bssid, 0, NET_MAX_MAC_ADDR_LEN + 1);
+		g_strlcpy(last_connected_bssid, bssid,
+						NET_MAX_MAC_ADDR_LEN + 1);
+	}
+}
+
+static void __libnet_register_connected_rssi_monitor(GList *all_services_list)
+{
+	int rv;
+	struct connman_service *connected_service;
+
+	rv = __libnet_get_connected_wifi_service(all_services_list,
+							&connected_service);
+	if (rv != WIFI_ERROR_NONE)
+		return;
+
+	__libnet_set_connected_rssi_level_changed_cb(connected_service);
 }
 
 static int __net_dbus_set_agent_passphrase(const char *path,
@@ -557,6 +670,12 @@ static void service_changed_callback(struct connman_manager *manager,
 
 	if (wifi_callbacks.connection_state_cb)
 		register_all_serivces_monitor();
+
+	/*
+	 * Monitor RSSI of default service;
+	 */
+	if (wifi_callbacks.rssi_level_changed_cb)
+		__libnet_register_connected_rssi_monitor(all_services_list);
 }
 
 static void technology_powered_changed(
@@ -1098,6 +1217,39 @@ int _wifi_unset_connection_state_cb()
 	wifi_callbacks.connection_state_user_data = NULL;
 
 	__wifi_unset_service_connection_changed_cb();
+
+	return WIFI_ERROR_NONE;
+}
+
+int _wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback,
+								void *user_data)
+{
+	GList *services_list;
+
+	if (wifi_callbacks.rssi_level_changed_cb != NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	wifi_callbacks.rssi_level_changed_cb = callback;
+	wifi_callbacks.rssi_level_changed_user_data = user_data;
+
+	services_list = connman_get_services();
+	if (services_list == NULL)
+		return WIFI_ERROR_NO_CONNECTION;
+
+	__libnet_register_connected_rssi_monitor(services_list);
+
+	return WIFI_ERROR_NONE;
+}
+
+int _wifi_unset_rssi_level_changed_cb()
+{
+	if (wifi_callbacks.rssi_level_changed_cb == NULL)
+		return WIFI_ERROR_INVALID_OPERATION;
+
+	wifi_callbacks.rssi_level_changed_cb = NULL;
+	wifi_callbacks.rssi_level_changed_user_data = NULL;
+
+	__libnet_unset_connected_rssi_level_changed_cb();
 
 	return WIFI_ERROR_NONE;
 }
