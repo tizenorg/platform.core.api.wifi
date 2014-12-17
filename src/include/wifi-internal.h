@@ -101,6 +101,9 @@ int _wifi_unset_background_scan_cb(void);
 int _wifi_set_connection_state_cb(
 		wifi_connection_state_changed_cb callback, void *user_data);
 int _wifi_unset_connection_state_cb();
+int _wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback,
+							void *user_data);
+int _wifi_unset_rssi_level_changed_cb();
 
 wifi_connection_state_e _wifi_convert_to_ap_state(
 					net_state_type_t state);

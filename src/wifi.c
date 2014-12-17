@@ -25,14 +25,6 @@
 #include "wifi-internal.h"
 
 static bool is_init = false;
-static wifi_rssi_level_changed_cb rssi_level_changed_cb = NULL;
-static void *rssi_level_changed_user_data = NULL;
-
-static void __rssi_level_changed_cb(keynode_t *node, void *user_data)
-{
-	int rssi_level = vconf_keynode_get_int(node);
-	rssi_level_changed_cb(rssi_level, rssi_level_changed_user_data);
-}
 
 EXPORT_API int wifi_initialize(void)
 {
@@ -400,28 +392,15 @@ EXPORT_API int wifi_set_rssi_level_changed_cb(
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	if (rssi_level_changed_cb == NULL)
-		vconf_notify_key_changed(VCONFKEY_WIFI_STRENGTH,
-					__rssi_level_changed_cb, NULL);
-	else
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
 		return WIFI_ERROR_INVALID_OPERATION;
+	}
 
-	rssi_level_changed_cb = callback;
-	rssi_level_changed_user_data = user_data;
-
-	return WIFI_ERROR_NONE;
+	return _wifi_set_rssi_level_changed_cb(callback, user_data);
 }
 
 EXPORT_API int wifi_unset_rssi_level_changed_cb(void)
 {
-	if (rssi_level_changed_cb != NULL)
-		vconf_ignore_key_changed(VCONFKEY_WIFI_STRENGTH,
-						__rssi_level_changed_cb);
-	else
-		return WIFI_ERROR_INVALID_OPERATION;
-
-	rssi_level_changed_cb = NULL;
-	rssi_level_changed_user_data = NULL;
-
-	return WIFI_ERROR_NONE;
+	return _wifi_unset_rssi_level_changed_cb();
 }
