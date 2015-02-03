@@ -64,6 +64,10 @@ static const char *__test_convert_error_to_string(wifi_error_e err_type)
 		return "NO_REPLY";
 	case WIFI_ERROR_SECURITY_RESTRICTED:
 		return "SECURITY_RESTRICTED";
+	case WIFI_ERROR_PERMISSION_DENIED:
+		return "PERMISSION_DENIED";
+	case WIFI_ERROR_NOT_SUPPORTED:
+		return "NOT_SUPPORTED";
 	}
 
 	return "UNKNOWN";
@@ -204,6 +208,8 @@ static void __test_rssi_level_callback(wifi_rssi_level_e rssi_level, void* user_
 static const char* __test_print_state(wifi_connection_state_e state)
 {
 	switch (state) {
+	case WIFI_CONNECTION_STATE_FAILURE:
+		return "Failure";
 	case WIFI_CONNECTION_STATE_DISCONNECTED:
 		return "Disconnected";
 	case WIFI_CONNECTION_STATE_ASSOCIATION:

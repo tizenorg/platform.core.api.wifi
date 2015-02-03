@@ -45,6 +45,100 @@ static void __wifi_init_ap(net_profile_info_t *profile_info, const char *essid)
 	g_strlcpy(profile_info->ProfileInfo.Wlan.essid, essid, NET_WLAN_ESSID_LEN+1);
 }
 
+static char *__wifi_create_profile_name(const char *ssid, const int net_mode, const int sec_mode)
+{
+	char *buf = NULL;
+	char *pbuf = NULL;
+	const char *hidden_str = "hidden";
+	char buf_tmp[32] = { 0, };
+	int i;
+	int ssid_len = 0;
+	int actual_len = 0;
+	const char *mode = "managed";
+	char *g_sec = NULL;
+
+	if (net_mode == NETPM_WLAN_CONNMODE_ADHOC) {
+		WIFI_LOG(WIFI_ERROR, "wlan_mode is adhoc");
+		return NULL;
+	}
+
+	switch (sec_mode) {
+	case WLAN_SEC_MODE_NONE:
+		g_sec = "none";
+		break;
+	case WLAN_SEC_MODE_WEP:
+		g_sec = "wep";
+		break;
+	case WLAN_SEC_MODE_WPA_PSK:
+	case WLAN_SEC_MODE_WPA2_PSK:
+		g_sec = "psk";
+		break;
+	case WLAN_SEC_MODE_IEEE8021X:
+		g_sec = "ieee8021x";
+		break;
+	default:
+		WIFI_LOG(WIFI_ERROR, "Invalid security type");
+		return NULL;
+	}
+
+	if (NULL != ssid) {
+		ssid_len = strlen(ssid);
+		actual_len = ssid_len * 2;
+	} else {
+		ssid_len = strlen(hidden_str);
+		actual_len = ssid_len;
+	}
+
+	buf = g_try_malloc0(actual_len + strlen(mode) + strlen(g_sec) + 3);
+	if (buf == NULL)
+		return NULL;
+
+	if (NULL != ssid) {
+		pbuf = buf;
+
+		for (i = 0; i < ssid_len; i++) {
+			g_snprintf(pbuf, 3, "%02x", ssid[i]);
+			pbuf += 2;
+		}
+	} else
+		g_strlcat(buf, hidden_str,
+				actual_len + strlen(mode) + strlen(g_sec) + 3);
+
+	g_snprintf(buf_tmp, 32, "_%s_%s", mode, g_sec);
+	g_strlcat(buf, buf_tmp,
+			actual_len + strlen(mode) + strlen(g_sec) + 3);
+
+	WIFI_LOG(WIFI_INFO, "Profile name: %s", buf);
+
+	return buf;
+}
+
+static bool _wifi_set_profile_name_to_ap(net_profile_info_t *ap_info)
+{
+	char *profile_name = NULL;
+
+	if (ap_info == NULL) {
+		WIFI_LOG(WIFI_ERROR, "profile_info is NULL");
+		return false;
+	}
+
+	profile_name = __wifi_create_profile_name(
+			ap_info->ProfileInfo.Wlan.essid,
+			ap_info->ProfileInfo.Wlan.wlan_mode,
+			ap_info->ProfileInfo.Wlan.security_info.sec_mode);
+	if (profile_name == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Failed to make a group name");
+		return false;
+	}
+
+	g_strlcpy(ap_info->ProfileInfo.Wlan.net_info.ProfileName,
+			profile_name, NET_PROFILE_NAME_LEN_MAX);
+
+	g_free(profile_name);
+
+	return true;
+}
+
 wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)
 {
 	wifi_connection_state_e ap_state;
@@ -54,8 +148,10 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)
 	case NET_STATE_TYPE_READY:
 		ap_state = WIFI_CONNECTION_STATE_CONNECTED;
 		break;
-	case NET_STATE_TYPE_IDLE:
 	case NET_STATE_TYPE_FAILURE:
+		ap_state = WIFI_CONNECTION_STATE_FAILURE;
+		break;
+	case NET_STATE_TYPE_IDLE:
 	case NET_STATE_TYPE_DISCONNECT:
 		ap_state = WIFI_CONNECTION_STATE_DISCONNECTED;
 		break;
@@ -67,6 +163,7 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)
 		break;
 	default:
 		ap_state = -1;
+		break;
 	}
 
 	return ap_state;
@@ -76,7 +173,7 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)
 EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 {
 	if (essid == NULL || ap == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -95,7 +192,7 @@ EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 EXPORT_API int wifi_ap_destroy(wifi_ap_h ap)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -107,7 +204,7 @@ EXPORT_API int wifi_ap_destroy(wifi_ap_h ap)
 EXPORT_API int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin)
 {
 	if (_wifi_libnet_check_ap_validity(origin) == false || cloned_ap == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -128,8 +225,18 @@ EXPORT_API int wifi_ap_refresh(wifi_ap_h ap)
 	net_profile_info_t ap_info_local;
 	net_profile_info_t *ap_info = ap;
 
-	if (net_get_profile_info(ap_info->ProfileName, &ap_info_local) != NET_ERR_NONE) {
-		WIFI_LOG(WIFI_ERROR, "Error!!! net_get_profile_info() failed\n");
+	if (_wifi_libnet_check_ap_validity(ap) == false) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	int rv = NET_ERR_NONE;
+	rv = net_get_profile_info(ap_info->ProfileName, &ap_info_local);
+	if (rv == NET_ERR_ACCESS_DENIED) {
+		WIFI_LOG(WIFI_ERROR, "Access denied");
+		return WIFI_ERROR_PERMISSION_DENIED;
+	} else if (rv != NET_ERR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to getprofile_info");
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
 
@@ -142,7 +249,7 @@ EXPORT_API int wifi_ap_refresh(wifi_ap_h ap)
 EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || essid == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -157,7 +264,7 @@ EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || bssid == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -172,12 +279,12 @@ EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 EXPORT_API int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || rssi == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	net_profile_info_t *profile_info = ap;
-	*rssi = (int)profile_info->ProfileInfo.Wlan.Strength;
+	*rssi = (int)(profile_info->ProfileInfo.Wlan.Strength - 120);
 
 	return WIFI_ERROR_NONE;
 }
@@ -185,7 +292,7 @@ EXPORT_API int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)
 EXPORT_API int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || frequency == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -198,7 +305,7 @@ EXPORT_API int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)
 EXPORT_API int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || max_speed == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -211,7 +318,7 @@ EXPORT_API int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)
 EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || favorite == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -228,7 +335,7 @@ EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
 EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || state == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -248,12 +355,12 @@ EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
 	    type == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -287,12 +394,12 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -330,12 +437,12 @@ EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
 	    ip_address == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -352,12 +459,12 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -380,12 +487,12 @@ EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
 	    subnet_mask == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -402,12 +509,12 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -430,12 +537,12 @@ EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
 	    gateway_address == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -452,12 +559,12 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -480,12 +587,12 @@ EXPORT_API int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e add
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
 	    proxy_address == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -502,12 +609,12 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e add
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -528,7 +635,7 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e add
 EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -557,7 +664,7 @@ EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -600,12 +707,12 @@ EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 	    dns_address == NULL ||
 	    order <= 0 ||
 	    order > NET_DNS_ADDR_MAX) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -625,12 +732,12 @@ EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6) ||
 	    order <= 0 ||
 	    order > NET_DNS_ADDR_MAX) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet\n");
+		WIFI_LOG(WIFI_ERROR, "Not supported yet");
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
@@ -654,7 +761,7 @@ EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -686,7 +793,7 @@ EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* typ
 EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -712,13 +819,15 @@ EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	_wifi_set_profile_name_to_ap(profile_info);
+
 	return WIFI_ERROR_NONE;
 }
 
 EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -750,7 +859,7 @@ EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e*
 EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -782,7 +891,7 @@ EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e 
 EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || required == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -813,7 +922,7 @@ EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || passphrase == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -841,7 +950,7 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 EXPORT_API int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || supported == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -859,7 +968,7 @@ EXPORT_API int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)
 EXPORT_API int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* password)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || (user_name == NULL && password == NULL)) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -881,7 +990,7 @@ EXPORT_API int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, c
 EXPORT_API int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password_set)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false ||user_name == NULL || is_password_set == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -904,12 +1013,14 @@ EXPORT_API int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* 
 
 EXPORT_API int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file)
 {
+	net_profile_info_t *profile_info = NULL;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+	profile_info = (net_profile_info_t *)ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -922,12 +1033,14 @@ EXPORT_API int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file)
 
 EXPORT_API int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file)
 {
+	net_profile_info_t *profile_info = NULL;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+	profile_info = (net_profile_info_t *)ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -939,12 +1052,14 @@ EXPORT_API int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file)
 
 EXPORT_API int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file)
 {
+	net_profile_info_t *profile_info = NULL;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+	profile_info = (net_profile_info_t *)ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -957,12 +1072,14 @@ EXPORT_API int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file)
 
 EXPORT_API int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file)
 {
+	net_profile_info_t *profile_info = NULL;
+
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	net_profile_info_t *profile_info = ap;
+	profile_info = (net_profile_info_t *)ap;
 	if (profile_info->ProfileInfo.Wlan.security_info.sec_mode != WLAN_SEC_MODE_IEEE8021X)
 		return WIFI_ERROR_INVALID_OPERATION;
 
@@ -975,7 +1092,7 @@ EXPORT_API int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file)
 EXPORT_API int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -993,7 +1110,7 @@ EXPORT_API int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file)
 EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char* password)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || file == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -1015,7 +1132,7 @@ EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, 
 EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -1049,7 +1166,7 @@ EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
 EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -1083,7 +1200,7 @@ EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
 EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || type == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -1120,7 +1237,7 @@ EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* typ
 EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
