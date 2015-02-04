@@ -30,7 +30,7 @@ static void __wifi_init_ap(net_profile_info_t *profile_info,
 							const char *bssid)
 {
 	profile_info->bssid = g_strdup(bssid);
-	profile_info->proxy_type = WIFI_PROXY_TYPE_AUTO;
+
 }
 
 wifi_connection_state_e _wifi_convert_to_ap_state(
@@ -614,6 +614,8 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 				const char* proxy_address)
 {
 	enum connman_lib_err err = CONNMAN_LIB_ERR_NONE;
+	struct service_proxy proxy_config;
+	const struct service_proxy *origin_proxy;
 
 	if (_wifi_libnet_check_ap_validity(ap) == false ||
 	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
@@ -627,30 +629,32 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap,
 		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
 	}
 
-	struct service_proxy proxy_config;
-	memset(&proxy_config, 0, sizeof(struct service_proxy));
-
-	proxy_config.servers = g_try_malloc0(sizeof(char*));
-
 	struct connman_service *service = _wifi_get_service_h(ap);
 	if (!service)
 		return WIFI_ERROR_INVALID_PARAMETER;
 
-	if (((net_profile_info_t *) ap)->proxy_type ==
-					WIFI_PROXY_TYPE_MANUAL) {
+	origin_proxy =
+		connman_service_get_proxy_config(service);
+
+	if (origin_proxy == NULL || origin_proxy->method == NULL)
+		return WIFI_ERROR_OPERATION_FAILED;
+
+	memset(&proxy_config, 0, sizeof(struct service_proxy));
+
+	if (!g_strcmp0(origin_proxy->method, "manual")) {
 		proxy_config.method = "manual";
+		proxy_config.servers = g_try_malloc0(sizeof(char *));
 		*proxy_config.servers = g_strdup(proxy_address);
 		err = connman_service_set_proxy_config(service, &proxy_config);
 		g_free(*proxy_config.servers);
 		g_free(proxy_config.servers);
-	} else if (((net_profile_info_t *) ap)->proxy_type ==
-					WIFI_PROXY_TYPE_AUTO) {
+	} else if (!g_strcmp0(origin_proxy->method, "auto")) {
 		proxy_config.method = "auto";
 		proxy_config.url = g_strdup(proxy_address);
 		err = connman_service_set_proxy_config(service, &proxy_config);
 		g_free(proxy_config.url);
 	} else
-		return WIFI_ERROR_INVALID_PARAMETER;
+		return WIFI_ERROR_OPERATION_FAILED;
 
 	if (err != CONNMAN_LIB_ERR_NONE)
 		return _wifi_connman_lib_error2wifi_error(err);
@@ -720,11 +724,7 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap,
 		break;
 	}
 
-	if (proxy_type == WIFI_PROXY_TYPE_DIRECT) {
-		err = connman_service_set_proxy_config(service, &proxy_config);
-	} else {
-		((net_profile_info_t *) ap)->proxy_type = proxy_type;
-	}
+	err = connman_service_set_proxy_config(service, &proxy_config);
 
 	if (err != CONNMAN_LIB_ERR_NONE)
 		return _wifi_connman_lib_error2wifi_error(err);
