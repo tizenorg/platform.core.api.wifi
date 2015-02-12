@@ -57,6 +57,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
+bool _wifi_is_init(void);
 bool _wifi_libnet_init(void);
 bool _wifi_libnet_deinit(void);
 int _wifi_activate(wifi_activated_cb callback, void *user_data);

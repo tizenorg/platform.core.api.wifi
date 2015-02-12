@@ -73,6 +73,11 @@ EXPORT_API int wifi_ap_create(const char* bssid, wifi_ap_h* ap)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
 	net_profile_info_t *ap_info =
 				g_try_malloc0(sizeof(net_profile_info_t));
 	if (ap_info == NULL)

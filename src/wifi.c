@@ -26,6 +26,11 @@
 
 static bool is_init = false;
 
+bool _wifi_is_init(void)
+{
+	return is_init;
+}
+
 EXPORT_API int wifi_initialize(void)
 {
 	if (is_init) {
@@ -110,6 +115,11 @@ EXPORT_API int wifi_is_activated(bool* activated)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
 	if (_wifi_libnet_get_wifi_device_state(&device_state) == false) {
 		return WIFI_ERROR_OPERATION_FAILED;
 	} else {
@@ -131,6 +141,11 @@ EXPORT_API int wifi_get_connection_state(
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
 	if (_wifi_libnet_get_wifi_state(connection_state) == false)
 		return WIFI_ERROR_OPERATION_FAILED;
 
@@ -142,6 +157,11 @@ EXPORT_API int wifi_get_mac_address(char** mac_address)
 	if (mac_address == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
 	}
 
 	*mac_address = vconf_get_str(VCONFKEY_WIFI_BSSID_ADDRESS);
@@ -161,6 +181,11 @@ EXPORT_API int wifi_get_network_interface_name(char** name)
 	if (name == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
 	}
 
 	return _wifi_libnet_get_intf_name(name);
@@ -219,6 +244,11 @@ EXPORT_API int wifi_get_connected_ap(wifi_ap_h* ap)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
 	rv = _wifi_libnet_get_connected_profile(ap);
 	WIFI_LOG(WIFI_INFO, "Connected AP %p, rv %d\n", *ap, rv);
 
@@ -233,6 +263,11 @@ EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback,
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
 	if (_wifi_libnet_foreach_found_aps(callback, user_data) == false)
 		return WIFI_ERROR_OPERATION_FAILED;
 
@@ -245,6 +280,11 @@ EXPORT_API int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback,
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
 		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	if (is_init == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
 	}
 
 	if (_wifi_libnet_foreach_found_hidden_aps(callback, user_data) == false)
