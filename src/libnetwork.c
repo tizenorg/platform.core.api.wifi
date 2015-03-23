@@ -571,6 +571,8 @@ bool _wifi_libnet_deinit(void)
 	ap_handle_list = NULL;
 	memset(&wifi_callbacks, 0, sizeof(struct _wifi_cb_s));
 
+	__wifi_set_init(false);
+
 	return true;
 }
 
@@ -857,7 +859,8 @@ int _wifi_libnet_foreach_found_hidden_aps(wifi_found_ap_cb callback, void *user_
 
 	for (i =0; i < hidden_profile_iterator.count; i++) {
 		rv = callback((wifi_ap_h)(&hidden_profile_iterator.profiles[i]), user_data);
-		if (rv == false) break;
+		if (rv == false)
+			break;
 	}
 
 	return WIFI_ERROR_NONE;

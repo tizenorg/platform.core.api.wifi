@@ -21,7 +21,6 @@
 
 #include "net_wifi_private.h"
 
-static bool is_init = false;
 static wifi_rssi_level_changed_cb rssi_level_changed_cb = NULL;
 static void *rssi_level_changed_user_data = NULL;
 
@@ -202,8 +201,8 @@ EXPORT_API int wifi_scan_hidden_ap(const char* essid, wifi_scan_finished_cb call
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	if (is_init == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
 	}
 
@@ -246,7 +245,7 @@ EXPORT_API int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback, void* us
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	if (_wifi_libnet_foreach_found_hidden_aps(callback, user_data) == false)
+	if (_wifi_libnet_foreach_found_hidden_aps(callback, user_data) != WIFI_ERROR_NONE)
 		return WIFI_ERROR_OPERATION_FAILED;
 
 	return WIFI_ERROR_NONE;
@@ -269,8 +268,8 @@ EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	if (is_init == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized\n");
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
 	}
 
