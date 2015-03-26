@@ -304,7 +304,27 @@ static bool __test_found_connect_wps_callback(wifi_ap_h ap, void *user_data)
 	}
 
 	if (strstr(ap_name, ap_name_part) != NULL) {
-		rv = wifi_connect(ap, __test_connected_callback, NULL);
+		int user_sel;
+		char pin[32] = {0,};
+
+		printf("%s - Input WPS method (1:PBC, 2:PIN) :\n", ap_name);
+		rv = scanf("%9d", &user_sel);
+
+		switch (user_sel) {
+		case 1:
+			rv = wifi_connect_by_wps_pbc(ap, __test_connected_callback, NULL);
+			break;
+		case 2:
+			printf("Input PIN code :\n");
+			rv = scanf("%31s", pin);
+			rv = wifi_connect_by_wps_pin(ap, pin, __test_connected_callback, NULL);
+			break;
+		default:
+			printf("Invalid input!\n");
+			g_free(ap_name);
+			return false;
+		}
+
 		if (rv != WIFI_ERROR_NONE)
 			printf("Fail to connection request [%s] : %s\n", ap_name, __test_convert_error_to_string(rv));
 		else
