@@ -23,6 +23,10 @@
 
 #include "wifi.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #undef LOG_TAG
 #define LOG_TAG "CAPI_NETWORK_WIFI"
 
@@ -44,9 +48,19 @@
 		} \
 	} while(0)
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#define SECURE_WIFI_LOG(log_level, format, args...) \
+	do { \
+		switch (log_level) { \
+		case WIFI_ERROR: \
+			SECURE_LOGE(format, ## args); \
+			break; \
+		case WIFI_WARN: \
+			SECURE_LOGW(format, ## args); \
+			break; \
+		default: \
+			SECURE_LOGI(format, ## args); \
+		} \
+	} while(0)
 
 bool _wifi_is_init(void);
 
@@ -64,11 +78,11 @@ int _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state);
 int _wifi_libnet_get_wifi_state(wifi_connection_state_e* connection_state);
 int _wifi_libnet_get_intf_name(char** name);
 int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void *user_data);
-int _wifi_libnet_scan_hidden_ap(const char *essid,
-					wifi_scan_finished_cb callback, void *user_data);
+int _wifi_libnet_scan_specific_ap(const char *essid, wifi_scan_finished_cb callback, void *user_data);
 int _wifi_libnet_get_connected_profile(wifi_ap_h *ap);
 int _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback, void *user_data);
-int _wifi_libnet_foreach_found_hidden_aps(wifi_found_ap_cb callback, void *user_data);
+int _wifi_libnet_foreach_found_specific_aps(wifi_found_ap_cb callback, void *user_data);
+
 int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data);
 int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, void *user_data);
 int _wifi_libnet_connect_with_wps_pbc(wifi_ap_h ap,
