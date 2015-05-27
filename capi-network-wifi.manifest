@@ -1,0 +1,8 @@
+<manifest>
+	<assign>
+		<filesystem path="/usr/bin/wifi_test" exec_label="connman"/>
+	</assign>
+	<request>
+		<domain name="_"/>
+	</request>
+</manifest>
