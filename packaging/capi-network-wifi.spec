@@ -1,6 +1,6 @@
 Name:       capi-network-wifi
 Summary:    Network Wi-Fi library in TIZEN C API
-Version:    0.1.2_27
+Version:    0.1.2_28
 Release:    1
 Group:      System/Network
 License:    Apache-2.0
@@ -52,6 +52,7 @@ cp LICENSE.APLv2 %{buildroot}%{_datadir}/license/capi-network-wifi
 %manifest %{name}.manifest
 %attr(644,-,-) %{_libdir}/libcapi-network-wifi.so.*
 %{_datadir}/license/capi-network-wifi
+%{_bindir}/wifi_test
 
 %files devel
 %manifest %{name}.manifest
