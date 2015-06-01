@@ -258,7 +258,9 @@ typedef void* wifi_ap_h;
  * @return  @c true to continue with the next iteration of the loop, \n
  *	    otherwise @c false to break out of the loop
  * @pre  wifi_foreach_found_aps() will invoke this callback.
+ * @pre  wifi_foreach_found_specific_aps() will invoke this callback.
  * @see  wifi_foreach_found_aps()
+ * @see  wifi_foreach_found_specific_aps()
  */
 typedef bool(*wifi_found_ap_cb)(wifi_ap_h ap, void *user_data);
 
@@ -536,18 +538,25 @@ int wifi_get_network_interface_name(char** name);
 int wifi_scan(wifi_scan_finished_cb callback, void *user_data);
 
 /**
-* @brief Starts hidden ap scan, asynchronously.
-* @param[in] essid     The essid of hidden ap
-* @param[in] callback  The callback function to be called
-* @param[in] user_data The user data passed to the callback function
-* @return 0 on success, otherwise negative error value.
-* @retval #WIFI_ERROR_NONE  Successful
-* @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
-* @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
-* @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
-* @post This function invokes wifi_scan_finished_cb().
-*/
-int wifi_scan_hidden_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data);
+ * @brief Starts specific ap scan, asynchronously.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.set \n
+ *               %http://tizen.org/privilege/network.get
+ * @remark This API needs both privileges.
+ * @param[in] essid     The essid of hidden ap
+ * @param[in] callback  The callback function to be called
+ * @param[in] user_data The user data passed to the callback function
+ * @return 0 on success, otherwise negative error value.
+ * @retval #WIFI_ERROR_NONE  Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
+ * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
+ * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
+ * @post This function invokes wifi_scan_finished_cb().
+ */
+int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data);
 
 /**
  * @brief Gets the handle of the connected access point.
@@ -584,16 +593,22 @@ int wifi_get_connected_ap(wifi_ap_h* ap);
 int wifi_foreach_found_aps(wifi_found_ap_cb callback, void *user_data);
 
 /**
-* @brief Gets the result of hidden ap scan.
-* @param[in] callback  The callback to be called
-* @param[in] user_data The user data passed to the callback function
-* @return 0 on success, otherwise negative error value.
-* @retval #WIFI_ERROR_NONE  Successful
-* @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
-* @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
-* @post This function invokes wifi_found_ap_cb().
-*/
-int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback, void* user_data);
+ * @brief Gets the result of specific ap scan.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.get
+ * @param[in] callback  The callback to be called
+ * @param[in] user_data The user data passed to the callback function
+ * @return 0 on success, otherwise negative error value.
+ * @retval #WIFI_ERROR_NONE  Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
+ * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
+ * @post This function invokes wifi_found_ap_cb().
+ * @see wifi_scan_specific_ap()
+ */
+int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data);
 
 /**
  * @brief Connects the access point asynchronously.

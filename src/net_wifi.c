@@ -192,23 +192,24 @@ EXPORT_API int wifi_scan(wifi_scan_finished_cb callback, void* user_data)
 	return rv;
 }
 
-EXPORT_API int wifi_scan_hidden_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data)
+EXPORT_API int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data)
 {
 	int rv;
 
-	if (callback == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+	if (essid == NULL || callback == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
+
 		return WIFI_ERROR_INVALID_OPERATION;
 	}
 
-	rv = _wifi_libnet_scan_hidden_ap(essid, callback, user_data);
+	rv = _wifi_libnet_scan_specific_ap(essid, callback, user_data);
 	if (rv != WIFI_ERROR_NONE)
-		WIFI_LOG(WIFI_ERROR, "Error!! Wi-Fi hidden scan failed.\n");
+		WIFI_LOG(WIFI_ERROR, "Wi-Fi hidden scan failed.\n");
 
 	return rv;
 }
@@ -238,17 +239,14 @@ EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback, void* user_data
 	return _wifi_libnet_foreach_found_aps(callback, user_data);
 }
 
-EXPORT_API int wifi_foreach_found_hidden_aps(wifi_found_ap_cb callback, void* user_data)
+EXPORT_API int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data)
 {
 	if (callback == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	if (_wifi_libnet_foreach_found_hidden_aps(callback, user_data) != WIFI_ERROR_NONE)
-		return WIFI_ERROR_OPERATION_FAILED;
-
-	return WIFI_ERROR_NONE;
+	return _wifi_libnet_foreach_found_specific_aps(callback, user_data);
 }
 
 EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)

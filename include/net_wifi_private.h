@@ -64,11 +64,11 @@ int _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state);
 int _wifi_libnet_get_wifi_state(wifi_connection_state_e* connection_state);
 int _wifi_libnet_get_intf_name(char** name);
 int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void *user_data);
-int _wifi_libnet_scan_hidden_ap(const char *essid,
-					wifi_scan_finished_cb callback, void *user_data);
+int _wifi_libnet_scan_specific_ap(const char *essid, wifi_scan_finished_cb callback, void *user_data);
 int _wifi_libnet_get_connected_profile(wifi_ap_h *ap);
 int _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback, void *user_data);
-int _wifi_libnet_foreach_found_hidden_aps(wifi_found_ap_cb callback, void *user_data);
+int _wifi_libnet_foreach_found_specific_aps(wifi_found_ap_cb callback, void *user_data);
+
 int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data);
 int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, void *user_data);
 int _wifi_libnet_connect_with_wps_pbc(wifi_ap_h ap,
