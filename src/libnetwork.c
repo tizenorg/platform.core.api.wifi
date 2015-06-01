@@ -234,6 +234,7 @@ static void __libnet_convert_profile_info_to_wifi_info(net_wifi_connection_info_
 	g_strlcpy(wifi_info->essid, ap_info->ProfileInfo.Wlan.essid, NET_WLAN_ESSID_LEN+1);
 	wifi_info->wlan_mode = ap_info->ProfileInfo.Wlan.wlan_mode;
 	memcpy(&wifi_info->security_info, &ap_info->ProfileInfo.Wlan.security_info, sizeof(wlan_security_info_t));
+	wifi_info->is_hidden = ap_info->ProfileInfo.Wlan.is_hidden;
 }
 
 static int __libnet_connect_with_wifi_info(net_profile_info_t *ap_info)
@@ -848,6 +849,9 @@ int _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback, void *user_data)
 	}
 
 	for (i = 0; i < profile_iterator.count; i++) {
+		if (profile_iterator.profiles[i].ProfileInfo.Wlan.is_hidden == TRUE)
+			continue;
+
 		rv = callback((wifi_ap_h)(&profile_iterator.profiles[i]), user_data);
 		if (rv == false) break;
 	}
@@ -903,6 +907,7 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void *
 	if (valid_profile == true && ap_info->Favourite)
 		rv = net_open_connection_with_profile(ap_info->ProfileName);
 	else if (valid_profile == true &&
+			ap_info->ProfileInfo.Wlan.is_hidden != TRUE &&
 			ap_info->ProfileInfo.Wlan.security_info.sec_mode == WLAN_SEC_MODE_NONE)
 		rv = net_open_connection_with_profile(ap_info->ProfileName);
 	else

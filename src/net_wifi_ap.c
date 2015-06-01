@@ -123,7 +123,8 @@ static bool _wifi_set_profile_name_to_ap(net_profile_info_t *ap_info)
 	}
 
 	profile_name = __wifi_create_profile_name(
-			ap_info->ProfileInfo.Wlan.essid,
+			ap_info->ProfileInfo.Wlan.is_hidden == TRUE ?
+			NULL : ap_info->ProfileInfo.Wlan.essid,
 			ap_info->ProfileInfo.Wlan.wlan_mode,
 			ap_info->ProfileInfo.Wlan.security_info.sec_mode);
 	if (profile_name == NULL) {
