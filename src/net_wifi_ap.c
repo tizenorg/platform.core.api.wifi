@@ -189,6 +189,26 @@ EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 	return WIFI_ERROR_NONE;
 }
 
+EXPORT_API int wifi_ap_hidden_create(const char* essid, wifi_ap_h* ap)
+{
+	if (essid == NULL || ap == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
+	if (ap_info == NULL)
+		return WIFI_ERROR_OUT_OF_MEMORY;
+
+	__wifi_init_ap(ap_info, essid);
+	ap_info->ProfileInfo.Wlan.is_hidden = TRUE;
+
+	_wifi_libnet_add_to_ap_list((wifi_ap_h)ap_info);
+	*ap = (wifi_ap_h)ap_info;
+
+	return WIFI_ERROR_NONE;
+}
+
 EXPORT_API int wifi_ap_destroy(wifi_ap_h ap)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
