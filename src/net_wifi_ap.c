@@ -332,6 +332,23 @@ EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)
 	return WIFI_ERROR_NONE;
 }
 
+EXPORT_API int wifi_ap_is_passpoint(wifi_ap_h ap, bool* passpoint)
+{
+	if (_wifi_libnet_check_ap_validity(ap) == false || passpoint == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	net_profile_info_t *profile_info = ap;
+
+	if (profile_info->ProfileInfo.Wlan.passpoint)
+		*passpoint = true;
+	else
+		*passpoint = false;
+
+	return WIFI_ERROR_NONE;
+}
+
 EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state)
 {
 	if (_wifi_libnet_check_ap_validity(ap) == false || state == NULL) {
