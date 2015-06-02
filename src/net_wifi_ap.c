@@ -942,10 +942,10 @@ EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.sec_mode) {
 	case WLAN_SEC_MODE_NONE:
+	case WLAN_SEC_MODE_IEEE8021X:
 		*required = false;
 		break;
 	case WLAN_SEC_MODE_WEP:
-	case WLAN_SEC_MODE_IEEE8021X:
 	case WLAN_SEC_MODE_WPA_PSK:
 	case WLAN_SEC_MODE_WPA2_PSK:
 		*required = true;
