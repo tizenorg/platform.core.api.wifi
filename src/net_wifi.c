@@ -251,6 +251,11 @@ EXPORT_API int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* 
 
 EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)
 {
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -261,14 +266,14 @@ EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user
 
 EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void* user_data)
 {
-	if (_wifi_libnet_check_ap_validity(ap) == false) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
-		return WIFI_ERROR_INVALID_PARAMETER;
-	}
-
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	if (_wifi_libnet_check_ap_validity(ap) == false) {
+		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	return _wifi_libnet_close_profile(ap, callback, user_data);
