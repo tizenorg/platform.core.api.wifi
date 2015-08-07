@@ -20,8 +20,13 @@
 #include <dlog.h>
 #include <network-cm-intf.h>
 #include <network-wifi-intf.h>
+#include <system_info.h>
 
 #include "wifi.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 #undef LOG_TAG
 #define LOG_TAG "CAPI_NETWORK_WIFI"
@@ -29,6 +34,26 @@
 #define WIFI_INFO	1
 #define WIFI_ERROR	2
 #define WIFI_WARN	3
+
+#define WIFI_FEATURE	"http://tizen.org/feature/network.wifi"
+
+#if !defined TIZEN_TV
+#define CHECK_FEATURE_SUPPORTED(feature_name) \
+	do { \
+		bool feature_supported = FALSE; \
+		if (!system_info_get_platform_bool(feature_name, &feature_supported)) { \
+			if (feature_supported == FALSE) { \
+				LOGE("%s feature is disabled", feature_name); \
+				return WIFI_ERROR_NOT_SUPPORTED; \
+			} \
+		} else { \
+			LOGE("Error - Feature getting from System Info"); \
+			return WIFI_ERROR_OPERATION_FAILED; \
+		} \
+	} while(0)
+#else
+#define CHECK_FEATURE_SUPPORTED(feature_name)
+#endif
 
 #define WIFI_LOG(log_level, format, args...) \
 	do { \
@@ -44,9 +69,19 @@
 		} \
 	} while(0)
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#define SECURE_WIFI_LOG(log_level, format, args...) \
+	do { \
+		switch (log_level) { \
+		case WIFI_ERROR: \
+			SECURE_LOGE(format, ## args); \
+			break; \
+		case WIFI_WARN: \
+			SECURE_LOGW(format, ## args); \
+			break; \
+		default: \
+			SECURE_LOGI(format, ## args); \
+		} \
+	} while(0)
 
 bool _wifi_is_init(void);
 

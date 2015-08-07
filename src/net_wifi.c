@@ -14,25 +14,52 @@
  * limitations under the License.
  */
 
+#include <glib.h>
 #include <stdio.h>
 #include <string.h>
-#include <glib.h>
 #include <vconf/vconf.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <glib.h>
 
 #include "net_wifi_private.h"
 
-static wifi_rssi_level_changed_cb rssi_level_changed_cb = NULL;
-static void *rssi_level_changed_user_data = NULL;
+#define WIFI_MAC_ADD_LENGTH	17
+#define WIFI_MAC_ADD_PATH		"/sys/class/net/wlan0/address"
+
+static __thread wifi_rssi_level_changed_cb rssi_level_changed_cb = NULL;
+static __thread void *rssi_level_changed_user_data = NULL;
+
+static gboolean __rssi_level_changed_cb_idle(gpointer data)
+{
+	int rssi_level = 0;
+
+	if (vconf_get_int(VCONFKEY_WIFI_STRENGTH, &rssi_level) != 0)
+		return FALSE;
+
+	if (rssi_level_changed_cb != NULL)
+		rssi_level_changed_cb(rssi_level, rssi_level_changed_user_data);
+
+	return FALSE;
+}
 
 static void __rssi_level_changed_cb(keynode_t *node, void *user_data)
 {
-	int rssi_level = vconf_keynode_get_int(node);
-	rssi_level_changed_cb(rssi_level, rssi_level_changed_user_data);
+	if (_wifi_is_init() != true) {
+		WIFI_LOG(WIFI_ERROR, "Application is not registered"
+				"If multi-threaded, thread integrity be broken.");
+		return;
+	}
+
+	if (rssi_level_changed_cb != NULL)
+		_wifi_callback_add(__rssi_level_changed_cb_idle, NULL);
 }
 
 EXPORT_API int wifi_initialize(void)
 {
 	int rv;
+
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (_wifi_is_init() == true) {
 		WIFI_LOG(WIFI_ERROR, "Already initialized");
@@ -56,6 +83,8 @@ EXPORT_API int wifi_initialize(void)
 
 EXPORT_API int wifi_deinitialize(void)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
@@ -78,6 +107,8 @@ EXPORT_API int wifi_activate(wifi_activated_cb callback, void* user_data)
 {
 	int rv;
 
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
@@ -95,6 +126,8 @@ EXPORT_API int wifi_activate_with_wifi_picker_tested(
 {
 	int rv;
 
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
@@ -110,6 +143,8 @@ EXPORT_API int wifi_activate_with_wifi_picker_tested(
 EXPORT_API int wifi_deactivate(wifi_deactivated_cb callback, void* user_data)
 {
 	int rv;
+
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
@@ -127,6 +162,8 @@ EXPORT_API int wifi_is_activated(bool* activated)
 {
 	int rv;
 	wifi_device_state_e device_state;
+
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (activated == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
@@ -146,23 +183,60 @@ EXPORT_API int wifi_is_activated(bool* activated)
 
 EXPORT_API int wifi_get_mac_address(char** mac_address)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	FILE *fp = NULL;
+	char buf[WIFI_MAC_ADD_LENGTH+ 1];
+
 	if (mac_address == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-	*mac_address = vconf_get_str(VCONFKEY_WIFI_BSSID_ADDRESS);
+#if defined TIZEN_TV
+	if (0 == access(WIFI_MAC_ADD_PATH, F_OK))
+		fp = fopen(WIFI_MAC_ADD_PATH, "r");
 
-	if (*mac_address == NULL) {
-		WIFI_LOG(WIFI_ERROR, "vconf_get_str Failed");
+	if (fp == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Failed to open file"
+				" %s\n", WIFI_MAC_ADD_PATH);
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
+
+	if (fgets(buf, sizeof(buf), fp) == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get MAC"
+				" info from %s\n", WIFI_MAC_ADD_PATH);
+		fclose(fp);
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+
+	WIFI_LOG(WIFI_INFO, "%s : %s\n", WIFI_MAC_ADD_PATH, buf);
+
+	*mac_address = (char *)g_try_malloc0(WIFI_MAC_ADD_LENGTH + 1);
+	if (*mac_address == NULL) {
+		WIFI_LOG(WIFI_ERROR, "malloc() failed");
+		fclose(fp);
+		return WIFI_ERROR_OUT_OF_MEMORY;
+	}
+	g_strlcpy(*mac_address, buf, WIFI_MAC_ADD_LENGTH + 1);
+	fclose(fp);
+#else
+	*mac_address = vconf_get_str(VCONFKEY_WIFI_BSSID_ADDRESS);
+
+	if(*mac_address == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get vconf"
+			" from %s", VCONFKEY_WIFI_BSSID_ADDRESS);
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+#endif
 
 	return WIFI_ERROR_NONE;
 }
 
 EXPORT_API int wifi_get_network_interface_name(char** name)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (name == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -174,6 +248,8 @@ EXPORT_API int wifi_get_network_interface_name(char** name)
 EXPORT_API int wifi_scan(wifi_scan_finished_cb callback, void* user_data)
 {
 	int rv;
+
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
@@ -196,6 +272,8 @@ EXPORT_API int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb ca
 {
 	int rv;
 
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (essid == NULL || callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -214,9 +292,13 @@ EXPORT_API int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb ca
 	return rv;
 }
 
+
+
 EXPORT_API int wifi_get_connected_ap(wifi_ap_h* ap)
 {
 	int rv;
+
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (ap == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
@@ -231,6 +313,8 @@ EXPORT_API int wifi_get_connected_ap(wifi_ap_h* ap)
 
 EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -241,6 +325,8 @@ EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback, void* user_data
 
 EXPORT_API int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -251,6 +337,8 @@ EXPORT_API int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* 
 
 EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
@@ -266,13 +354,15 @@ EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user
 
 EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
 	}
 
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
-		WIFI_LOG(WIFI_ERROR, "Wrong Parameter Passed\n");
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
@@ -281,6 +371,8 @@ EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void
 
 EXPORT_API int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
@@ -296,6 +388,8 @@ EXPORT_API int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback,
 
 EXPORT_API int wifi_connect_by_wps_pin(wifi_ap_h ap, const char *pin, wifi_connected_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
@@ -316,6 +410,8 @@ EXPORT_API int wifi_connect_by_wps_pin(wifi_ap_h ap, const char *pin, wifi_conne
 
 EXPORT_API int wifi_forget_ap(wifi_ap_h ap)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
@@ -331,6 +427,8 @@ EXPORT_API int wifi_forget_ap(wifi_ap_h ap)
 
 EXPORT_API int wifi_get_connection_state(wifi_connection_state_e* connection_state)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (connection_state == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -341,6 +439,8 @@ EXPORT_API int wifi_get_connection_state(wifi_connection_state_e* connection_sta
 
 EXPORT_API int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -356,11 +456,15 @@ EXPORT_API int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb cal
 
 EXPORT_API int wifi_unset_device_state_changed_cb(void)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	return _wifi_unset_power_on_off_cb();
 }
 
 EXPORT_API int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -376,11 +480,15 @@ EXPORT_API int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void*
 
 EXPORT_API int wifi_unset_background_scan_cb(void)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	return _wifi_unset_background_scan_cb();
 }
 
 EXPORT_API int wifi_set_connection_state_changed_cb(wifi_connection_state_changed_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -396,11 +504,15 @@ EXPORT_API int wifi_set_connection_state_changed_cb(wifi_connection_state_change
 
 EXPORT_API int wifi_unset_connection_state_changed_cb(void)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	return _wifi_unset_connection_state_cb();
 }
 
 EXPORT_API int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback, void* user_data)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (callback == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -419,6 +531,8 @@ EXPORT_API int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callbac
 
 EXPORT_API int wifi_unset_rssi_level_changed_cb(void)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	if (rssi_level_changed_cb != NULL)
 		vconf_ignore_key_changed(VCONFKEY_WIFI_STRENGTH, __rssi_level_changed_cb);
 	else

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+#include <glib.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
-#include <glib.h>
+
 #include "net_wifi_private.h"
 
 static __thread bool is_init = false;
@@ -255,44 +256,102 @@ static int __libnet_connect_with_wifi_info(net_profile_info_t *ap_info)
 	return WIFI_ERROR_NONE;
 }
 
+static gboolean __wifi_state_changed_cb(gpointer data)
+{
+	wifi_ap_h ap_info;
+	struct _wifi_state_notify *notify = (struct _wifi_state_notify *)data;
+
+	if (notify == NULL)
+		return FALSE;
+
+	if (notify->ap_info == NULL) {
+		g_free(notify);
+		return FALSE;
+	}
+
+	ap_info = (wifi_ap_h)notify->ap_info;
+
+	_wifi_libnet_add_to_ap_list(ap_info);
+
+	if (wifi_callbacks.connection_state_cb != NULL)
+		wifi_callbacks.connection_state_cb(notify->state, ap_info,
+						wifi_callbacks.connection_state_user_data);
+
+	_wifi_libnet_remove_from_ap_list(ap_info);
+
+	g_free(notify);
+
+	return FALSE;
+}
+
 static void __libnet_state_changed_cb(char *profile_name, net_profile_info_t *profile_info,
 							wifi_connection_state_e state)
 {
+	guint id;
+	net_profile_info_t *ap_info = NULL;
+	struct _wifi_state_notify *notify = NULL;
+
+	if (_wifi_is_init() != true) {
+		WIFI_LOG(WIFI_ERROR, "Application is not registered"
+				"If multi-threaded, thread integrity be broken.");
+		return;
+	}
+
+	if (wifi_callbacks.connection_state_cb == NULL)
+		return;
+
 	if (profile_name == NULL)
 		return;
 
 	if (profile_info == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Error!! Profile info not found! : %s\n", profile_name);
+		SECURE_WIFI_LOG(WIFI_ERROR, "Failed to find: %s", profile_name);
 		return;
 	}
 
-	ap_handle_list = g_slist_append(ap_handle_list, (wifi_ap_h)profile_info);
+	ap_info = g_try_malloc0(sizeof(net_profile_info_t));
+	if (ap_info == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Memory allocation error");
+		return;
+	}
 
-	if (wifi_callbacks.connection_state_cb)
-		wifi_callbacks.connection_state_cb(state, (wifi_ap_h)profile_info,
-					wifi_callbacks.connection_state_user_data);
+	memcpy(ap_info, profile_info, sizeof(net_profile_info_t));
 
-	ap_handle_list = g_slist_remove(ap_handle_list, (wifi_ap_h)profile_info);
+	notify = g_try_new0(struct _wifi_state_notify, 1);
+	if (notify == NULL) {
+		g_free(ap_info);
+		return;
+	}
+
+	notify->ap_info = ap_info;
+	notify->state = state;
+
+	id = _wifi_callback_add(__wifi_state_changed_cb, (gpointer)notify);
+	if (!id)
+		g_free(notify);
 }
 
 static void __libnet_set_activated_cb(wifi_activated_cb user_cb, void *user_data)
 {
-	if (user_cb) {
+	if (user_cb != NULL) {
 		wifi_callbacks.activated_cb = user_cb;
 		wifi_callbacks.activated_user_data = user_data;
 	}
 }
 
-static void __libnet_activated_cb(wifi_error_e result)
+static gboolean __activated_cb_idle(gpointer data)
 {
-	if (wifi_callbacks.activated_cb)
+	wifi_error_e result = (wifi_error_e)data;
+
+	if (wifi_callbacks.activated_cb != NULL)
 		wifi_callbacks.activated_cb(result, wifi_callbacks.activated_user_data);
 
 	wifi_callbacks.activated_cb = NULL;
 	wifi_callbacks.activated_user_data = NULL;
+
+	return FALSE;
 }
 
-static void __libnet_set_deactivated_cb(wifi_disconnected_cb user_cb, void *user_data)
+static void __libnet_set_deactivated_cb(wifi_deactivated_cb user_cb, void *user_data)
 {
 	if (user_cb != NULL) {
 		wifi_callbacks.deactivated_cb = user_cb;
@@ -300,13 +359,27 @@ static void __libnet_set_deactivated_cb(wifi_disconnected_cb user_cb, void *user
 	}
 }
 
-static void __libnet_deactivated_cb(wifi_error_e result)
+static gboolean __deactivated_cb_idle(gpointer data)
 {
-	if (wifi_callbacks.deactivated_cb)
+	wifi_error_e result = (wifi_error_e)data;
+
+	if (wifi_callbacks.deactivated_cb != NULL)
 		wifi_callbacks.deactivated_cb(result, wifi_callbacks.deactivated_user_data);
 
 	wifi_callbacks.deactivated_cb = NULL;
 	wifi_callbacks.deactivated_user_data = NULL;
+
+	return FALSE;
+}
+
+static gboolean __device_state_cb_idle(gpointer data)
+{
+	wifi_device_state_e state = (wifi_device_state_e)data;
+
+	if (wifi_callbacks.device_state_cb != NULL)
+		wifi_callbacks.device_state_cb(state, wifi_callbacks.device_state_user_data);
+
+	return FALSE;
 }
 
 static void __libnet_power_on_off_cb(net_event_info_t *event_cb, bool is_requested)
@@ -335,7 +408,6 @@ static void __libnet_power_on_off_cb(net_event_info_t *event_cb, bool is_request
 			WIFI_LOG(WIFI_INFO, "Wi-Fi power off");
 			state = WIFI_DEVICE_STATE_DEACTIVATED;
 			__libnet_clear_profile_list(&profile_iterator);
-			__libnet_clear_profile_list(&specific_profile_iterator);
 		} else {
 			WIFI_LOG(WIFI_ERROR, "Error Wi-Fi state %d", *wifi_state);
 			error_code = WIFI_ERROR_OPERATION_FAILED;
@@ -352,31 +424,82 @@ static void __libnet_power_on_off_cb(net_event_info_t *event_cb, bool is_request
 		state = WIFI_DEVICE_STATE_DEACTIVATED;
 	}
 
-	__libnet_activated_cb(error_code);
-	__libnet_deactivated_cb(error_code);
+	if (wifi_callbacks.activated_cb != NULL)
+		_wifi_callback_add(__activated_cb_idle, (gpointer)error_code);
 
-	if (wifi_callbacks.device_state_cb)
-		wifi_callbacks.device_state_cb(state, wifi_callbacks.device_state_user_data);
+	if (wifi_callbacks.deactivated_cb != NULL)
+		_wifi_callback_add(__deactivated_cb_idle, (gpointer)error_code);
+
+	if (wifi_callbacks.device_state_cb != NULL)
+		_wifi_callback_add(__device_state_cb_idle, (gpointer)state);
 }
 
-static void __libnet_scan_cb(net_event_info_t *event_cb)
+static gboolean __scan_request_cb_idle(gpointer data)
+{
+	wifi_error_e error_code = (wifi_error_e)data;
+
+	if (wifi_callbacks.scan_request_cb != NULL)
+		wifi_callbacks.scan_request_cb(error_code, wifi_callbacks.scan_request_user_data);
+
+	wifi_callbacks.scan_request_cb = NULL;
+	wifi_callbacks.scan_request_user_data = NULL;
+
+	return FALSE;
+}
+
+static void __libnet_set_specific_scan_cb(wifi_scan_finished_cb user_cb, void *user_data)
+{
+	if (user_cb != NULL) {
+		wifi_callbacks.specific_scan_cb = user_cb;
+		wifi_callbacks.specific_scan_user_data = user_data;
+	}
+}
+
+static gboolean __specific_scan_cb_idle(gpointer data)
+{
+	wifi_error_e error_code = (wifi_error_e)data;
+
+	if (wifi_callbacks.specific_scan_cb != NULL)
+		wifi_callbacks.specific_scan_cb(error_code, wifi_callbacks.specific_scan_user_data);
+
+	wifi_callbacks.specific_scan_cb = NULL;
+	wifi_callbacks.specific_scan_user_data = NULL;
+
+	return FALSE;
+}
+
+static gboolean __bgscan_cb_idle(gpointer data)
+{
+	wifi_error_e error_code = (wifi_error_e)data;
+
+	if (wifi_callbacks.bg_scan_cb != NULL)
+		wifi_callbacks.bg_scan_cb(error_code, wifi_callbacks.bg_scan_user_data);
+
+	return FALSE;
+}
+
+static void __libnet_scan_cb(net_event_info_t *event_cb, bool is_requested)
 {
 	wifi_error_e error_code = WIFI_ERROR_NONE;
 
+	if (_wifi_is_init() != true) {
+		WIFI_LOG(WIFI_ERROR, "Application is not registered"
+				"If multi-threaded, thread integrity be broken.");
+		return;
+	}
+
 	if (event_cb->Error != NET_ERR_NONE) {
-		WIFI_LOG(WIFI_ERROR, "Scan failed!, Error [%d]\n", event_cb->Error);
+		WIFI_LOG(WIFI_ERROR, "Scan failed[%d]", event_cb->Error);
 		error_code = WIFI_ERROR_OPERATION_FAILED;
 	}
 
-	if (wifi_callbacks.scan_request_cb) {
-		wifi_callbacks.scan_request_cb(error_code, wifi_callbacks.scan_request_user_data);
-		wifi_callbacks.scan_request_cb = NULL;
-		wifi_callbacks.scan_request_user_data = NULL;
+	if (wifi_callbacks.scan_request_cb != NULL) {
+		_wifi_callback_add(__scan_request_cb_idle, (gpointer)error_code);
 		return;
 	}
 
 	if (wifi_callbacks.bg_scan_cb != NULL)
-		wifi_callbacks.bg_scan_cb(error_code, wifi_callbacks.bg_scan_user_data);
+		_wifi_callback_add(__bgscan_cb_idle, (gpointer)error_code);
 }
 
 static void __libnet_specific_scan_cb(net_event_info_t *event_cb)
@@ -393,45 +516,74 @@ static void __libnet_specific_scan_cb(net_event_info_t *event_cb)
 		__libnet_update_specific_profile_iterator(ap_list);
 	}
 
-	if (wifi_callbacks.specific_scan_cb) {
-		wifi_callbacks.specific_scan_cb(error_code, wifi_callbacks.specific_scan_user_data);
-		wifi_callbacks.specific_scan_cb = NULL;
-		wifi_callbacks.specific_scan_user_data = NULL;
-	}
+	if (wifi_callbacks.specific_scan_cb != NULL)
+		_wifi_callback_add(__specific_scan_cb_idle, (gpointer)error_code);
 }
 
 static void __libnet_set_connected_cb(wifi_connected_cb user_cb, void *user_data)
 {
-	if (user_cb) {
+	if (user_cb != NULL) {
 		wifi_callbacks.connected_cb = user_cb;
 		wifi_callbacks.connected_user_data = user_data;
 	}
 }
 
-static void __libnet_connected_cb(wifi_error_e result)
+static gboolean __connected_cb_idle(gpointer data)
 {
-	if (wifi_callbacks.connected_cb)
+	wifi_error_e result = (wifi_error_e)data;
+
+	if (wifi_callbacks.connected_cb != NULL)
 		wifi_callbacks.connected_cb(result, wifi_callbacks.connected_user_data);
 
 	wifi_callbacks.connected_cb = NULL;
 	wifi_callbacks.connected_user_data = NULL;
+
+	return FALSE;
+}
+
+static void __libnet_connected_cb(wifi_error_e result)
+{
+	if (_wifi_is_init() != true) {
+		WIFI_LOG(WIFI_ERROR, "Application is not registered"
+				"If multi-threaded, thread integrity be broken.");
+		return;
+	}
+
+	if (wifi_callbacks.connected_cb != NULL)
+		_wifi_callback_add(__connected_cb_idle, (gpointer)result);
 }
 
 static void __libnet_set_disconnected_cb(wifi_disconnected_cb user_cb, void *user_data)
 {
-	if (user_cb) {
+	if (user_cb != NULL) {
 		wifi_callbacks.disconnected_cb = user_cb;
 		wifi_callbacks.disconnected_user_data = user_data;
 	}
 }
 
-static void __libnet_disconnected_cb(wifi_error_e result)
+static gboolean __disconnected_cb_idle(gpointer data)
 {
-	if (wifi_callbacks.disconnected_cb)
+	wifi_error_e result = (wifi_error_e)data;
+
+	if (wifi_callbacks.disconnected_cb != NULL)
 		wifi_callbacks.disconnected_cb(result, wifi_callbacks.disconnected_user_data);
 
 	wifi_callbacks.disconnected_cb = NULL;
 	wifi_callbacks.disconnected_user_data = NULL;
+
+	return FALSE;
+}
+
+static void __libnet_disconnected_cb(wifi_error_e result)
+{
+	if (_wifi_is_init() != true) {
+		WIFI_LOG(WIFI_ERROR, "Application is not registered"
+				"If multi-threaded, thread integrity be broken.");
+		return;
+	}
+
+	if (wifi_callbacks.disconnected_cb != NULL)
+		_wifi_callback_add(__disconnected_cb_idle, (gpointer)result);
 }
 
 static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
@@ -440,6 +592,8 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 	net_profile_info_t *prof_info_p = NULL;
 	net_profile_info_t prof_info;
 	wifi_error_e result = WIFI_ERROR_NONE;
+	int i = 0;
+	bool is_profile_exists = false;
 
 	switch (event_cb->Event) {
 	case NET_EVENT_OPEN_RSP:
@@ -451,8 +605,8 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 			return;
 
 		result = __libnet_convert_to_ap_error_type(event_cb->Error);
-		WIFI_LOG(WIFI_INFO, "Got Open RSP/IND : %s\n",
-			__libnet_convert_ap_error_type_to_string(result));
+		WIFI_LOG(WIFI_INFO, "Connection open error %s",
+				__libnet_convert_ap_error_type_to_string(result));
 
 		if (is_requested)
 			__libnet_connected_cb(result);
@@ -487,8 +641,8 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 			return;
 
 		result = __libnet_convert_to_ap_error_type(event_cb->Error);
-		WIFI_LOG(WIFI_INFO, "Got Close RSP/IND : %s\n",
-			__libnet_convert_ap_error_type_to_string(result));
+		WIFI_LOG(WIFI_ERROR, "Connection close error %s",
+				__libnet_convert_ap_error_type_to_string(result));
 
 		if (is_requested)
 			__libnet_disconnected_cb(result);
@@ -517,21 +671,34 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 		net_state_type_t *profile_state = (net_state_type_t *)event_cb->Data;
 		wifi_connection_state_e ap_state = _wifi_convert_to_ap_state(*profile_state);
 
-		WIFI_LOG(WIFI_INFO,
-			"Profile State : %s, profile name : %s\n",
-			__libnet_convert_ap_state_to_string(ap_state),
-			event_cb->ProfileName);
+		WIFI_LOG(WIFI_INFO, "state: %s", __libnet_convert_ap_state_to_string(ap_state));
+		SECURE_WIFI_LOG(WIFI_INFO, "profile name: %s", event_cb->ProfileName);
 
 		if (net_get_profile_info(event_cb->ProfileName, &prof_info) == NET_ERR_NONE)
 			__libnet_state_changed_cb(event_cb->ProfileName, &prof_info, ap_state);
-		else
+		else if (ap_state == WIFI_CONNECTION_STATE_DISCONNECTED) {
+			for (i = 0; i < profile_iterator.count; i++) {
+				if (!g_strcmp0(event_cb->ProfileName,
+						profile_iterator.profiles[i].ProfileName)) {
+					is_profile_exists = true;
+					break;
+				}
+			}
+
+			if (is_profile_exists == true) {
+				profile_iterator.profiles[i].ProfileState = *profile_state;
+				__libnet_state_changed_cb(event_cb->ProfileName,
+							&profile_iterator.profiles[i], ap_state);
+			} else
+				__libnet_state_changed_cb(event_cb->ProfileName,
+							NULL, ap_state);
+		} else
 			__libnet_state_changed_cb(event_cb->ProfileName, NULL, ap_state);
 
 		break;
 	case NET_EVENT_WIFI_SCAN_RSP:
 	case NET_EVENT_WIFI_SCAN_IND:
-		WIFI_LOG(WIFI_INFO, "Got Wi-Fi scan IND\n");
-		__libnet_scan_cb(event_cb);
+		__libnet_scan_cb(event_cb, is_requested);
 		break;
 	case NET_EVENT_SPECIFIC_SCAN_RSP:
 		WIFI_LOG(WIFI_INFO, "Got Wi-Fi specific scan RSP\n");
@@ -570,7 +737,6 @@ bool _wifi_libnet_deinit(void)
 		return false;
 
 	__libnet_clear_profile_list(&profile_iterator);
-	__libnet_clear_profile_list(&specific_profile_iterator);
 	g_slist_free_full(ap_handle_list, g_free);
 	ap_handle_list = NULL;
 	memset(&wifi_callbacks, 0, sizeof(struct _wifi_cb_s));
@@ -585,7 +751,7 @@ int _wifi_activate(wifi_activated_cb callback, gboolean wifi_picker_test,
 {
 	int rv = NET_ERR_NONE;
 
-	rv = net_wifi_power_on();
+	rv = net_wifi_power_on(wifi_picker_test);
 	if (rv == NET_ERR_NONE) {
 		__libnet_set_activated_cb(callback, user_data);
 		return WIFI_ERROR_NONE;
@@ -722,6 +888,12 @@ int _wifi_libnet_get_wifi_state(wifi_connection_state_e* connection_state)
 	case WIFI_ON:
 		*connection_state = WIFI_CONNECTION_STATE_DISCONNECTED;
 		break;
+	case WIFI_ASSOCIATION:
+		*connection_state = WIFI_CONNECTION_STATE_ASSOCIATION;
+		break;
+	case WIFI_CONFIGURATION:
+		*connection_state = WIFI_CONNECTION_STATE_CONFIGURATION;
+		break;
 	case WIFI_CONNECTED:
 		*connection_state = WIFI_CONNECTION_STATE_CONNECTED;
 		break;
@@ -782,12 +954,11 @@ int _wifi_libnet_scan_specific_ap(const char *essid,
                                        wifi_scan_finished_cb callback, void *user_data)
 {
 	int rv;
-	rv = net_specific_scan_wifi(essid);
+    rv = net_specific_scan_wifi(essid);
 
-	if (rv == NET_ERR_NONE) {
+    if (rv == NET_ERR_NONE) {
 		g_strlcpy(specific_profile_essid, essid, NET_WLAN_ESSID_LEN+1);
-		wifi_callbacks.specific_scan_cb = callback;
-		wifi_callbacks.specific_scan_user_data = user_data;
+		__libnet_set_specific_scan_cb(callback, user_data);
 		return WIFI_ERROR_NONE;
 	} else if (rv == NET_ERR_ACCESS_DENIED) {
 		WIFI_LOG(WIFI_ERROR, "Access denied");
@@ -908,7 +1079,8 @@ int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void *
 		rv = net_open_connection_with_profile(ap_info->ProfileName);
 	else if (valid_profile == true &&
 			ap_info->ProfileInfo.Wlan.is_hidden != TRUE &&
-			ap_info->ProfileInfo.Wlan.security_info.sec_mode == WLAN_SEC_MODE_NONE)
+			ap_info->ProfileInfo.Wlan.security_info.sec_mode ==
+												WLAN_SEC_MODE_NONE)
 		rv = net_open_connection_with_profile(ap_info->ProfileName);
 	else
 		rv = __libnet_connect_with_wifi_info(ap_info);
@@ -1087,6 +1259,54 @@ int _wifi_update_ap_info(net_profile_info_t *ap_info)
 		return WIFI_ERROR_OPERATION_FAILED;
 
 	return WIFI_ERROR_NONE;
+}
+
+static void __wifi_idle_destroy_cb(gpointer data)
+{
+	if (!data)
+		return;
+
+	managed_idler_list = g_slist_remove(managed_idler_list, data);
+	g_free(data);
+}
+
+static gboolean __wifi_idle_cb(gpointer user_data)
+{
+	struct managed_idle_data *data = (struct managed_idle_data *)user_data;
+
+	if (!data)
+		return FALSE;
+
+	return data->func(data->user_data);
+}
+
+guint _wifi_callback_add(GSourceFunc func, gpointer user_data)
+{
+	guint id;
+	struct managed_idle_data *data;
+
+	if (!func)
+		return 0;
+
+	data = g_try_new0(struct managed_idle_data, 1);
+	if (!data)
+		return 0;
+
+	data->func = func;
+	data->user_data = user_data;
+
+	id = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, __wifi_idle_cb, data,
+			__wifi_idle_destroy_cb);
+	if (!id) {
+		g_free(data);
+		return id;
+	}
+
+	data->id = id;
+
+	managed_idler_list = g_slist_append(managed_idler_list, data);
+
+	return id;
 }
 
 void _wifi_callback_cleanup(void)

@@ -91,6 +91,9 @@ static void __test_bg_scan_completed_callback(wifi_error_e error_code, void* use
 
 static void __test_scan_request_callback(wifi_error_e error_code, void* user_data)
 {
+	if(user_data != NULL)
+		printf("user_data : %s\n", (char *)user_data);
+
 	printf("Scan Completed from scan request, error code : %s\n",
 			__test_convert_error_to_string(error_code));
 }
@@ -133,7 +136,7 @@ static void __test_activated_callback(wifi_error_e result, void* user_data)
 	if (result == WIFI_ERROR_NONE)
 		printf("Wi-Fi Activation Succeeded\n");
 	else
-		printf("Wi-Fi Activation Failed! error : %s", __test_convert_error_to_string(result));
+		printf("Wi-Fi Activation Failed! error : %s\n", __test_convert_error_to_string(result));
 }
 
 static void __test_deactivated_callback(wifi_error_e result, void* user_data)
@@ -141,7 +144,7 @@ static void __test_deactivated_callback(wifi_error_e result, void* user_data)
 	if (result == WIFI_ERROR_NONE)
 		printf("Wi-Fi Deactivation Succeeded\n");
 	else
-		printf("Wi-Fi Deactivation Failed! error : %s", __test_convert_error_to_string(result));
+		printf("Wi-Fi Deactivation Failed! error : %s\n", __test_convert_error_to_string(result));
 }
 
 static void __test_connected_callback(wifi_error_e result, void* user_data)
@@ -149,7 +152,7 @@ static void __test_connected_callback(wifi_error_e result, void* user_data)
 	if (result == WIFI_ERROR_NONE)
 		printf("Wi-Fi Connection Succeeded\n");
 	else
-		printf("Wi-Fi Connection Failed! error : %s", __test_convert_error_to_string(result));
+		printf("Wi-Fi Connection Failed! error : %s\n", __test_convert_error_to_string(result));
 }
 
 static void __test_disconnected_callback(wifi_error_e result, void* user_data)
@@ -157,7 +160,7 @@ static void __test_disconnected_callback(wifi_error_e result, void* user_data)
 	if (result == WIFI_ERROR_NONE)
 		printf("Wi-Fi Disconnection Succeeded\n");
 	else
-		printf("Wi-Fi Disconnection Failed! error : %s", __test_convert_error_to_string(result));
+		printf("Wi-Fi Disconnection Failed! error : %s\n", __test_convert_error_to_string(result));
 }
 
 static void __test_rssi_level_callback(wifi_rssi_level_e rssi_level, void* user_data)
@@ -222,7 +225,11 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 
 	if (strstr(ap_name, ap_name_part) != NULL) {
 		bool required = false;
-		wifi_ap_is_passphrase_required(ap, &required);
+
+		if (wifi_ap_is_passphrase_required(ap, &required) == WIFI_ERROR_NONE)
+			printf("Passphrase required : %s\n", required ? "TRUE" : "FALSE");
+		else
+			printf("Fail to get Passphrase required\n");
 
 		if (required) {
 			char passphrase[100];
@@ -365,8 +372,12 @@ static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)
 	}
 
 	if (strstr(ap_name, ap_name_part) != NULL) {
-		wifi_security_type_e type;;
-		wifi_ap_get_security_type(ap, &type);
+		wifi_security_type_e type;
+
+		if (wifi_ap_get_security_type(ap, &type) == WIFI_ERROR_NONE)
+			printf("Security type : %d\n", type);
+		else
+			printf("Fail to get Security type\n");
 
 		if (type != WIFI_SECURITY_TYPE_EAP) {
 			g_free(ap_name);
@@ -414,6 +425,23 @@ static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)
 	return true;
 }
 
+static bool test_get_user_int(const char *msg, int *num)
+{
+	if (msg == NULL || num == NULL)
+		return false;
+
+	int rv;
+	char buf[32] = {0,};
+	printf("%s\n", msg);
+	rv = read(0, buf, 32);
+
+	if (rv < 0 || *buf == 0 || *buf == '\n' || *buf == '\r')
+		return false;
+
+	*num = atoi(buf);
+	return true;
+}
+
 static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv;
@@ -429,6 +457,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 	if (strstr(ap_name, ap_name_part) != NULL) {
 		wifi_ip_config_type_e type;
 		int method;
+		int address_type;
 
 		printf("Input new method type (1:dhcp, 2:manual, 3:auto) :\n");
 		rv = scanf("%9d", &method);
@@ -436,6 +465,14 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 			g_free(ap_name);
 			return false;
 		}
+
+	       rv = test_get_user_int("Input Address type to get"
+	                       "(0:IPV4, 1:IPV6):", &address_type);
+
+	       if (rv == false || (address_type != 0 && address_type != 1)) {
+	               printf("Invalid input!!\n");
+	               return false;
+	       }
 
 		switch (method) {
 		case 1:
@@ -453,7 +490,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 			return false;
 		}
 
-		rv = wifi_ap_set_ip_config_type(ap, WIFI_ADDRESS_FAMILY_IPV4, type);
+		rv = wifi_ap_set_ip_config_type(ap, address_type, type);
 		if (rv != WIFI_ERROR_NONE)
 			printf("Fail to set ip method type[%s]\n", __test_convert_error_to_string(rv));
 
@@ -468,10 +505,10 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 					rv = WIFI_ERROR_NONE;
 					break;
 				case '0':
-					rv = wifi_ap_set_ip_address(ap, WIFI_ADDRESS_FAMILY_IPV4, NULL);
+					rv = wifi_ap_set_ip_address(ap, address_type, NULL);
 					break;
 				default:
-					rv = wifi_ap_set_ip_address(ap, WIFI_ADDRESS_FAMILY_IPV4, ip_addr);
+					rv = wifi_ap_set_ip_address(ap, address_type, ip_addr);
 				}
 
 				if (rv != WIFI_ERROR_NONE)
@@ -487,10 +524,10 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 					rv = WIFI_ERROR_NONE;
 					break;
 				case '0':
-					rv = wifi_ap_set_subnet_mask(ap, WIFI_ADDRESS_FAMILY_IPV4, NULL);
+					rv = wifi_ap_set_subnet_mask(ap, address_type, NULL);
 					break;
 				default:
-					rv = wifi_ap_set_subnet_mask(ap, WIFI_ADDRESS_FAMILY_IPV4, ip_addr);
+					rv = wifi_ap_set_subnet_mask(ap, address_type, ip_addr);
 				}
 
 				if (rv != WIFI_ERROR_NONE)
@@ -506,10 +543,10 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 					rv = WIFI_ERROR_NONE;
 					break;
 				case '0':
-					rv = wifi_ap_set_gateway_address(ap, WIFI_ADDRESS_FAMILY_IPV4, NULL);
+					rv = wifi_ap_set_gateway_address(ap, address_type, NULL);
 					break;
 				default:
-					rv = wifi_ap_set_gateway_address(ap, WIFI_ADDRESS_FAMILY_IPV4, ip_addr);
+					rv = wifi_ap_set_gateway_address(ap, address_type, ip_addr);
 				}
 
 				if (rv != WIFI_ERROR_NONE)
@@ -528,7 +565,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 
 static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_data)
 {
-	int rv;
+	int rv, address_type;
 	char *ap_name;
 	char *ap_name_part = (char*)user_data;
 
@@ -550,6 +587,14 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 			g_free(ap_name);
 			return false;
 		}
+
+	       rv = test_get_user_int("Input Address type to get"
+	                       "(0:IPV4, 1:IPV6):", &address_type);
+
+	       if (rv == false || (address_type != 0 && address_type != 1)) {
+	               printf("Invalid input!!\n");
+	               return false;
+	       }
 
 		switch (method) {
 		case 1:
@@ -580,10 +625,10 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 				rv = WIFI_ERROR_NONE;
 				break;
 			case '0':
-				rv = wifi_ap_set_proxy_address(ap, WIFI_ADDRESS_FAMILY_IPV4, NULL);
+				rv = wifi_ap_set_proxy_address(ap, address_type, NULL);
 				break;
 			default:
-				rv = wifi_ap_set_proxy_address(ap, WIFI_ADDRESS_FAMILY_IPV4, proxy_addr);
+				rv = wifi_ap_set_proxy_address(ap, address_type, proxy_addr);
 			}
 
 			if (rv != WIFI_ERROR_NONE)
@@ -600,7 +645,7 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 
 static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 {
-	int rv;
+	int rv, address_type = 0;
 	char *ap_name;
 	char *str_value;
 	int int_value;
@@ -658,24 +703,32 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 		else
 			printf("Fail to get Connection State\n");
 
-		if (wifi_ap_get_ip_config_type(ap, WIFI_ADDRESS_FAMILY_IPV4, &ip_type) == WIFI_ERROR_NONE)
+		rv = test_get_user_int("Input Address type to get"
+	                       "(0:IPV4, 1:IPV6):", &address_type);
+
+	    if (rv == false || (address_type != 0 && address_type != 1)) {
+	        printf("Invalid input!!\n");
+	        return false;
+	    }
+
+		if (wifi_ap_get_ip_config_type(ap, address_type, &ip_type) == WIFI_ERROR_NONE)
 			printf("IP config type : %d\n", ip_type);
 		else
 			printf("Fail to get IP config type\n");
 
-		if (wifi_ap_get_ip_address(ap, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
+		if (wifi_ap_get_ip_address(ap, address_type, &str_value) == WIFI_ERROR_NONE) {
 			printf("IP : %s\n", str_value);
 			g_free(str_value);
 		} else
 			printf("Fail to get IP\n");
 
-		if (wifi_ap_get_subnet_mask(ap, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
+		if (wifi_ap_get_subnet_mask(ap, address_type, &str_value) == WIFI_ERROR_NONE) {
 			printf("Subnet mask : %s\n", str_value);
 			g_free(str_value);
 		} else
 			printf("Fail to get Subnet mask\n");
 
-		if (wifi_ap_get_gateway_address(ap, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
+		if (wifi_ap_get_gateway_address(ap, address_type, &str_value) == WIFI_ERROR_NONE) {
 			printf("Gateway : %s\n", str_value);
 			g_free(str_value);
 		} else
@@ -686,19 +739,19 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 		else
 			printf("Fail to get Proxy type\n");
 
-		if (wifi_ap_get_proxy_address(ap, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
+		if (wifi_ap_get_proxy_address(ap, address_type, &str_value) == WIFI_ERROR_NONE) {
 			printf("Proxy : %s\n", str_value);
 			g_free(str_value);
 		} else
 			printf("Fail to get Proxy\n");
 
-		if (wifi_ap_get_dns_address(ap, 1, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
+		if (wifi_ap_get_dns_address(ap, 1, address_type, &str_value) == WIFI_ERROR_NONE) {
 			printf("DNS1 : %s\n", str_value);
 			g_free(str_value);
 		} else
 			printf("Fail to get DNS1\n");
 
-		if (wifi_ap_get_dns_address(ap, 2, WIFI_ADDRESS_FAMILY_IPV4, &str_value) == WIFI_ERROR_NONE) {
+		if (wifi_ap_get_dns_address(ap, 2, address_type, &str_value) == WIFI_ERROR_NONE) {
 			printf("DNS2 : %s\n", str_value);
 			g_free(str_value);
 		} else
@@ -1300,6 +1353,7 @@ int test_get_ap_info(void)
 int main(int argc, char **argv)
 {
 	GMainLoop *mainloop;
+	g_type_init();
 	mainloop = g_main_loop_new (NULL, FALSE);
 
 	GIOChannel *channel = g_io_channel_unix_new(0);
