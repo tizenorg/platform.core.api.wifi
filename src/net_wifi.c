@@ -193,7 +193,6 @@ EXPORT_API int wifi_get_mac_address(char** mac_address)
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
-#if defined TIZEN_TV
 	if (0 == access(WIFI_MAC_ADD_PATH, F_OK))
 		fp = fopen(WIFI_MAC_ADD_PATH, "r");
 
@@ -220,15 +219,6 @@ EXPORT_API int wifi_get_mac_address(char** mac_address)
 	}
 	g_strlcpy(*mac_address, buf, WIFI_MAC_ADD_LENGTH + 1);
 	fclose(fp);
-#else
-	*mac_address = vconf_get_str(VCONFKEY_WIFI_BSSID_ADDRESS);
-
-	if(*mac_address == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Failed to get vconf"
-			" from %s", VCONFKEY_WIFI_BSSID_ADDRESS);
-		return WIFI_ERROR_OPERATION_FAILED;
-	}
-#endif
 
 	return WIFI_ERROR_NONE;
 }
