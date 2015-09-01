@@ -40,16 +40,9 @@ extern "C" {
 #if !defined TIZEN_TV
 #define CHECK_FEATURE_SUPPORTED(feature_name) \
 	do { \
-		bool feature_supported = FALSE; \
-		if (!system_info_get_platform_bool(feature_name, &feature_supported)) { \
-			if (feature_supported == FALSE) { \
-				LOGE("%s feature is disabled", feature_name); \
-				return WIFI_ERROR_NOT_SUPPORTED; \
-			} \
-		} else { \
-			LOGE("Error - Feature getting from System Info"); \
-			return WIFI_ERROR_OPERATION_FAILED; \
-		} \
+		int rv = _wifi_check_feature_supported(feature_name); \
+		if( rv != WIFI_ERROR_NONE ) \
+			return rv; \
 	} while(0)
 #else
 #define CHECK_FEATURE_SUPPORTED(feature_name)
@@ -124,6 +117,8 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state);
 
 guint _wifi_callback_add(GSourceFunc func, gpointer user_data);
 void _wifi_callback_cleanup(void);
+
+int _wifi_check_feature_supported(const char *feature_name);
 
 #ifdef __cplusplus
 }

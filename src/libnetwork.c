@@ -65,6 +65,8 @@ static __thread struct _wifi_cb_s wifi_callbacks = { 0, };
 static __thread struct _profile_list_s profile_iterator = { 0, NULL };
 static __thread struct _profile_list_s specific_profile_iterator = {0, NULL};
 static __thread char specific_profile_essid[NET_WLAN_ESSID_LEN + 1] = { 0, };
+static __thread bool is_feature_checked = false;
+static __thread bool feature_supported = false;
 static __thread GSList *managed_idler_list = NULL;
 
 bool _wifi_is_init(void)
@@ -1329,4 +1331,29 @@ void _wifi_callback_cleanup(void)
 
 	g_slist_free(managed_idler_list);
 	managed_idler_list = NULL;
+}
+
+int _wifi_check_feature_supported(const char *feature_name)
+{
+	if(is_feature_checked) {
+		if(!feature_supported) {
+			LOGE("%s feature is disabled", feature_name);
+			return WIFI_ERROR_NOT_SUPPORTED;
+		}
+	}
+	else {
+		if (!system_info_get_platform_bool(feature_name, &feature_supported)) {
+			is_feature_checked = true;
+			if (!feature_supported) {
+				LOGE("%s feature is disabled", feature_name);
+				return WIFI_ERROR_NOT_SUPPORTED;
+			}
+		}
+		else {
+			LOGE("Error - Feature getting from System Info");
+			return WIFI_ERROR_OPERATION_FAILED;
+		}
+	}
+
+	return WIFI_ERROR_NONE;
 }
