@@ -37,16 +37,12 @@ extern "C" {
 
 #define WIFI_FEATURE	"http://tizen.org/feature/network.wifi"
 
-#if !defined TIZEN_TV
 #define CHECK_FEATURE_SUPPORTED(feature_name) \
 	do { \
 		int rv = _wifi_check_feature_supported(feature_name); \
 		if( rv != WIFI_ERROR_NONE ) \
 			return rv; \
 	} while(0)
-#else
-#define CHECK_FEATURE_SUPPORTED(feature_name)
-#endif
 
 #define WIFI_LOG(log_level, format, args...) \
 	do { \
