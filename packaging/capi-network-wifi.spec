@@ -1,6 +1,6 @@
 Name:		capi-network-wifi
 Summary:	Network Wi-Fi library in TIZEN C API
-Version:	1.0.58
+Version:	1.0.59
 Release:	1
 Group:		System/Network
 License:	Apache-2.0
@@ -10,12 +10,14 @@ BuildRequires:	pkgconfig(dlog)
 BuildRequires:	pkgconfig(vconf)
 BuildRequires:	pkgconfig(network)
 BuildRequires:	pkgconfig(glib-2.0)
+BuildRequires:	pkgconfig(gio-2.0)
+BuildRequires:	pkgconfig(gthread-2.0)
 BuildRequires:	pkgconfig(capi-base-common)
 BuildRequires:	pkgconfig(capi-system-info)
 Requires(post):		/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
 
-%if "%{profile}" == "wearable"
+%if "%{?tizen_profile_name}" == "wearable"
 BuildRequires:  pkgconfig(capi-appfw-application)
 %endif
 
@@ -42,7 +44,7 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr -DFULLVER=%{version} -DMAJORVER=${MAJORVER} \
 %if 0%{?model_build_feature_network_dsds} == 1
 	-DTIZEN_DUALSIM_ENABLE=1 \
 %endif
-%if "%{profile}" == "wearable"
+%if "%{pofile}" == "wearable"
 	-DTIZEN_WEARABLE=1 \
 %else
 %if "%{profile}" == "mobile"
