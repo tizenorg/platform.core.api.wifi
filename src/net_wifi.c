@@ -76,6 +76,8 @@ EXPORT_API int wifi_initialize(void)
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
 
+	_wifi_dbus_init();
+
 	WIFI_LOG(WIFI_INFO, "Wi-Fi successfully initialized");
 
 	return WIFI_ERROR_NONE;
@@ -97,6 +99,8 @@ EXPORT_API int wifi_deinitialize(void)
 
 	wifi_unset_rssi_level_changed_cb();
 	_wifi_callback_cleanup();
+
+	_wifi_dbus_deinit();
 
 	WIFI_LOG(WIFI_INFO, "Wi-Fi successfully de-initialized");
 
@@ -185,14 +189,14 @@ EXPORT_API int wifi_get_mac_address(char** mac_address)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
-	FILE *fp = NULL;
-	char buf[WIFI_MAC_ADD_LENGTH+ 1];
-
 	if (mac_address == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+#if defined TIZEN_TV
+	FILE *fp = NULL;
+	char buf[WIFI_MAC_ADD_LENGTH + 1];
 	if (0 == access(WIFI_MAC_ADD_PATH, F_OK))
 		fp = fopen(WIFI_MAC_ADD_PATH, "r");
 
@@ -219,6 +223,15 @@ EXPORT_API int wifi_get_mac_address(char** mac_address)
 	}
 	g_strlcpy(*mac_address, buf, WIFI_MAC_ADD_LENGTH + 1);
 	fclose(fp);
+#else
+	*mac_address = vconf_get_str(VCONFKEY_WIFI_BSSID_ADDRESS);
+
+	if(*mac_address == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get vconf"
+			" from %s", VCONFKEY_WIFI_BSSID_ADDRESS);
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+#endif
 
 	return WIFI_ERROR_NONE;
 }

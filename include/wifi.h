@@ -243,6 +243,20 @@ typedef void* wifi_ap_h;
 * @}
 */
 
+/**
+* @addtogroup CAPI_NETWORK_WIFI_CONFIG_MODULE
+* @{
+*/
+
+/**
+ * @brief The Wi-Fi access point configuration handle
+ * @since_tizen 2.4
+ */
+typedef void *wifi_config_h;
+
+/**
+* @}
+*/
 
 /**
 * @addtogroup CAPI_NETWORK_WIFI_MANAGER_MODULE
@@ -363,6 +377,28 @@ typedef void(*wifi_rssi_level_changed_cb)(wifi_rssi_level_e rssi_level, void *us
 * @}
 */
 
+/**
+* @addtogroup CAPI_NETWORK_WIFI_CONFIG_MODULE
+* @{
+*/
+
+/**
+ * @brief Called when you get the found access point configurations repeatedly.
+ * @since_tizen 2.4
+ * @remarks @a config is valid only in this function. In order to use @a config outside this function, you must copy the config with wifi_config_clone().
+ *
+ * @param[in]  config		The access point configuration handle
+ * @param[in]  user_data	The user data passed from the request function
+ *
+ * @return  @c true to continue with the next iteration of the loop, otherwise @c false to break out of the loop \n
+ * @pre  wifi_config_foreach_configuration() will invoke this callback.
+ * @see  wifi_config_foreach_configuration()
+ */
+typedef bool (*wifi_config_list_cb)(const wifi_config_h config, void *user_data);
+
+/**
+* @}
+*/
 
 /**
 * @addtogroup CAPI_NETWORK_WIFI_MODULE
@@ -1611,6 +1647,429 @@ int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type);
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
 int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type);
+
+/**
+* @}
+*/
+
+/**
+* @addtogroup CAPI_NETWORK_WIFI_CONFIG_MODULE
+* @{
+*/
+
+/**
+ * @brief Gets access point configuration handle.
+ * @since_tizen 2.4
+ * @remarks You must release @a config using wifi_config_destroy().
+ *
+ * @param[in] name				The access point name
+ * @param[in] passphrase		The access point passphrase
+ * @param[in] security_type		The access point security type
+ * @param[out] config			The access point configuration handle
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_OUT_OF_MEMORY		Out of memory
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ * @see wifi_config_destroy()
+ * @pre This API needs wifi_initialize() before use
+ */
+int wifi_config_create(const char *name, const char *passphrase, wifi_security_type_e security_type, wifi_config_h *config);
+
+/**
+ * @brief Clones the access point configuration handle.
+ * @since_tizen 2.4
+ * @remarks You must release @a cloned_config using wifi_config_destroy().
+ *
+ * @param[in] origin				The origin access point configuration handle
+ * @param[out] cloned_config	The cloned access point configuration handle
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_OUT_OF_MEMORY		Out of memory
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ * @see wifi_config_destroy()
+ */
+int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config);
+
+/**
+ * @brief Destroys the access point configuration handle.
+ * @since_tizen 2.4
+ *
+ * @param[in] config	The access point configuration handle
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ * @see wifi_config_create()
+ * @see wifi_config_clone()
+ */
+int wifi_config_destroy(wifi_config_h config);
+
+/**
+ * @brief Saves Wi-Fi configuration of access point.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config	The access point configuration handle
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission denied
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ * @see wifi_config_create()
+ */
+int wifi_config_save_configuration(wifi_config_h config);
+
+/**
+ * @brief Gets the result of access point configurations repeatedly.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] callback		The callback to be called
+ * @param[in] user_data		The user data passed to the callback function
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission denied
+ * @retval #WIFI_ERROR_OUT_OF_MEMORY		Out of memory
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ * @pre This API needs wifi_initialize() before use.
+ * @post This function invokes wifi_config_list_cb().
+ */
+int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_data);
+
+/**
+ * @brief Gets the name of access point from configuration.
+ * @since_tizen 2.4
+ * @remarks You must release @a name using free().
+ *
+ * @param[in] config	The access point configuration handle
+ * @param[out] name		The name of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_OUT_OF_MEMORY		Out of memory
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ */
+int wifi_config_get_name(wifi_config_h config, char **name);
+
+/**
+ * @brief Gets the security type of access point from configuration.
+ * @since_tizen 2.4
+ *
+ * @param[in] config			The access point configuration handle
+ * @param[out] security_type	The security type of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ */
+int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *security_type);
+
+/**
+ * @brief Sets access point proxy address configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config			The access point configuration handle
+ * @param[in] address_family	The address family
+ * @param[in] proxy_address		The proxy address
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission denied
+ * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED Not supported address family
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ */
+int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e address_family, const char *proxy_address);
+
+/**
+ * @brief Gets the proxy address of access point from configuration.
+ * @since_tizen 2.4
+ * @remarks You must release @a proxy_address using free().
+ *
+ * @param[in] config			The access point configuration handle
+ * @param[out] address_family	The address family
+ * @param[out] proxy_address	The proxy address
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_OUT_OF_MEMORY		Out of memory
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ */
+int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *address_family, char **proxy_address);
+
+/**
+ * @brief Sets the hidden property of access point from the configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[in] is_hidden		true to enable and false to disable
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission denied
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ */
+int wifi_config_set_hidden_ap_property(wifi_config_h config, bool is_hidden);
+
+/**
+ * @brief Gets the hidden property of access point from the configuration.
+ * @since_tizen 2.4
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[out] is_hidden	The hidden property of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ */
+int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *is_hidden);
+
+/**
+ * @brief Gets access point anonymous identity from configuration.
+ * @since_tizen 2.4
+ * @remarks You must release @a anonymous_identity using free().
+ *
+ * @param[in] config				The access point configuration handle
+ * @param[out] anonymous_identity	The anonymous identity of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ */
+int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymous_identity);
+
+/**
+ * @brief Sets access point anonymous identity to configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config				The access point configuration handle
+ * @param[in] anonymous_identity	The anonymous identity
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
+ */
+int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* anonymous_identity);
+
+/**
+ * @brief Gets access point cacert file from configuration.
+ * @since_tizen 2.4
+ * @remarks You must release @a ca_cert using free().
+ * @remarks The mediastorage privilege http://tizen.org/privilege/mediastorage is needed \n
+ * 			 if @a image_path is relevant to media storage.\n
+ * 			 The externalstorage privilege http://tizen.org/privilege/externalstorage is needed \n
+ * 			 if @a image_path is relevant to external storage.
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[out] ca_cert		The certification authority(CA) certificates file of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ */
+int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert);
+
+/**
+ * @brief Sets access point cacert file to configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ * @remarks The mediastorage privilege http://tizen.org/privilege/mediastorage is needed \n
+ * 			 if @a image_path is relevant to media storage.\n
+ * 			 The externalstorage privilege http://tizen.org/privilege/externalstorage is needed \n
+ * 			 if @a image_path is relevant to external storage.
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[in] ca_cert		The certification authority(CA) certificates file of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
+ */
+int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert);
+
+/**
+ * @brief Gets access point client cert file from configuration.
+ * @since_tizen 2.4
+ * @remarks You must release @a client_crt using free().
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[out] client_crt	The certification authority(CA) certificates file of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ */
+int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cert);
+
+/**
+ * @brief Sets access point client cert file to configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[in] private_key	The private key file
+ * @param[in] client_crt		The certification authority(CA) certificates file of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
+ */
+int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* private_key, const char* client_cert);
+
+/**
+ * @brief Gets access point identity from configuration.
+ * @since_tizen 2.4
+ * @remarks You must release @a identity using free().
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[out] identity		The identity of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ */
+int wifi_config_get_eap_identity(wifi_config_h config, char** identity);
+
+/**
+ * @brief Sets access point identity to configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[in] identity		The identity
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
+ */
+int wifi_config_set_eap_identity(wifi_config_h config, const char* identity);
+
+/**
+ * @brief Gets access point eap type from configuration.
+ * @since_tizen 2.4
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[out] eap_type	The eap type of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ */
+int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type);
+
+/**
+ * @brief Sets access point eap type to configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config		The access point configuration handle
+ * @param[in] eap_type		The eap type
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
+ */
+int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type);
+
+/**
+ * @brief Gets access point eap auth type from configuration.
+ * @since_tizen 2.4
+ *
+ * @param[in] config			The access point configuration handle
+ * @param[out] eap_auth_type	The eap auth type of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ */
+int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* eap_auth_type);
+
+/**
+ * @brief Sets access point eap auth type to configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config			The access point configuration handle
+ * @param[in] eap_auth_type	The eap auth type
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
+ */
+int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap_auth_type);
+
+/**
+ * @brief Gets access point subject match from configuration.
+ * @since_tizen 2.4
+ * @remarks You must release @a subject_match using free().
+ *
+ * @param[in] config			The access point configuration handle
+ * @param[out] subject_match	The subject match of access point
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ */
+int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match);
+
+/**
+ * @brief Sets access point subject match to configuration.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config			The access point configuration handle
+ * @param[in] subject_match	The subject match
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
+ */
+int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_match);
 
 /**
 * @}
