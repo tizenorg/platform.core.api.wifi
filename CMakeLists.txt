@@ -11,7 +11,7 @@ SET(LIBDIR ${PREFIX}/${LIB_PATH})
 SET(INC_DIR include)
 INCLUDE_DIRECTORIES(${INC_DIR})
 
-SET(dependents "dlog vconf capi-base-common glib-2.0 network capi-system-info")
+SET(dependents "dlog vconf capi-base-common capi-system-info glib-2.0 gio-2.0 gthread-2.0 network ")
 SET(pc_dependents "capi-base-common")
 
 IF(TIZEN_DUALSIM_ENABLE)

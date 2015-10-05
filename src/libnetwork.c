@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "wifi_dbus_private.h"
 #include "net_wifi_private.h"
 
 static __thread bool is_init = false;
@@ -68,6 +69,8 @@ static __thread char specific_profile_essid[NET_WLAN_ESSID_LEN + 1] = { 0, };
 static __thread bool is_feature_checked = false;
 static __thread bool feature_supported = false;
 static __thread GSList *managed_idler_list = NULL;
+
+wifi_dbus *g_dbus_h = NULL;
 
 bool _wifi_is_init(void)
 {
@@ -870,42 +873,41 @@ int _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_libnet_get_wifi_state(wifi_connection_state_e* connection_state)
+int _wifi_libnet_get_wifi_state(wifi_connection_state_e *connection_state)
 {
-	int rv;
-	net_wifi_state_t wlan_state = 0;
-	net_profile_name_t profile_name;
+	wifi_dbus *dbus_h = NULL;
+	GError *error = NULL;
+	GVariant *result = NULL;
+	gint state = 0;
 
-	rv = net_get_wifi_state(&wlan_state, &profile_name);
-	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
-	} else if (rv != NET_ERR_NONE) {
-		WIFI_LOG(WIFI_ERROR, "Failed to get Wi-Fi state");
+	dbus_h = _wifi_get_dbus_handle();
+	if (dbus_h == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized for wifi dbus connection");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	result = g_dbus_connection_call_sync(dbus_h->dbus_conn,
+					     NETCONFIG_SERVICE,
+					     NETCONFIG_WIFI_PATH,
+					     NETCONFIG_IWIFI,
+					     "GetWifiState",
+					     g_variant_new("()"),
+					     NULL, G_DBUS_CALL_FLAGS_NONE,
+					     DBUS_REPLY_TIMEOUT, dbus_h->ca,
+					     &error);
+
+	if (error) {
+		WIFI_LOG(WIFI_ERROR, "Fail to GetWifiState [%d: %s]", error->code, error->message);
+		g_error_free(error);
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
 
-	switch (wlan_state) {
-	case WIFI_OFF:
-	case WIFI_ON:
-		*connection_state = WIFI_CONNECTION_STATE_DISCONNECTED;
-		break;
-	case WIFI_ASSOCIATION:
-		*connection_state = WIFI_CONNECTION_STATE_ASSOCIATION;
-		break;
-	case WIFI_CONFIGURATION:
-		*connection_state = WIFI_CONNECTION_STATE_CONFIGURATION;
-		break;
-	case WIFI_CONNECTED:
-		*connection_state = WIFI_CONNECTION_STATE_CONNECTED;
-		break;
-	case WIFI_DISCONNECTING:
-		*connection_state = WIFI_CONNECTION_STATE_CONNECTED;
-		break;
-	default :
-		WIFI_LOG(WIFI_ERROR, "Unknown state");
-		return WIFI_ERROR_OPERATION_FAILED;
+	if (result != NULL) {
+		g_variant_get(result, "(i)", &state);
+		g_variant_unref(result);
 	}
+
+	*connection_state = state;
 
 	return WIFI_ERROR_NONE;
 }
@@ -1356,4 +1358,33 @@ int _wifi_check_feature_supported(const char *feature_name)
 	}
 
 	return WIFI_ERROR_NONE;
+}
+
+int _wifi_dbus_init(void)
+{
+	int rv;
+
+	rv = wifi_dbus_init(&g_dbus_h);
+	if (rv != NET_ERR_NONE)
+		return rv;
+
+	return NET_ERR_NONE;
+}
+
+int _wifi_dbus_deinit(void)
+{
+	wifi_dbus_deinit(g_dbus_h);
+	g_dbus_h = NULL;
+
+	return NET_ERR_NONE;
+}
+
+wifi_dbus *_wifi_get_dbus_handle(void)
+{
+	if (g_dbus_h == NULL) {
+		WIFI_LOG(WIFI_ERROR, "g_dbus_h is NULL");
+		return NULL;
+	}
+
+	return g_dbus_h;
 }

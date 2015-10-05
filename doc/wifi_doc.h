@@ -40,7 +40,7 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.gettingstarted/html/native/details/app_filtering_n.htm"><b>Feature List</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -68,7 +68,7 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.gettingstarted/html/native/details/app_filtering_n.htm"><b>Feature List</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -92,7 +92,7 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.gettingstarted/html/native/details/app_filtering_n.htm"><b>Feature List</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -117,7 +117,7 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.gettingstarted/html/native/details/app_filtering_n.htm"><b>Feature List</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -141,7 +141,7 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.gettingstarted/html/native/details/app_filtering_n.htm"><b>Feature List</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -165,7 +165,7 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.gettingstarted/html/native/details/app_filtering_n.htm"><b>Feature List</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -189,10 +189,33 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.gettingstarted/html/native/details/app_filtering_n.htm"><b>Feature List</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
 
+/**
+ * @defgroup CAPI_NETWORK_WIFI_CONFIG_MODULE  Wi-Fi Configuration
+ * @brief The Configuration API provides functions for managing the configuration of Wi-Fi.
+ * @ingroup CAPI_NETWORK_WIFI_MODULE
+ *
+ * @section CAPI_NETWORK_WIFI_CONFIG_MODULE  Required Header
+ *   \#include <wifi.h>
+ *
+ * @section CAPI_NETWORK_WIFI_CONFIG_MODULE_OVERVIEW Overview
+ * The Configuration API provides functions for managing the configuration of Wi-Fi. You can manage the configuration information using the functions.
+ * @section CAPI_NETWORK_WIFI_CONFIG_MODULE Related Features
+ * This API is related with the following features:\n
+ * - http://tizen.org/feature/network.wifi\n
+ *
+ * It is recommended to design feature related codes in your application for reliability.\n
+ *
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ *
+ * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
+ *
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ *
+ */
 
 #endif /* __TIZEN_NETWORK_WIFI_DOC_H__ */

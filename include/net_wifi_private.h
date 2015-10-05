@@ -23,6 +23,7 @@
 #include <system_info.h>
 
 #include "wifi.h"
+#include "wifi_dbus_private.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,6 +116,10 @@ guint _wifi_callback_add(GSourceFunc func, gpointer user_data);
 void _wifi_callback_cleanup(void);
 
 int _wifi_check_feature_supported(const char *feature_name);
+
+int        _wifi_dbus_init(void);
+int        _wifi_dbus_deinit(void);
+wifi_dbus *_wifi_get_dbus_handle(void);
 
 #ifdef __cplusplus
 }
