@@ -827,6 +827,31 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 	return true;
 }
 
+static bool _test_config_list_cb(const wifi_config_h config, void *user_data)
+{
+	gchar *name = NULL;
+	wifi_security_type_e security_type;
+
+	wifi_config_get_name(config, &name);
+	wifi_config_get_security_type(config, &security_type);
+
+	printf("Name[%s] ", name);
+	printf("Security type[%d] ", security_type);
+	if (security_type == WIFI_SECURITY_TYPE_EAP) {
+		wifi_eap_type_e eap_type;
+		wifi_eap_auth_type_e eap_auth_type;
+		wifi_config_get_eap_type(config, &eap_type);
+		printf("Eap type[%d] ", eap_type);
+		wifi_config_get_eap_auth_type(config, &eap_auth_type);
+		printf("Eap auth type[%d]", eap_auth_type);
+	}
+	printf("\n");
+
+	g_free(name);
+
+	return true;
+}
+
 static bool __test_found_specific_aps_callback(wifi_ap_h ap, void *user_data)
 {
 	printf("Found specific ap Completed\n");
@@ -930,7 +955,6 @@ static void __test_scan_specific_ap_callback(wifi_error_e error_code, void* user
 	}
 }
 
-
 int test_wifi_init(void)
 {
 	int rv = wifi_initialize();
@@ -948,7 +972,7 @@ int test_wifi_init(void)
 	printf("Wifi init succeeded\n");
 	return 1;
 }
- 
+
 int  test_wifi_deinit(void)
 {
 	int rv = 0;
@@ -1350,6 +1374,160 @@ int test_get_ap_info(void)
 	return 1;
 }
 
+int test_load_configuration(void)
+{
+	int rv;
+
+	rv = wifi_config_foreach_configuration(_test_config_list_cb, NULL);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	return 1;
+}
+
+int test_save_configuration(void)
+{
+	int rv;
+	char name[33] = { 0, };
+	char passphrase[100] = { 0, };
+	int type = 0;
+	wifi_config_h config;
+
+	printf("Input AP configuration\n");
+	printf("Name : ");
+	rv = scanf("%32s", name);
+	if (rv <= 0)
+		return -1;
+
+	printf("Passphrase : ");
+	rv = scanf("%99s", passphrase);
+	if (rv <= 0)
+		return -1;
+
+	printf("Security type(None(0), WEP(1), WPA-PSK(2), EAP(4) : ");
+	rv = scanf("%d", &type);
+	if (rv <= 0)
+		return -1;
+
+	rv = wifi_config_create(name, passphrase, type, &config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_save_configuration(config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_destroy(config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	return 1;
+}
+
+int test_set_configuration_proxy_and_hidden(void)
+{
+	int rv;
+	char name[33] = { 0, };
+	char passphrase[100] = { 0, };
+	int type = 0;
+	char proxy[100] = { 0, };
+	int hidden = 0;
+	wifi_config_h config;
+
+	printf("Input AP configuration\n");
+	printf("Name : ");
+	rv = scanf("%32s", name);
+	if (rv <= 0)
+		return -1;
+
+	printf("Passphrase : ");
+	rv = scanf("%99s", passphrase);
+	if (rv <= 0)
+		return -1;
+
+	printf("Security type(None(0), WEP(1), WPA-PSK(2), EAP(4) : ");
+	rv = scanf("%d", &type);
+	if (rv <= 0)
+		return -1;
+
+	printf("Proxy(server:port) : ");
+	rv = scanf("%99s", proxy);
+	if (rv <= 0)
+		return -1;
+
+	printf("Hidden(1:Hidden) : ");
+	rv = scanf("%d", &hidden);
+	if (rv <= 0)
+		return -1;
+
+	rv = wifi_config_create(name, passphrase, type, &config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_save_configuration(config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_set_proxy_address(config, WIFI_ADDRESS_FAMILY_IPV4, proxy);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	if (hidden == 1)
+		rv = wifi_config_set_hidden_ap_property(config, TRUE);
+	else
+		rv = wifi_config_set_hidden_ap_property(config, FALSE);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_destroy(config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	return 1;
+}
+
+int test_set_eap_configuration(void)
+{
+	int rv;
+	char name[33] = { 0, };
+	char passphrase[100] = { 0, };
+	int type = WIFI_SECURITY_TYPE_EAP;
+	wifi_config_h config;
+
+	printf("Input EAP configuration\n");
+	printf("Name : ");
+	rv = scanf("%32s", name);
+	if (rv <= 0)
+		return -1;
+
+	printf("Passphrase : ");
+	rv = scanf("%99s", passphrase);
+	if (rv <= 0)
+		return -1;
+
+	rv = wifi_config_create(name, passphrase, type, &config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_save_configuration(config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_set_eap_type(config, WIFI_EAP_TYPE_TLS);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_set_eap_auth_type(config, WIFI_EAP_AUTH_TYPE_MD5);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	rv = wifi_config_destroy(config);
+	if (rv != WIFI_ERROR_NONE)
+		return -1;
+
+	return 1;
+}
+
 int main(int argc, char **argv)
 {
 	GMainLoop *mainloop;
@@ -1407,6 +1585,10 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("i 	- Set Proxy method type\n");
 		printf("j 	- Get Ap info\n");
 		printf("k 	- Connect Specific AP\n");
+		printf("l 	- Load configuration\n");
+		printf("m 	- Save configuration\n");
+		printf("n 	- Set configuration proxy and hidden\n");
+		printf("o       - Set EAP configuration\n");
 		printf("0 	- Exit \n");
 
 		printf("ENTER  - Show options menu.......\n");
@@ -1473,6 +1655,19 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 	case 'k':
 		rv = test_connect_specific_ap();
 		break;
+	case 'l':
+		rv = test_load_configuration();
+		break;
+	case 'm':
+		rv = test_save_configuration();
+		break;
+	case 'n':
+		rv = test_set_configuration_proxy_and_hidden();
+		break;
+	case 'o':
+		rv = test_set_eap_configuration();
+		break;
+
 	default:
 		break;
 	}
