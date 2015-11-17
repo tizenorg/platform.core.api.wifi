@@ -52,8 +52,12 @@ EXPORT_API int wifi_config_create(const char *name, const char *passphrase, wifi
 
 	if (security_type == WIFI_SECURITY_TYPE_EAP) {
 		h->eap_config = g_new0(struct _wifi_eap_config, 1);
-		if (h->eap_config == NULL)
+		if (h->eap_config == NULL) {
+			g_free(h->name);
+			g_free(h->passphrase);
+			g_free(h);
 			return WIFI_ERROR_OUT_OF_MEMORY;
+		}
 
 		h->eap_config->ca_cert = NULL;
 		h->eap_config->client_cert = NULL;
@@ -103,8 +107,13 @@ EXPORT_API int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_con
 
 	if (config->eap_config) {
 		h->eap_config = g_new0(struct _wifi_eap_config, 1);
-		if (h->eap_config == NULL)
+		if (h->eap_config == NULL) {
+			g_free(h->name);
+			g_free(h->passphrase);
+			g_free(h->proxy_address);
+			g_free(h);
 			return WIFI_ERROR_OUT_OF_MEMORY;
+		}
 
 		h->eap_config->ca_cert = g_strdup(config->eap_config->ca_cert);
 		h->eap_config->client_cert = g_strdup(config->eap_config->client_cert);
@@ -271,6 +280,7 @@ EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, v
 			g_free(h->eap_config);
 		}
 		g_free(h);
+		h = NULL;
 
 		if (rv == false)
 			break;
