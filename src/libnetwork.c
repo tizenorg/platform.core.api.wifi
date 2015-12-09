@@ -205,12 +205,11 @@ static int __libnet_update_profile_iterator(void)
 
 static void __libnet_update_specific_profile_iterator(GSList *ap_list)
 {
-    int count=0;
-    GSList *list = ap_list;
+	int count = 0;
+	GSList *list = ap_list;
 
-    for (count = 0; list; list = list->next) {
+	for (count = 0; list; list = list->next)
 		count++;
-    }
 
 	if (count == 0) {
 		WIFI_LOG(WIFI_INFO, "No hidden AP found\n");
@@ -626,7 +625,7 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 			return;
 		case NET_ERR_ACTIVE_CONNECTION_EXISTS:
 			return;
-		default :
+		default:
 			break;
 		}
 
@@ -718,7 +717,7 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 	case NET_EVENT_WIFI_POWER_IND:
 		__libnet_power_on_off_cb(event_cb, is_requested);
 		break;
-	default :
+	default:
 		break;
 	}
 }
@@ -955,12 +954,12 @@ int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void *user_data)
 }
 
 int _wifi_libnet_scan_specific_ap(const char *essid,
-                                       wifi_scan_finished_cb callback, void *user_data)
+							wifi_scan_finished_cb callback, void *user_data)
 {
 	int rv;
-    rv = net_specific_scan_wifi(essid);
+	rv = net_specific_scan_wifi(essid);
 
-    if (rv == NET_ERR_NONE) {
+	if (rv == NET_ERR_NONE) {
 		g_strlcpy(specific_profile_essid, essid, NET_WLAN_ESSID_LEN+1);
 		__libnet_set_specific_scan_cb(callback, user_data);
 		return WIFI_ERROR_NONE;
@@ -1337,21 +1336,19 @@ void _wifi_callback_cleanup(void)
 
 int _wifi_check_feature_supported(const char *feature_name)
 {
-	if(is_feature_checked) {
-		if(!feature_supported) {
+	if (is_feature_checked) {
+		if (!feature_supported) {
 			LOGE("%s feature is disabled", feature_name);
 			return WIFI_ERROR_NOT_SUPPORTED;
 		}
-	}
-	else {
+	} else {
 		if (!system_info_get_platform_bool(feature_name, &feature_supported)) {
 			is_feature_checked = true;
 			if (!feature_supported) {
 				LOGE("%s feature is disabled", feature_name);
 				return WIFI_ERROR_NOT_SUPPORTED;
 			}
-		}
-		else {
+		} else {
 			LOGE("Error - Feature getting from System Info");
 			return WIFI_ERROR_OPERATION_FAILED;
 		}

@@ -103,9 +103,8 @@ static gchar *_wifi_change_name_to_hexadecimal(const gchar *name)
 	gint length = 0;
 	gchar *hex = NULL;
 
-	if (name == NULL) {
+	if (name == NULL)
 		return NULL;
-	}
 
 	length = strlen(name);
 
@@ -113,9 +112,8 @@ static gchar *_wifi_change_name_to_hexadecimal(const gchar *name)
 	if (string == NULL)
 		return NULL;
 
-	for (i = 0; i < length; i++) {
+	for (i = 0; i < length; i++)
 		g_string_append_printf(string, "%02x", name[i]);
-	}
 
 	hex = g_strdup_printf("%s", string->str);
 	g_string_free(string, TRUE);
@@ -127,22 +125,22 @@ gchar *wifi_eap_type_to_string(wifi_eap_type_e eap_type)
 {
 	gchar *type = NULL;
 
-	switch(eap_type) {
-		case WIFI_EAP_TYPE_PEAP:
-			type = g_strdup("PEAP");
-			break;
-		case WIFI_EAP_TYPE_TLS:
-			type = g_strdup("TLS");
-			break;
-		case WIFI_EAP_TYPE_TTLS:
-			type = g_strdup("TTLS");
-			break;
-		case WIFI_EAP_TYPE_SIM:
-			type = g_strdup("SIM");
-			break;
-		case WIFI_EAP_TYPE_AKA:
-			type = g_strdup("AKA");
-			break;
+	switch (eap_type) {
+	case WIFI_EAP_TYPE_PEAP:
+		type = g_strdup("PEAP");
+		break;
+	case WIFI_EAP_TYPE_TLS:
+		type = g_strdup("TLS");
+		break;
+	case WIFI_EAP_TYPE_TTLS:
+		type = g_strdup("TTLS");
+		break;
+	case WIFI_EAP_TYPE_SIM:
+		type = g_strdup("SIM");
+		break;
+	case WIFI_EAP_TYPE_AKA:
+		type = g_strdup("AKA");
+		break;
 	}
 	return type;
 }
@@ -151,26 +149,26 @@ gchar *wifi_eap_auth_type_to_string(wifi_eap_auth_type_e eap_auth_type)
 {
 	gchar *type = NULL;
 
-	switch(eap_auth_type) {
-		case WIFI_EAP_AUTH_TYPE_PAP:
-			type = g_strdup("PAP");
-			break;
-		case WIFI_EAP_AUTH_TYPE_MSCHAP:
-			type = g_strdup("MSCHAP");
-			break;
-		case WIFI_EAP_AUTH_TYPE_MSCHAPV2:
-			type = g_strdup("MSCHAPV2");
-			break;
-		case WIFI_EAP_AUTH_TYPE_GTC:
-			type = g_strdup("GTC");
-			break;
-		case WIFI_EAP_AUTH_TYPE_MD5:
-			type = g_strdup("MD5");
-			break;
-		default:
-		case WIFI_EAP_AUTH_TYPE_NONE:
-			type = NULL;
-			break;
+	switch (eap_auth_type) {
+	case WIFI_EAP_AUTH_TYPE_PAP:
+		type = g_strdup("PAP");
+		break;
+	case WIFI_EAP_AUTH_TYPE_MSCHAP:
+		type = g_strdup("MSCHAP");
+		break;
+	case WIFI_EAP_AUTH_TYPE_MSCHAPV2:
+		type = g_strdup("MSCHAPV2");
+		break;
+	case WIFI_EAP_AUTH_TYPE_GTC:
+		type = g_strdup("GTC");
+		break;
+	case WIFI_EAP_AUTH_TYPE_MD5:
+		type = g_strdup("MD5");
+		break;
+	default:
+	case WIFI_EAP_AUTH_TYPE_NONE:
+		type = NULL;
+		break;
 	}
 	return type;
 }
@@ -179,23 +177,21 @@ wifi_eap_type_e wifi_eap_type_to_int(const gchar *type)
 {
 	wifi_eap_type_e ret = -1;
 
-	if (type == NULL) {
+	if (type == NULL)
 		return ret;
-	}
 
-	if (g_strcmp0(type, "PEAP") == 0) {
+	if (g_strcmp0(type, "PEAP") == 0)
 		ret = WIFI_EAP_TYPE_PEAP;
-	} else if (g_strcmp0(type, "TLS") == 0) {
+	else if (g_strcmp0(type, "TLS") == 0)
 		ret = WIFI_EAP_TYPE_TLS;
-	} else if (g_strcmp0(type, "TTLS") == 0) {
+	else if (g_strcmp0(type, "TTLS") == 0)
 		ret = WIFI_EAP_TYPE_TTLS;
-	} else if (g_strcmp0(type, "SIM") == 0) {
+	else if (g_strcmp0(type, "SIM") == 0)
 		ret = WIFI_EAP_TYPE_SIM;
-	} else if (g_strcmp0(type, "AKA") == 0) {
+	else if (g_strcmp0(type, "AKA") == 0)
 		ret = WIFI_EAP_TYPE_AKA;
-	} else {
+	else
 		WIFI_LOG(WIFI_ERROR, "Not supported type (%s)", type);
-	}
 
 	return ret;
 }
@@ -204,23 +200,21 @@ wifi_eap_auth_type_e wifi_eap_auth_type_to_int(const gchar *type)
 {
 	wifi_eap_auth_type_e ret = WIFI_EAP_AUTH_TYPE_NONE;
 
-	if (type == NULL) {
+	if (type == NULL)
 		return ret;
-	}
 
-	if (g_strcmp0(type, "PAP") == 0) {
+	if (g_strcmp0(type, "PAP") == 0)
 		ret = WIFI_EAP_AUTH_TYPE_PAP;
-	} else if (g_strcmp0(type, "MSCHAP") == 0) {
+	else if (g_strcmp0(type, "MSCHAP") == 0)
 		ret = WIFI_EAP_AUTH_TYPE_MSCHAP;
-	} else if (g_strcmp0(type, "MSCHAPV2") == 0) {
+	else if (g_strcmp0(type, "MSCHAPV2") == 0)
 		ret = WIFI_EAP_AUTH_TYPE_MSCHAPV2;
-	} else if (g_strcmp0(type, "GTC") == 0) {
+	else if (g_strcmp0(type, "GTC") == 0)
 		ret = WIFI_EAP_AUTH_TYPE_GTC;
-	} else if (g_strcmp0(type, "MD5") == 0) {
+	else if (g_strcmp0(type, "MD5") == 0)
 		ret = WIFI_EAP_AUTH_TYPE_MD5;
-	} else {
+	else
 		WIFI_LOG(WIFI_ERROR, "Not supported type (%s)", type);
-	}
 
 	return ret;
 }
@@ -229,21 +223,19 @@ static wifi_security_type_e _wifi_security_type_to_int(const gchar *type)
 {
 	wifi_security_type_e ret = WIFI_SECURITY_TYPE_NONE;
 
-	if (type == NULL) {
+	if (type == NULL)
 		return ret;
-	}
 
-	if (g_strcmp0(type, WIFI_SECURITY_NONE) == 0) {
+	if (g_strcmp0(type, WIFI_SECURITY_NONE) == 0)
 		ret = WIFI_SECURITY_TYPE_NONE;
-	} else if (g_strcmp0(type, WIFI_SECURITY_WEP) == 0) {
+	else if (g_strcmp0(type, WIFI_SECURITY_WEP) == 0)
 		ret = WIFI_SECURITY_TYPE_WEP;
-	} else if (g_strcmp0(type, WIFI_SECURITY_WPA_PSK) == 0) {
+	else if (g_strcmp0(type, WIFI_SECURITY_WPA_PSK) == 0)
 		ret = WIFI_SECURITY_TYPE_WPA_PSK;
-	} else if (g_strcmp0(type, WIFI_SECURITY_EAP) == 0) {
+	else if (g_strcmp0(type, WIFI_SECURITY_EAP) == 0)
 		ret = WIFI_SECURITY_TYPE_EAP;
-	} else {
+	else
 		WIFI_LOG(WIFI_ERROR, "Not supported type (%s)", type);
-	}
 
 	return ret;
 }
@@ -331,9 +323,8 @@ GSList *wifi_config_get_config_id_list(wifi_dbus *handle)
 	}
 
 	g_variant_get(result, "(as)", &iter);
-	while (g_variant_iter_loop(iter, "s", &config_id)) {
+	while (g_variant_iter_loop(iter, "s", &config_id))
 		list = g_slist_append(list, g_strdup(config_id));
-	}
 
 	g_variant_iter_free(iter);
 	g_variant_unref(result);
@@ -440,18 +431,16 @@ int wifi_load_configurations(wifi_dbus *handle, const gchar *config_id, gchar **
 					*security_type = _wifi_security_type_to_int(g_variant_get_string(value, NULL));
 				} else if (g_strcmp0(field, WIFI_CONFIG_HIDDEN) == 0) {
 					const gchar *r_hidden = g_variant_get_string(value, NULL);
-					if (g_strcmp0(r_hidden, "TRUE") == 0) {
+					if (g_strcmp0(r_hidden, "TRUE") == 0)
 						*is_hidden = TRUE;
-					} else {
+					else
 						*is_hidden = FALSE;
-					}
 				} else if (g_strcmp0(field, WIFI_CONFIG_PROXYADDRESS) == 0) {
 					const gchar *r_proxy_address = g_variant_get_string(value, NULL);
-					if (g_strcmp0(r_proxy_address, "NONE") == 0) {
+					if (g_strcmp0(r_proxy_address, "NONE") == 0)
 						*proxy_address = NULL;
-					} else {
+					else
 						*proxy_address = g_strdup(r_proxy_address);
-					}
 				} else if (g_strcmp0(field, WIFI_CONFIG_FAILURE) == 0) {
 					*last_error = _wifi_last_error_to_enum(g_variant_get_string(value, NULL));
 				}
@@ -527,13 +516,12 @@ eap_save_config:
 			g_variant_builder_add(b, "{sv}", WIFI_CONFIG_EAP_SUBJECT_MATCH, g_variant_new_string(eap_config->subject_match));
 
 		auth_type = wifi_eap_auth_type_to_string(eap_config->eap_auth_type);
-		if (auth_type != NULL) {
+		if (auth_type != NULL)
 			g_variant_builder_add(b, "{sv}", WIFI_CONFIG_EAP_AUTH_TYPE, g_variant_new_string(auth_type));
-		}
+
 		eap_type = wifi_eap_type_to_string(eap_config->eap_type);
-		if (eap_type != NULL) {
+		if (eap_type != NULL)
 			g_variant_builder_add(b, "{sv}", WIFI_CONFIG_EAP_TYPE, g_variant_new_string(eap_type));
-		}
 
 		g_free(auth_type);
 		g_free(eap_type);
@@ -594,18 +582,16 @@ int wifi_load_eap_configurations(wifi_dbus *handle, const gchar *config_id, gcha
 					*security_type = _wifi_security_type_to_int(g_variant_get_string(value, NULL));
 				} else if (g_strcmp0(field, WIFI_CONFIG_HIDDEN) == 0) {
 					const gchar *r_hidden = g_variant_get_string(value, NULL);
-					if (g_strcmp0(r_hidden, "TRUE") == 0) {
+					if (g_strcmp0(r_hidden, "TRUE") == 0)
 						*is_hidden = TRUE;
-					} else {
+					else
 						*is_hidden = FALSE;
-					}
 				} else if (g_strcmp0(field, WIFI_CONFIG_PROXYADDRESS) == 0) {
 					const gchar *r_proxy_address = g_variant_get_string(value, NULL);
-					if (g_strcmp0(r_proxy_address, "NONE") == 0) {
+					if (g_strcmp0(r_proxy_address, "NONE") == 0)
 						*proxy_address = NULL;
-					} else {
+					else
 						*proxy_address = g_strdup(r_proxy_address);
-					}
 				} else if (g_strcmp0(field, WIFI_CONFIG_EAP_ANONYMOUS_IDENTITY) == 0) {
 					const gchar *anonymous_identity = g_variant_get_string(value, NULL);
 					(*eap_config)->anonymous_identity = g_strdup(anonymous_identity);

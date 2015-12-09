@@ -91,7 +91,7 @@ static void __test_bg_scan_completed_callback(wifi_error_e error_code, void* use
 
 static void __test_scan_request_callback(wifi_error_e error_code, void* user_data)
 {
-	if(user_data != NULL)
+	if (user_data != NULL)
 		printf("user_data : %s\n", (char *)user_data);
 
 	printf("Scan Completed from scan request, error code : %s\n",
@@ -466,13 +466,13 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 			return false;
 		}
 
-	       rv = test_get_user_int("Input Address type to get"
-	                       "(0:IPV4, 1:IPV6):", &address_type);
+		rv = test_get_user_int("Input Address type to get"
+							"(0:IPV4, 1:IPV6):", &address_type);
 
-	       if (rv == false || (address_type != 0 && address_type != 1)) {
-	               printf("Invalid input!!\n");
-	               return false;
-	       }
+		if (rv == false || (address_type != 0 && address_type != 1)) {
+			printf("Invalid input!!\n");
+			return false;
+		}
 
 		switch (method) {
 		case 1:
@@ -588,13 +588,13 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 			return false;
 		}
 
-	       rv = test_get_user_int("Input Address type to get"
-	                       "(0:IPV4, 1:IPV6):", &address_type);
+		rv = test_get_user_int("Input Address type to get"
+							"(0:IPV4, 1:IPV6):", &address_type);
 
-	       if (rv == false || (address_type != 0 && address_type != 1)) {
-	               printf("Invalid input!!\n");
-	               return false;
-	       }
+		if (rv == false || (address_type != 0 && address_type != 1)) {
+			printf("Invalid input!!\n");
+			return false;
+		}
 
 		switch (method) {
 		case 1:
@@ -704,12 +704,12 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 			printf("Fail to get Connection State\n");
 
 		rv = test_get_user_int("Input Address type to get"
-	                       "(0:IPV4, 1:IPV6):", &address_type);
+							"(0:IPV4, 1:IPV6):", &address_type);
 
-	    if (rv == false || (address_type != 0 && address_type != 1)) {
-	        printf("Invalid input!!\n");
-	        return false;
-	    }
+		if (rv == false || (address_type != 0 && address_type != 1)) {
+			printf("Invalid input!!\n");
+			return false;
+		}
 
 		if (wifi_ap_get_ip_config_type(ap, address_type, &ip_type) == WIFI_ERROR_NONE)
 			printf("IP config type : %d\n", ip_type);
@@ -876,10 +876,10 @@ static bool __test_found_specific_aps_callback(wifi_ap_h ap, void *user_data)
 		return false;
 	}
 
-	switch(security_type) {
-	case WIFI_SECURITY_TYPE_WEP :
-	case WIFI_SECURITY_TYPE_WPA_PSK :
-	case WIFI_SECURITY_TYPE_WPA2_PSK :
+	switch (security_type) {
+	case WIFI_SECURITY_TYPE_WEP:
+	case WIFI_SECURITY_TYPE_WPA_PSK:
+	case WIFI_SECURITY_TYPE_WPA2_PSK:
 		{
 			char passphrase[100];
 			printf("Input passphrase for %s : ", ap_name);
@@ -893,7 +893,7 @@ static bool __test_found_specific_aps_callback(wifi_ap_h ap, void *user_data)
 			}
 		}
 		break;
-	case WIFI_SECURITY_TYPE_EAP :
+	case WIFI_SECURITY_TYPE_EAP:
 		{
 			char input_str1[100];
 			printf("Input user name for %s : ", ap_name);
@@ -923,8 +923,8 @@ static bool __test_found_specific_aps_callback(wifi_ap_h ap, void *user_data)
 			g_free(inputed_name);
 		}
 		break;
-	case WIFI_SECURITY_TYPE_NONE :
-	default :
+	case WIFI_SECURITY_TYPE_NONE:
+	default:
 		break;
 	}
 
@@ -979,7 +979,7 @@ int  test_wifi_deinit(void)
 
 	rv = wifi_deinitialize();
 
-	if (rv != WIFI_ERROR_NONE){
+	if (rv != WIFI_ERROR_NONE) {
 		printf("Wifi deinit failed [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
 	}
@@ -1532,14 +1532,14 @@ int main(int argc, char **argv)
 {
 	GMainLoop *mainloop;
 	g_type_init();
-	mainloop = g_main_loop_new (NULL, FALSE);
+	mainloop = g_main_loop_new(NULL, FALSE);
 
 	GIOChannel *channel = g_io_channel_unix_new(0);
 	g_io_add_watch(channel, (G_IO_IN|G_IO_ERR|G_IO_HUP|G_IO_NVAL), test_thread, NULL);
 
 	printf("Test Thread created...\n");
 
-	g_main_loop_run (mainloop);
+	g_main_loop_run(mainloop);
 
 	return 0;
 }
@@ -1565,31 +1565,31 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 	if (a[0] == '\n' || a[0] == '\r') {
 		printf("\n\n Network Connection API Test App\n\n");
 		printf("Options..\n");
-		printf("1 	- Wi-Fi init and set callbacks\n");
-		printf("2 	- Wi-Fi deinit(unset callbacks automatically)\n");
-		printf("3	- Activate Wi-Fi device\n");
-		printf("4 	- Deactivate Wi-Fi device\n");
-		printf("5 	- Is Wi-Fi activated?\n");
-		printf("6	- Get connection state\n");
-		printf("7 	- Get MAC address\n");
-		printf("8 	- Get Wi-Fi interface name\n");
-		printf("9 	- Scan request\n");
-		printf("a 	- Get Connected AP\n");
-		printf("b 	- Get AP list\n");
-		printf("c 	- Connect\n");
-		printf("d 	- Disconnect\n");
-		printf("e 	- Connect by wps pbc\n");
-		printf("f 	- Forget an AP\n");
-		printf("g 	- Set & connect EAP\n");
-		printf("h 	- Set IP method type\n");
-		printf("i 	- Set Proxy method type\n");
-		printf("j 	- Get Ap info\n");
-		printf("k 	- Connect Specific AP\n");
-		printf("l 	- Load configuration\n");
-		printf("m 	- Save configuration\n");
-		printf("n 	- Set configuration proxy and hidden\n");
-		printf("o       - Set EAP configuration\n");
-		printf("0 	- Exit \n");
+		printf("1   - Wi-Fi init and set callbacks\n");
+		printf("2   - Wi-Fi deinit(unset callbacks automatically)\n");
+		printf("3   - Activate Wi-Fi device\n");
+		printf("4   - Deactivate Wi-Fi device\n");
+		printf("5   - Is Wi-Fi activated?\n");
+		printf("6   - Get connection state\n");
+		printf("7   - Get MAC address\n");
+		printf("8   - Get Wi-Fi interface name\n");
+		printf("9   - Scan request\n");
+		printf("a   - Get Connected AP\n");
+		printf("b   - Get AP list\n");
+		printf("c   - Connect\n");
+		printf("d   - Disconnect\n");
+		printf("e   - Connect by wps pbc\n");
+		printf("f   - Forget an AP\n");
+		printf("g   - Set & connect EAP\n");
+		printf("h   - Set IP method type\n");
+		printf("i   - Set Proxy method type\n");
+		printf("j   - Get Ap info\n");
+		printf("k   - Connect Specific AP\n");
+		printf("l   - Load configuration\n");
+		printf("m   - Save configuration\n");
+		printf("n   - Set configuration proxy and hidden\n");
+		printf("o   - Set EAP configuration\n");
+		printf("0   - Exit \n");
 
 		printf("ENTER  - Show options menu.......\n");
 	}
