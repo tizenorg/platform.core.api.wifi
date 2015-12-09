@@ -189,15 +189,12 @@ EXPORT_API int wifi_config_save_configuration(wifi_config_h config)
 
 	if (h->security_type == WIFI_SECURITY_TYPE_EAP) {
 		ret = wifi_save_eap_configurations(dbus_h, h->name, h->passphrase, h->security_type, h->proxy_address, h->eap_config, h->is_hidden);
-		if (ret != WIFI_ERROR_NONE) {
+		if (ret != WIFI_ERROR_NONE)
 			WIFI_LOG(WIFI_ERROR, "Fail to wifi_save_eap_configurations");
-		}
-	}
-	else {
+	} else {
 		ret = wifi_save_configurations(dbus_h, h->name, h->passphrase, h->security_type, h->proxy_address, h->is_hidden);
-		if (ret != WIFI_ERROR_NONE) {
+		if (ret != WIFI_ERROR_NONE)
 			WIFI_LOG(WIFI_ERROR, "Fail to save configurations [%d]", ret);
-		}
 	}
 
 	h->is_saved = TRUE;
@@ -254,8 +251,7 @@ EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, v
 			}
 			ret = wifi_load_eap_configurations(dbus_h, id, &h->name,
 				&h->security_type, &h->proxy_address, &h->is_hidden, &h->eap_config, &h->last_error);
-		}
-		else {
+		} else {
 			ret = wifi_load_configurations(dbus_h, id, &h->name,
 				&h->security_type, &h->proxy_address, &h->is_hidden, &h->last_error);
 		}
@@ -384,9 +380,8 @@ EXPORT_API int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_
 		config_id = wifi_config_get_config_id(h->name, h->security_type);
 
 		ret = wifi_configuration_set_field(dbus_h, config_id, WIFI_CONFIG_PROXYADDRESS, proxy_address);
-		if (ret != WIFI_ERROR_NONE) {
+		if (ret != WIFI_ERROR_NONE)
 			WIFI_LOG(WIFI_ERROR, "Fail to set proxy address [%d]", ret);
-		}
 
 		g_free(config_id);
 	}
@@ -448,15 +443,14 @@ EXPORT_API int wifi_config_set_hidden_ap_property(wifi_config_h config, bool hid
 
 		config_id = wifi_config_get_config_id(h->name, h->security_type);
 
-		if (h->is_hidden == TRUE) {
+		if (h->is_hidden == TRUE)
 			hidden = g_strdup("TRUE");
-		} else {
+		else
 			hidden = g_strdup("FALSE");
-		}
+
 		ret = wifi_configuration_set_field(dbus_h, config_id, WIFI_CONFIG_HIDDEN, hidden);
-		if (ret != WIFI_ERROR_NONE) {
+		if (ret != WIFI_ERROR_NONE)
 			WIFI_LOG(WIFI_ERROR, "Fail to set hidden [%d]", ret);
-		}
 
 		g_free(hidden);
 		g_free(config_id);

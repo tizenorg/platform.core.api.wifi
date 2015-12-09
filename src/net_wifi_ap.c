@@ -443,11 +443,10 @@ EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 
 	net_profile_info_t *profile_info = ap;
 
-	if (address_family == WIFI_ADDRESS_FAMILY_IPV4){
+	if (address_family == WIFI_ADDRESS_FAMILY_IPV4)
 		profileType = profile_info->ProfileInfo.Wlan.net_info.IpConfigType ;
-	} else {
+	else
 		profileType = profile_info->ProfileInfo.Wlan.net_info.IpConfigType6 ;
-	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV4) {
 		switch (profileType) {
@@ -507,11 +506,10 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 
 	net_profile_info_t *profile_info = ap;
 
-	if (address_family == WIFI_ADDRESS_FAMILY_IPV4) {
+	if (address_family == WIFI_ADDRESS_FAMILY_IPV4)
 		profileType = &profile_info->ProfileInfo.Wlan.net_info.IpConfigType ;
-	} else {
+	else
 		profileType = &profile_info->ProfileInfo.Wlan.net_info.IpConfigType6 ;
-	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV4) {
 		switch (type) {
@@ -679,7 +677,7 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 	 * For IPv6 address subnet mask is prefix length, an integer,  while for
 	 * Ipv6 address subnet mask is a ipv6 address.
 	 */
-	if (address_family == WIFI_ADDRESS_FAMILY_IPV6){
+	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
 		if (subnet_mask == NULL)
 			profile_info->ProfileInfo.Wlan.net_info.PrefixLen6 = 0;
 		else {
@@ -877,7 +875,7 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
 		return WIFI_ERROR_NONE;
 
-	rv =_wifi_update_ap_info(profile_info);
+	rv = _wifi_update_ap_info(profile_info);
 	if (rv != NET_ERR_NONE && proxy_type == WIFI_PROXY_TYPE_MANUAL) {
 		g_strlcpy(profile_info->ProfileInfo.Wlan.net_info.ProxyAddr, "0.0.0.0:8080", 15);
 		rv = _wifi_update_ap_info(profile_info);
@@ -902,7 +900,7 @@ EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 
 	net_profile_info_t *profile_info = ap;
 
-	if(address_family == WIFI_ADDRESS_FAMILY_IPV4)
+	if (address_family == WIFI_ADDRESS_FAMILY_IPV4)
 		*dns_address = __ap_convert_ip_to_string(
 				&profile_info->ProfileInfo.Wlan.net_info.DnsAddr[order-1],
 				address_family);
@@ -1213,7 +1211,7 @@ EXPORT_API int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* 
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
-	if (_wifi_libnet_check_ap_validity(ap) == false ||user_name == NULL || is_password_set == NULL) {
+	if (_wifi_libnet_check_ap_validity(ap) == false || user_name == NULL || is_password_set == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}

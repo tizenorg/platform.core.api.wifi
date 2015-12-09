@@ -70,8 +70,7 @@ EXPORT_API int wifi_initialize(void)
 	if (rv == NET_ERR_ACCESS_DENIED) {
 		WIFI_LOG(WIFI_ERROR, "Access denied");
 		return WIFI_ERROR_PERMISSION_DENIED;
-	}
-	else if (rv != NET_ERR_NONE) {
+	} else if (rv != NET_ERR_NONE) {
 		WIFI_LOG(WIFI_ERROR, "Init failed[%d]", rv);
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
