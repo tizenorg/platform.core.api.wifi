@@ -121,6 +121,11 @@ int        _wifi_dbus_init(void);
 int        _wifi_dbus_deinit(void);
 wifi_dbus *_wifi_get_dbus_handle(void);
 
+int _wifi_set_tdls_connected_cb(wifi_tdls_connected_cb callback, void *user_data);
+int _wifi_set_tdls_disconnected_cb(wifi_tdls_disconnected_cb callback, void *user_data);
+int _wifi_unset_tdls_connected_cb(void);
+int _wifi_unset_tdls_disconnected_cb(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -44,6 +44,10 @@ struct _wifi_cb_s {
 	void *connected_user_data;
 	wifi_disconnected_cb disconnected_cb;
 	void *disconnected_user_data;
+	wifi_tdls_connected_cb	tdls_connected_cb;
+	void *tdls_connected_user_data;
+	wifi_tdls_disconnected_cb tdls_disconnected_cb;
+	void *tdls_disconnected_user_data;
 };
 
 struct _profile_list_s {
@@ -590,6 +594,25 @@ static void __libnet_disconnected_cb(wifi_error_e result)
 		_wifi_callback_add(__disconnected_cb_idle, (gpointer)result);
 }
 
+static void __libnet_tdls_connected_cb(net_event_info_t *event_cb)
+{
+
+	char *peer_mac_add = NULL;
+	peer_mac_add = (char*)event_cb->Data;
+
+	if (wifi_callbacks.tdls_connected_cb)
+		wifi_callbacks.tdls_connected_cb(peer_mac_add,wifi_callbacks.tdls_connected_user_data);
+}
+
+static void __libnet_tdls_disconnected_cb(net_event_info_t *event_cb)
+{
+	char *peer_mac_add = NULL;
+	peer_mac_add = (char*)event_cb->Data;
+
+	if (wifi_callbacks.tdls_disconnected_cb)
+		wifi_callbacks.tdls_disconnected_cb(peer_mac_add,wifi_callbacks.tdls_disconnected_user_data);
+}
+
 static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 {
 	bool is_requested = false;
@@ -716,6 +739,14 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 		/* fall through */
 	case NET_EVENT_WIFI_POWER_IND:
 		__libnet_power_on_off_cb(event_cb, is_requested);
+		break;
+	case NET_EVENT_TDLS_CONNECTED_IND:
+		WIFI_LOG(WIFI_INFO,"Got TDLS Connected Ind");
+		__libnet_tdls_connected_cb(event_cb);
+		break;
+	case NET_EVENT_TDLS_DISCONNECTED_IND:
+		WIFI_LOG(WIFI_INFO,"Got TDLS Disconnected Ind");
+		__libnet_tdls_disconnected_cb(event_cb);
 		break;
 	default:
 		break;
@@ -1384,4 +1415,52 @@ wifi_dbus *_wifi_get_dbus_handle(void)
 	}
 
 	return g_dbus_h;
+}
+
+int _wifi_set_tdls_connected_cb(wifi_tdls_connected_cb callback, void *user_data)
+{
+	if (wifi_callbacks.tdls_connected_cb) {
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	wifi_callbacks.tdls_connected_cb = callback;
+	wifi_callbacks.tdls_connected_user_data = user_data;
+
+	return WIFI_ERROR_NONE;
+}
+
+int _wifi_set_tdls_disconnected_cb(wifi_tdls_disconnected_cb callback, void *user_data)
+{
+	if (wifi_callbacks.tdls_disconnected_cb) {
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	wifi_callbacks.tdls_disconnected_cb = callback;
+	wifi_callbacks.tdls_disconnected_user_data = user_data;
+
+	return WIFI_ERROR_NONE;
+}
+
+int _wifi_unset_tdls_connected_cb(void)
+{
+	if (wifi_callbacks.tdls_connected_cb == NULL) {
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	wifi_callbacks.tdls_connected_cb = NULL;
+	wifi_callbacks.tdls_connected_user_data = NULL;
+
+	return WIFI_ERROR_NONE;
+}
+
+int _wifi_unset_tdls_disconnected_cb(void)
+{
+	if (wifi_callbacks.tdls_disconnected_cb == NULL) {
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	wifi_callbacks.tdls_disconnected_cb = NULL;
+	wifi_callbacks.tdls_disconnected_user_data = NULL;
+
+	return WIFI_ERROR_NONE;
 }
