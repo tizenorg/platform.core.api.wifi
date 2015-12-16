@@ -1528,6 +1528,46 @@ int test_set_eap_configuration(void)
 	return 1;
 }
 
+int test_wifi_tdls_disconnect(void)
+{
+	int rv = 0;
+
+	char * peer_mac = NULL;
+	printf("Enter Mac_address: ");
+	if(scanf(" %ms", &peer_mac) < 1)
+		return -1;
+
+	if (strlen(peer_mac) > 17)
+	{
+		printf("Wrong Mac_address\n");
+		return -1;
+	}
+
+	rv = wifi_tdls_disconnect(peer_mac);
+	if (rv != WIFI_ERROR_NONE) {
+		printf("test_wifi_tdls_disconnect() is failed [%s]\n", __test_convert_error_to_string(rv));
+		g_free(peer_mac);
+		return -1;
+	}
+	g_free(peer_mac);
+	return 1;
+}
+
+int test_wifi_tdls_get_connected_peer(void)
+{
+	int rv = 0;
+	char *mac_addr = NULL;
+
+	rv = wifi_tdls_get_connected_peer(&mac_addr);
+	if (rv != WIFI_ERROR_NONE) {
+		printf("wifi_tdls_get_connected_peer() is failed [%s]\n", __test_convert_error_to_string(rv));
+		return -1;
+	}
+	printf("Peer Mac address is [%s]\n",mac_addr);
+	g_free(mac_addr);
+	return 1;
+}
+
 int main(int argc, char **argv)
 {
 	GMainLoop *mainloop;
@@ -1589,6 +1629,10 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("m   - Save configuration\n");
 		printf("n   - Set configuration proxy and hidden\n");
 		printf("o   - Set EAP configuration\n");
+		printf("p   - TDLS TearDown\n");
+		printf("q   - TDLS Set Connected Callback\n");
+		printf("r   - TDLS Set Disconnected Callback\n");
+		printf("s   - TDLS Get Connected Peer\n");
 		printf("0   - Exit \n");
 
 		printf("ENTER  - Show options menu.......\n");
@@ -1666,6 +1710,12 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		break;
 	case 'o':
 		rv = test_set_eap_configuration();
+		break;
+	case 'p':
+		rv = test_wifi_tdls_disconnect();
+		break;
+	case 'r':
+		rv = test_wifi_tdls_get_connected_peer();
 		break;
 
 	default:

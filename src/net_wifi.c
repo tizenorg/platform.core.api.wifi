@@ -545,3 +545,70 @@ EXPORT_API int wifi_unset_rssi_level_changed_cb(void)
 
 	return WIFI_ERROR_NONE;
 }
+
+EXPORT_API int wifi_tdls_disconnect(const char* peer_mac_addr)
+{
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	if (peer_mac_addr == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	int rv = 0;
+	rv = net_wifi_tdls_disconnect(peer_mac_addr);
+
+	if (rv != NET_ERR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to disconnect tdls");
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+
+	return WIFI_ERROR_NONE;
+}
+
+EXPORT_API int wifi_tdls_get_connected_peer(char** peer_mac_addr)
+{
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	if (peer_mac_addr == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	int rv = 0;
+	rv = net_wifi_tdls_connected_peer(peer_mac_addr);
+
+	if (rv != NET_ERR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get connected peer");
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+
+	if (g_strcmp0(*peer_mac_addr, "00.00.00.00.00.00") == 0) {
+		g_free(*peer_mac_addr);
+		return WIFI_ERROR_NO_CONNECTION;
+	}
+
+	return WIFI_ERROR_NONE;
+}
+
+EXPORT_API int wifi_tdls_set_state_changed_cb(wifi_tdls_state_changed_cb callback, void* user_data)
+{
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	return WIFI_ERROR_NONE;
+}
+
+EXPORT_API int wifi_tdls_unset_state_changed_cb(void)
+{
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	return WIFI_ERROR_NONE;
+}
