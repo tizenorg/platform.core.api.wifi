@@ -218,4 +218,29 @@
  *
  */
 
+/**
+ * @defgroup CAPI_NETWORK_WIFI_TDLS_MODULE
+ * @brief The TDLS APIs for managing TDLS.
+ * @ingroup CAPI_NETWORK_WIFI_MODULE
+ *
+ * @section CAPI_NETWORK_WIFI_TDLS_MODULE  Required Header
+ *   \#include <wifi.h>
+ *
+ * @section CAPI_NETWORK_WIFI_TDLS_MODULE_OVERVIEW Overview
+ * The TDLS APIs for managing TDLS.
+ * @section CAPI_NETWORK_WIFI_TDLS_MODULE Related Features
+ * This API is related with the following features:\n
+ * - http://tizen.org/feature/network.wifi.tdls\n
+ *
+ * It is recommended to design feature related codes in your application for reliability.\n
+ *
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.
+ *
+ * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
+ *
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.
+ *
+ */
+
+
 #endif /* __TIZEN_NETWORK_WIFI_DOC_H__ */

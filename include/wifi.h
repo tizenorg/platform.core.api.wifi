@@ -414,6 +414,7 @@ typedef bool (*wifi_config_list_cb)(const wifi_config_h config, void *user_data)
  * @retval #WIFI_ERROR_NONE  Successful
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
 int wifi_initialize(void);
@@ -911,6 +912,7 @@ int wifi_unset_rssi_level_changed_cb(void);
  * @retval #WIFI_ERROR_NONE  Successful
  * @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_ERROR_OUT_OF_MEMORY  Out of memory
+ * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  * @see wifi_ap_destroy()
  */
@@ -2076,7 +2078,7 @@ int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_
  */
 
 /**
- * @addtogroup CAPI_NETWORK_WIFI_TDLS
+ * @addtogroup CAPI_NETWORK_WIFI_TDLS_MODULE
  * @{
  */
 
@@ -2108,13 +2110,14 @@ typedef void(*wifi_tdls_state_changed_cb)(wifi_tdls_state_e state, char* peer_ma
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.set
  *
- * @param[in] ap  The MAC address of the connected peer
+ * @param[in] peer_mac_addr  The MAC address of the connected peer
  *
  * @return @c 0 on success, otherwise negative error value
  * @retval #WIFI_ERROR_NONE  Successful
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
  */
 int wifi_tdls_disconnect(const char* peer_mac_addr);
@@ -2134,6 +2137,7 @@ int wifi_tdls_disconnect(const char* peer_mac_addr);
  * @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NO_CONNECTION     No active TDLS Connection
+ * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
  */
 int wifi_tdls_get_connected_peer(char** peer_mac_addr);
