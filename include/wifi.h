@@ -2072,8 +2072,101 @@ int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match
 int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_match);
 
 /**
-* @}
-*/
+ * @}
+ */
+
+/**
+ * @addtogroup CAPI_NETWORK_WIFI_TDLS
+ * @{
+ */
+
+/**
+ * @brief Enumeration for the state of the Wi-Fi TDLS.
+ * @since_tizen 3.0
+ */
+typedef enum
+{
+	WIFI_TDLS_STATE_DISCONNECTED = 0,  /**< Wi-Fi TDLS is Disconnected */
+	WIFI_TDLS_STATE_CONNECTED = 1,     /**< Wi-Fi TDLS is Connected */
+} wifi_tdls_state_e;
+
+/**
+ * @brief Called when the WiFi TDLS state is changed.
+ * @since_tizen 3.0
+ *
+ * @param[in] state  The TDLS state
+ * @param[in] peer_mac_addr  MAC address of the TDLS peer
+ * @param[in] user_data  The user data passed from the callback registration function
+ * @see wifi_tdls_set_state_changed_cb()
+ * @see wifi_tdls_unset_state_changed_cb()
+ */
+typedef void(*wifi_tdls_state_changed_cb)(wifi_tdls_state_e state, char* peer_mac_addr, void* user_data);
+
+/**
+ * @brief Disconnects the connected peer.
+ * @since_tizen 3.0
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.set
+ *
+ * @param[in] ap  The MAC address of the connected peer
+ *
+ * @return @c 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE  Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
+ */
+int wifi_tdls_disconnect(const char* peer_mac_addr);
+
+/**
+ * @brief Gets Peer Mac address of Connected peer.
+ * @since_tizen 3.0
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.get
+ *
+ * @remarks The @a peer_mac_addr should be freed using free().
+ * @param[out] peer_mac_addr  The MAC address of the connected peer
+ *
+ * @return @c 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE  Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_ERROR_NO_CONNECTION     No active TDLS Connection
+ * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
+ */
+int wifi_tdls_get_connected_peer(char** peer_mac_addr);
+
+/**
+ * @brief Registers the callback called when TDLS state is changed.
+ * @since_tizen 3.0
+ *
+ * @param[in] callback  The callback function to be called
+ * @param[in] user_data The user data passed to the callback function
+ *
+ * @return @c 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE  Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER   Invalid parameter
+ * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
+ */
+int wifi_tdls_set_state_changed_cb(wifi_tdls_state_changed_cb callback, void* user_data);
+
+/**
+ * @brief Unregisters the callback called when TDLS state is changed.
+ * @since_tizen 3.0
+ *
+ * @return @c 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE  Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
+ * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
+ */
+int wifi_tdls_unset_state_changed_cb(void);
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }
