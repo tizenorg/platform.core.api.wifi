@@ -1182,70 +1182,29 @@ int _wifi_libnet_forget_ap(wifi_ap_h ap)
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback, void *user_data)
+int _wifi_libnet_set_device_state_changed_cb(
+			wifi_device_state_changed_cb callback, void *user_data)
 {
-	if (wifi_callbacks.device_state_cb != NULL)
-		return WIFI_ERROR_INVALID_OPERATION;
-
 	wifi_callbacks.device_state_cb = callback;
 	wifi_callbacks.device_state_user_data = user_data;
 
-	WIFI_LOG(WIFI_INFO, "Wi-Fi registered device state changed callback");
-
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_unset_power_on_off_cb(void)
+int _wifi_libnet_set_background_scan_cb(
+			wifi_scan_finished_cb callback, void *user_data)
 {
-	if (wifi_callbacks.device_state_cb == NULL)
-		return WIFI_ERROR_INVALID_OPERATION;
-
-	wifi_callbacks.device_state_cb = NULL;
-	wifi_callbacks.device_state_user_data = NULL;
-
-	return WIFI_ERROR_NONE;
-}
-
-int _wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void *user_data)
-{
-	if (wifi_callbacks.bg_scan_cb != NULL)
-		return WIFI_ERROR_INVALID_OPERATION;
-
 	wifi_callbacks.bg_scan_cb = callback;
 	wifi_callbacks.bg_scan_user_data = user_data;
 
 	return WIFI_ERROR_NONE;
 }
 
-int _wifi_unset_background_scan_cb(void)
+int _wifi_libnet_set_connection_state_cb(
+			wifi_connection_state_changed_cb callback, void *user_data)
 {
-	if (wifi_callbacks.bg_scan_cb == NULL)
-		return WIFI_ERROR_INVALID_OPERATION;
-
-	wifi_callbacks.bg_scan_cb = NULL;
-	wifi_callbacks.bg_scan_user_data = NULL;
-
-	return WIFI_ERROR_NONE;
-}
-
-int _wifi_set_connection_state_cb(wifi_connection_state_changed_cb callback, void *user_data)
-{
-	if (wifi_callbacks.connection_state_cb != NULL)
-		return WIFI_ERROR_INVALID_OPERATION;
-
 	wifi_callbacks.connection_state_cb = callback;
 	wifi_callbacks.connection_state_user_data = user_data;
-
-	return WIFI_ERROR_NONE;
-}
-
-int _wifi_unset_connection_state_cb()
-{
-	if (wifi_callbacks.connection_state_cb == NULL)
-		return WIFI_ERROR_INVALID_OPERATION;
-
-	wifi_callbacks.connection_state_cb = NULL;
-	wifi_callbacks.connection_state_user_data = NULL;
 
 	return WIFI_ERROR_NONE;
 }

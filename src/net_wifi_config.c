@@ -21,20 +21,22 @@
 /**
  * wifi configuration
  */
-EXPORT_API int wifi_config_create(const char *name, const char *passphrase, wifi_security_type_e security_type, wifi_config_h *config)
+EXPORT_API int wifi_config_create(wifi_h wifi,
+		const char *name, const char *passphrase, wifi_security_type_e security_type, wifi_config_h *config)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = NULL;
 
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || name == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (config == NULL || name == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	h = g_new0(struct _wifi_config, 1);
@@ -74,21 +76,23 @@ EXPORT_API int wifi_config_create(const char *name, const char *passphrase, wifi
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config)
+EXPORT_API int wifi_config_clone(wifi_h wifi,
+			wifi_config_h origin, wifi_config_h *cloned_config)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = NULL;
 	struct _wifi_config *config = NULL;
 
+	if (__wifi_check_handle_validity(wifi) ||
+		origin == NULL || cloned_config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (origin == NULL || cloned_config == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	config = (struct _wifi_config *)origin;
@@ -130,20 +134,20 @@ EXPORT_API int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_con
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_destroy(wifi_config_h config)
+EXPORT_API int wifi_config_destroy(wifi_h wifi, wifi_config_h config)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
+	if (config == NULL || __wifi_check_handle_validity(wifi)) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (config == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	g_free(h->name);
@@ -163,7 +167,7 @@ EXPORT_API int wifi_config_destroy(wifi_config_h config)
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_save_configuration(wifi_config_h config)
+EXPORT_API int wifi_config_save_configuration(wifi_h wifi, wifi_config_h config)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
@@ -171,14 +175,15 @@ EXPORT_API int wifi_config_save_configuration(wifi_config_h config)
 	wifi_dbus *dbus_h = NULL;
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->name == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (config == NULL || h->name == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	dbus_h = _wifi_get_dbus_handle();
@@ -202,7 +207,8 @@ EXPORT_API int wifi_config_save_configuration(wifi_config_h config)
 	return ret;
 }
 
-EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_data)
+EXPORT_API int wifi_config_foreach_configuration(wifi_h wifi,
+			wifi_config_list_cb callback, void *user_data)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
@@ -210,14 +216,14 @@ EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, v
 	wifi_dbus *dbus_h = NULL;
 	GSList *config_ids = NULL;
 
+	if (callback == NULL || __wifi_check_handle_validity(wifi)) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (callback == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	dbus_h = _wifi_get_dbus_handle();
@@ -290,20 +296,21 @@ EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, v
 	return ret;
 }
 
-EXPORT_API int wifi_config_get_name(wifi_config_h config, char **name)
+EXPORT_API int wifi_config_get_name(wifi_h wifi, wifi_config_h config, char **name)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || name == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (config == NULL || name == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	if (h->name != NULL)
@@ -314,20 +321,22 @@ EXPORT_API int wifi_config_get_name(wifi_config_h config, char **name)
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *security_type)
+EXPORT_API int wifi_config_get_security_type(wifi_h wifi,
+			wifi_config_h config, wifi_security_type_e *security_type)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || security_type == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (config == NULL || security_type == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	*security_type = h->security_type;
@@ -338,22 +347,24 @@ EXPORT_API int wifi_config_get_security_type(wifi_config_h config, wifi_security
 /**
  * wifi configuration set field
  */
-EXPORT_API int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e address_family, const char *proxy_address)
+EXPORT_API int wifi_config_set_proxy_address(wifi_h wifi,
+		wifi_config_h config, wifi_address_family_e address_family, const char *proxy_address)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = (struct _wifi_config *)config;
 	int ret = WIFI_ERROR_NONE;
 
+	if (__wifi_check_handle_validity(wifi) || config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
 	}
 
-	if (config == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
-	}
 	if ((address_family != WIFI_ADDRESS_FAMILY_IPV4 && address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
@@ -389,20 +400,22 @@ EXPORT_API int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_
 	return ret;
 }
 
-EXPORT_API int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *address_family, char **proxy_address)
+EXPORT_API int wifi_config_get_proxy_address(wifi_h wifi,
+			wifi_config_h config, wifi_address_family_e *address_family, char **proxy_address)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || address_family == NULL || proxy_address == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (config == NULL || address_family == NULL || proxy_address == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	*address_family = h->address_family;
@@ -411,21 +424,22 @@ EXPORT_API int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_set_hidden_ap_property(wifi_config_h config, bool hidden)
+EXPORT_API int wifi_config_set_hidden_ap_property(wifi_h wifi,
+			wifi_config_h config, bool hidden)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = (struct _wifi_config *)config;
 	int ret = WIFI_ERROR_NONE;
 
+	if (config == NULL || __wifi_check_handle_validity(wifi)) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (config == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	h->is_hidden = hidden;
@@ -459,20 +473,22 @@ EXPORT_API int wifi_config_set_hidden_ap_property(wifi_config_h config, bool hid
 	return ret;
 }
 
-EXPORT_API int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *hidden)
+EXPORT_API int wifi_config_get_hidden_ap_property(wifi_h wifi,
+			wifi_config_h config, bool *hidden)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || hidden == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
 		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	if (config == NULL || hidden == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
 	*hidden = h->is_hidden;
@@ -480,30 +496,32 @@ EXPORT_API int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *hi
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymous_identity)
+EXPORT_API int wifi_config_get_eap_anonymous_identity(wifi_h wifi,
+			wifi_config_h config, char** anonymous_identity)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL || anonymous_identity == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
-	if (anonymous_identity == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	*anonymous_identity = g_strdup(h->eap_config->anonymous_identity);
 
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* anonymous_identity)
+EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_h wifi,
+			wifi_config_h config, const char* anonymous_identity)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	h->eap_config->anonymous_identity = g_strdup(anonymous_identity);
 
@@ -527,30 +545,32 @@ EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_config_h config, cons
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert)
+EXPORT_API int wifi_config_get_eap_ca_cert_file(wifi_h wifi,
+			wifi_config_h config, char** ca_cert)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL || ca_cert == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
-	if (ca_cert == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	*ca_cert = g_strdup(h->eap_config->ca_cert);
 
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert)
+EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_h wifi,
+			wifi_config_h config, const char* ca_cert)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	h->eap_config->ca_cert = g_strdup(ca_cert);
 
@@ -574,30 +594,32 @@ EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cert)
+EXPORT_API int wifi_config_get_eap_client_cert_file(wifi_h wifi,
+			wifi_config_h config, char** client_cert)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL || client_cert == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
-	if (client_cert == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	*client_cert = g_strdup(h->eap_config->client_cert);
 
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* private_key, const char* client_cert)
+EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_h wifi,
+			wifi_config_h config, const char* private_key, const char* client_cert)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	h->eap_config->private_key = g_strdup(private_key);
 	h->eap_config->client_cert = g_strdup(client_cert);
@@ -623,30 +645,32 @@ EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_config_h config, const 
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_get_eap_identity(wifi_config_h config, char** identity)
+EXPORT_API int wifi_config_get_eap_identity(wifi_h wifi,
+			wifi_config_h config, char** identity)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL || identity == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
-	if (identity == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	*identity = g_strdup(h->eap_config->identity);
 
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_set_eap_identity(wifi_config_h config, const char* identity)
+EXPORT_API int wifi_config_set_eap_identity(wifi_h wifi,
+			wifi_config_h config, const char* identity)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	h->eap_config->identity = g_strdup(identity);
 
@@ -670,30 +694,32 @@ EXPORT_API int wifi_config_set_eap_identity(wifi_config_h config, const char* id
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type)
+EXPORT_API int wifi_config_get_eap_type(wifi_h wifi,
+			wifi_config_h config, wifi_eap_type_e *eap_type)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL || eap_type == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
-	if (eap_type == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	*eap_type = h->eap_config->eap_type;
 
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type)
+EXPORT_API int wifi_config_set_eap_type(wifi_h wifi,
+			wifi_config_h config, wifi_eap_type_e eap_type)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	h->eap_config->eap_type = eap_type;
 
@@ -721,30 +747,32 @@ EXPORT_API int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e ea
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* eap_auth_type)
+EXPORT_API int wifi_config_get_eap_auth_type(wifi_h wifi,
+			wifi_config_h config, wifi_eap_auth_type_e* eap_auth_type)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL || eap_auth_type == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
-	if (eap_auth_type == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	*eap_auth_type = h->eap_config->eap_auth_type;
 
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap_auth_type)
+EXPORT_API int wifi_config_set_eap_auth_type(wifi_h wifi,
+			wifi_config_h config, wifi_eap_auth_type_e eap_auth_type)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	h->eap_config->eap_auth_type = eap_auth_type;
 
@@ -772,30 +800,32 @@ EXPORT_API int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match)
+EXPORT_API int wifi_config_get_eap_subject_match(wifi_h wifi,
+			wifi_config_h config, char** subject_match)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL || subject_match == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
-	if (subject_match == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	*subject_match = g_strdup(h->eap_config->subject_match);
 
 	return WIFI_ERROR_NONE;
 }
 
-EXPORT_API int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_match)
+EXPORT_API int wifi_config_set_eap_subject_match(wifi_h wifi,
+			wifi_config_h config, const char* subject_match)
 {
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
-	if (config == NULL)
+	if (__wifi_check_handle_validity(wifi) ||
+		config == NULL || h->eap_config == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
-	if (h->eap_config == NULL)
-		return WIFI_ERROR_INVALID_PARAMETER;
+	}
 
 	h->eap_config->subject_match = g_strdup(subject_match);
 

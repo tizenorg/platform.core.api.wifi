@@ -73,6 +73,28 @@ extern "C" {
 		} \
 	} while(0)
 
+typedef enum
+{
+	WIFI_DEVICE_STATE_CHANGED_CB,
+	WIFI_SCAN_FINISHED_CB,
+	WIFI_CONNECTION_STATE_CHANGED_CB,
+	WIFI_RSSI_LEVEL_CHANGED_CB,
+	WIFI_TDLS_STATE_CHANGED_CB,
+} wifi_handle_cb_e;
+
+typedef struct _wifi_handle_s {
+	wifi_device_state_changed_cb device_state_cb;
+	wifi_scan_finished_cb bg_scan_cb;
+	wifi_connection_state_changed_cb connection_state_cb;
+	wifi_rssi_level_changed_cb rssi_level_changed_cb;
+	wifi_tdls_state_changed_cb tdls_state_changed_cb;
+	void *device_state_user_data;
+	void *bg_scan_user_data;
+	void *connection_state_user_data;
+	void *rssi_level_changed_user_data;
+	void *tdls_state_changed_user_data;
+} wifi_handle_s;
+
 bool _wifi_is_init(void);
 
 int _wifi_libnet_init(void);
@@ -102,12 +124,12 @@ int _wifi_libnet_connect_with_wps_pin(wifi_ap_h ap, const char *pin,
 		wifi_connected_cb callback, void *user_data);
 int _wifi_libnet_forget_ap(wifi_ap_h ap);
 
-int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback, void *user_data);
-int _wifi_unset_power_on_off_cb(void);
-int _wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void *user_data);
-int _wifi_unset_background_scan_cb(void);
-int _wifi_set_connection_state_cb(wifi_connection_state_changed_cb callback, void *user_data);
-int _wifi_unset_connection_state_cb();
+int _wifi_libnet_set_device_state_changed_cb(
+			wifi_device_state_changed_cb callback, void *user_data);
+int _wifi_libnet_set_background_scan_cb(
+			wifi_scan_finished_cb callback, void *user_data);
+int _wifi_libnet_set_connection_state_cb(
+			wifi_connection_state_changed_cb callback, void *user_data);
 
 int _wifi_update_ap_info(net_profile_info_t *ap_info);
 wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state);
@@ -120,6 +142,8 @@ int _wifi_check_feature_supported(const char *feature_name);
 int        _wifi_dbus_init(void);
 int        _wifi_dbus_deinit(void);
 wifi_dbus *_wifi_get_dbus_handle(void);
+
+bool __wifi_check_handle_validity(wifi_h wifi);
 
 #ifdef __cplusplus
 }
