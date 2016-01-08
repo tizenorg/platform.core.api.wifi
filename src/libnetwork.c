@@ -69,6 +69,8 @@ static __thread char specific_profile_essid[NET_WLAN_ESSID_LEN + 1] = { 0, };
 static __thread bool is_feature_checked = false;
 static __thread bool feature_supported = false;
 static __thread GSList *managed_idler_list = NULL;
+static __thread bool wifi_is_feature_checked[WIFI_SUPPORTED_FEATURE_MAX] = {0, };
+static __thread bool wifi_feature_supported[WIFI_SUPPORTED_FEATURE_MAX] = {0, };
 
 wifi_dbus *g_dbus_h = NULL;
 
@@ -1340,26 +1342,48 @@ void _wifi_callback_cleanup(void)
 	managed_idler_list = NULL;
 }
 
-int _wifi_check_feature_supported(const char *feature_name)
+bool __libnet_check_feature_supported(const char *key, wifi_supported_feature_e feature)
 {
-	if (is_feature_checked) {
-		if (!feature_supported) {
-			LOGE("%s feature is disabled", feature_name);
-			return WIFI_ERROR_NOT_SUPPORTED;
-		}
-	} else {
-		if (!system_info_get_platform_bool(feature_name, &feature_supported)) {
-			is_feature_checked = true;
-			if (!feature_supported) {
-				LOGE("%s feature is disabled", feature_name);
-				return WIFI_ERROR_NOT_SUPPORTED;
-			}
-		} else {
-			LOGE("Error - Feature getting from System Info");
+	if (!wifi_is_feature_checked[feature]) {
+		if (system_info_get_platform_bool(key, &wifi_feature_supported[feature]) < 0) {
+			WIFI_LOG(WIFI_ERROR, "Error - Feature getting from System Info");
+			set_last_result(WIFI_ERROR_OPERATION_FAILED);
 			return WIFI_ERROR_OPERATION_FAILED;
 		}
+		wifi_is_feature_checked[feature] = true;
+	}
+	return wifi_feature_supported[feature];
+}
+
+int _wifi_check_feature_supported(const char *feature_name, ...)
+{
+	va_list list;
+	const char *key;
+	bool value = false;
+	bool feature_supported = false;
+
+	va_start(list, feature_name);
+	key = feature_name;
+	while (1) {
+		if (strcmp(key, WIFI_FEATURE) == 0)
+			value = __libnet_check_feature_supported(key, WIFI_SUPPORTED_FEATURE_WIFI);
+		else if (strcmp(key, WIFI_TDLS_FEATURE) == 0)
+			value = __libnet_check_feature_supported(key, WIFI_SUPPORTED_FEATURE_WIFI_TDLS);
+
+		SECURE_WIFI_LOG(WIFI_INFO, "%s feature is %s", key, (value ? "true" : "false"));
+		feature_supported |= value;
+		key = va_arg(list, const char *);
+		if (!key) break;
+	}
+	if (!feature_supported) {
+		WIFI_LOG(WIFI_ERROR, "Error - Feature is not supported");
+		set_last_result(WIFI_ERROR_NOT_SUPPORTED);
+		va_end(list);
+		return WIFI_ERROR_NOT_SUPPORTED;
 	}
 
+	va_end(list);
+	set_last_result(WIFI_ERROR_NONE);
 	return WIFI_ERROR_NONE;
 }
 

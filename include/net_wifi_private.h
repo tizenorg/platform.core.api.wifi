@@ -37,10 +37,19 @@ extern "C" {
 #define WIFI_WARN	3
 
 #define WIFI_FEATURE	"http://tizen.org/feature/network.wifi"
+#define WIFI_TDLS_FEATURE	"http://tizen.org/feature/network.wifi.tdls"
 
-#define CHECK_FEATURE_SUPPORTED(feature_name) \
+typedef enum
+{
+	WIFI_SUPPORTED_FEATURE_WIFI,
+	WIFI_SUPPORTED_FEATURE_WIFI_TDLS,
+	WIFI_SUPPORTED_FEATURE_MAX,
+} wifi_supported_feature_e;
+
+
+#define CHECK_FEATURE_SUPPORTED(...) \
 	do { \
-		int rv = _wifi_check_feature_supported(feature_name); \
+		int rv = _wifi_check_feature_supported(__VA_ARGS__, NULL); \
 		if( rv != WIFI_ERROR_NONE ) \
 			return rv; \
 	} while(0)
@@ -115,7 +124,8 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state);
 guint _wifi_callback_add(GSourceFunc func, gpointer user_data);
 void _wifi_callback_cleanup(void);
 
-int _wifi_check_feature_supported(const char *feature_name);
+bool __libnet_check_feature_supported(const char *key, wifi_supported_feature_e feature);
+int _wifi_check_feature_supported(const char *feature_name, ...);
 
 int        _wifi_dbus_init(void);
 int        _wifi_dbus_deinit(void);

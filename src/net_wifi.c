@@ -549,6 +549,7 @@ EXPORT_API int wifi_unset_rssi_level_changed_cb(void)
 EXPORT_API int wifi_tdls_disconnect(const char* peer_mac_addr)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	CHECK_FEATURE_SUPPORTED(WIFI_TDLS_FEATURE);
 
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
@@ -574,6 +575,7 @@ EXPORT_API int wifi_tdls_disconnect(const char* peer_mac_addr)
 EXPORT_API int wifi_tdls_get_connected_peer(char** peer_mac_addr)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	CHECK_FEATURE_SUPPORTED(WIFI_TDLS_FEATURE);
 
 	if (_wifi_is_init() == false) {
 		WIFI_LOG(WIFI_ERROR, "Not initialized");
@@ -604,11 +606,13 @@ EXPORT_API int wifi_tdls_get_connected_peer(char** peer_mac_addr)
 EXPORT_API int wifi_tdls_set_state_changed_cb(wifi_tdls_state_changed_cb callback, void* user_data)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	CHECK_FEATURE_SUPPORTED(WIFI_TDLS_FEATURE);
 	return WIFI_ERROR_NONE;
 }
 
 EXPORT_API int wifi_tdls_unset_state_changed_cb(void)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	CHECK_FEATURE_SUPPORTED(WIFI_TDLS_FEATURE);
 	return WIFI_ERROR_NONE;
 }

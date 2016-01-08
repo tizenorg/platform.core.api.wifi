@@ -1630,9 +1630,7 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("n   - Set configuration proxy and hidden\n");
 		printf("o   - Set EAP configuration\n");
 		printf("p   - TDLS TearDown\n");
-		printf("q   - TDLS Set Connected Callback\n");
-		printf("r   - TDLS Set Disconnected Callback\n");
-		printf("s   - TDLS Get Connected Peer\n");
+		printf("q   - TDLS Get Connected Peer\n");
 		printf("0   - Exit \n");
 
 		printf("ENTER  - Show options menu.......\n");
@@ -1714,7 +1712,7 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 	case 'p':
 		rv = test_wifi_tdls_disconnect();
 		break;
-	case 'r':
+	case 'q':
 		rv = test_wifi_tdls_get_connected_peer();
 		break;
 
