@@ -219,9 +219,9 @@
  */
 
 /**
- * @defgroup CAPI_NETWORK_WIFI_TDLS_MODULE
+ * @defgroup CAPI_NETWORK_WIFI_TDLS_MODULE TDLS
  * @brief The TDLS APIs for managing TDLS.
- * @ingroup CAPI_NETWORK_WIFI_MODULE
+ * @ingroup CAPI_NETWORK_WIFI_MANAGER_MODULE
  *
  * @section CAPI_NETWORK_WIFI_TDLS_MODULE  Required Header
  *   \#include <wifi.h>
