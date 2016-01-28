@@ -30,6 +30,11 @@
 #include <wifi.h>
 #include <tizen_error.h>
 
+#define LOG_RED "\033[0;31m"
+#define LOG_GREEN "\033[0;32m"
+#define LOG_BROWN "\033[0;33m"
+#define LOG_BLUE "\033[0;34m"
+#define LOG_END "\033[0;m"
 
 gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data);
 
@@ -1605,18 +1610,18 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 	if (a[0] == '\n' || a[0] == '\r') {
 		printf("\n\n Network Connection API Test App\n\n");
 		printf("Options..\n");
-		printf("1   - Wi-Fi init and set callbacks\n");
+		printf(LOG_GREEN "1   - Wi-Fi init and set callbacks\n" LOG_END);
 		printf("2   - Wi-Fi deinit(unset callbacks automatically)\n");
-		printf("3   - Activate Wi-Fi device\n");
+		printf(LOG_GREEN "3   - Activate Wi-Fi device\n" LOG_END);
 		printf("4   - Deactivate Wi-Fi device\n");
 		printf("5   - Is Wi-Fi activated?\n");
 		printf("6   - Get connection state\n");
 		printf("7   - Get MAC address\n");
 		printf("8   - Get Wi-Fi interface name\n");
-		printf("9   - Scan request\n");
+		printf(LOG_GREEN "9   - Scan request\n" LOG_END);
 		printf("a   - Get Connected AP\n");
 		printf("b   - Get AP list\n");
-		printf("c   - Connect\n");
+		printf(LOG_GREEN "c   - Connect\n" LOG_END);
 		printf("d   - Disconnect\n");
 		printf("e   - Connect by wps pbc\n");
 		printf("f   - Forget an AP\n");
@@ -1631,7 +1636,7 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("o   - Set EAP configuration\n");
 		printf("p   - TDLS TearDown\n");
 		printf("q   - TDLS Get Connected Peer\n");
-		printf("0   - Exit \n");
+		printf(LOG_RED "0   - Exit \n" LOG_END);
 
 		printf("ENTER  - Show options menu.......\n");
 	}

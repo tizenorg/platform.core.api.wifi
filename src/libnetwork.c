@@ -66,8 +66,6 @@ static __thread struct _wifi_cb_s wifi_callbacks = { 0, };
 static __thread struct _profile_list_s profile_iterator = { 0, NULL };
 static __thread struct _profile_list_s specific_profile_iterator = {0, NULL};
 static __thread char specific_profile_essid[NET_WLAN_ESSID_LEN + 1] = { 0, };
-static __thread bool is_feature_checked = false;
-static __thread bool feature_supported = false;
 static __thread GSList *managed_idler_list = NULL;
 static __thread bool wifi_is_feature_checked[WIFI_SUPPORTED_FEATURE_MAX] = {0, };
 static __thread bool wifi_feature_supported[WIFI_SUPPORTED_FEATURE_MAX] = {0, };
@@ -876,39 +874,39 @@ int _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)
 
 int _wifi_libnet_get_wifi_state(wifi_connection_state_e *connection_state)
 {
-	wifi_dbus *dbus_h = NULL;
-	GError *error = NULL;
-	GVariant *result = NULL;
-	gint state = 0;
+	int rv;
+	net_wifi_state_t wlan_state = 0;
 
-	dbus_h = _wifi_get_dbus_handle();
-	if (dbus_h == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized for wifi dbus connection");
-		return WIFI_ERROR_INVALID_OPERATION;
-	}
-
-	result = g_dbus_connection_call_sync(dbus_h->dbus_conn,
-					     NETCONFIG_SERVICE,
-					     NETCONFIG_WIFI_PATH,
-					     NETCONFIG_IWIFI,
-					     "GetWifiState",
-					     g_variant_new("()"),
-					     NULL, G_DBUS_CALL_FLAGS_NONE,
-					     DBUS_REPLY_TIMEOUT, dbus_h->ca,
-					     &error);
-
-	if (error) {
-		WIFI_LOG(WIFI_ERROR, "Fail to GetWifiState [%d: %s]", error->code, error->message);
-		g_error_free(error);
+	rv = net_get_wifi_state(&wlan_state);
+	if (rv == NET_ERR_ACCESS_DENIED) {
+		WIFI_LOG(WIFI_ERROR, "Access denied");
+		return WIFI_ERROR_PERMISSION_DENIED;
+	} else if (rv != NET_ERR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get Wi-Fi state");
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
 
-	if (result != NULL) {
-		g_variant_get(result, "(i)", &state);
-		g_variant_unref(result);
+	switch (wlan_state) {
+	case WIFI_OFF:
+	case WIFI_ON:
+		*connection_state = WIFI_CONNECTION_STATE_DISCONNECTED;
+		break;
+	case WIFI_ASSOCIATION:
+		*connection_state = WIFI_CONNECTION_STATE_ASSOCIATION;
+		break;
+	case WIFI_CONFIGURATION:
+		*connection_state = WIFI_CONNECTION_STATE_CONFIGURATION;
+		break;
+	case WIFI_CONNECTED:
+		*connection_state = WIFI_CONNECTION_STATE_CONNECTED;
+		break;
+	case WIFI_DISCONNECTING:
+		*connection_state = WIFI_CONNECTION_STATE_CONNECTED;
+		break;
+	default:
+		WIFI_LOG(WIFI_ERROR, "Unknown state");
+		return WIFI_ERROR_OPERATION_FAILED;
 	}
-
-	*connection_state = state;
 
 	return WIFI_ERROR_NONE;
 }
@@ -1370,7 +1368,6 @@ int _wifi_check_feature_supported(const char *feature_name, ...)
 		else if (strcmp(key, WIFI_TDLS_FEATURE) == 0)
 			value = __libnet_check_feature_supported(key, WIFI_SUPPORTED_FEATURE_WIFI_TDLS);
 
-		SECURE_WIFI_LOG(WIFI_INFO, "%s feature is %s", key, (value ? "true" : "false"));
 		feature_supported |= value;
 		key = va_arg(list, const char *);
 		if (!key) break;
