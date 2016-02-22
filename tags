@@ -1,0 +1,456 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CHECK_FEATURE_SUPPORTED	include/net_wifi_private.h	50;"	d
+DBUS_REPLY_TIMEOUT	include/wifi_dbus_private.h	6;"	d
+LOG_TAG	include/net_wifi_private.h	32;"	d
+LOG_TAG	include/net_wifi_private.h	33;"	d
+MAX_PREFIX_LENGTH	src/net_wifi_ap.c	26;"	d	file:
+NETCONFIG_INETWORK	include/wifi_dbus_private.h	10;"	d
+NETCONFIG_ISTATISTICS	include/wifi_dbus_private.h	11;"	d
+NETCONFIG_IWIFI	include/wifi_dbus_private.h	9;"	d
+NETCONFIG_NETWORK_PATH	include/wifi_dbus_private.h	14;"	d
+NETCONFIG_SERVICE	include/wifi_dbus_private.h	8;"	d
+NETCONFIG_STATISTICS_PATH	include/wifi_dbus_private.h	15;"	d
+NETCONFIG_WIFI_PATH	include/wifi_dbus_private.h	13;"	d
+SECURE_WIFI_LOG	include/net_wifi_private.h	71;"	d
+WIFI_ADDRESS_FAMILY_IPV4	include/wifi.h	/^    WIFI_ADDRESS_FAMILY_IPV4 = 0,  \/**< IPV4 Address family *\/$/;"	e	enum:__anon6
+WIFI_ADDRESS_FAMILY_IPV6	include/wifi.h	/^    WIFI_ADDRESS_FAMILY_IPV6 = 1,  \/**< IPV6 Address family *\/$/;"	e	enum:__anon6
+WIFI_CONFIG_EAP_ANONYMOUS_IDENTITY	include/wifi_config_private.h	16;"	d
+WIFI_CONFIG_EAP_AUTH_TYPE	include/wifi_config_private.h	22;"	d
+WIFI_CONFIG_EAP_CACERT	include/wifi_config_private.h	17;"	d
+WIFI_CONFIG_EAP_CLIENTCERT	include/wifi_config_private.h	18;"	d
+WIFI_CONFIG_EAP_IDENTITY	include/wifi_config_private.h	20;"	d
+WIFI_CONFIG_EAP_PRIVATEKEY	include/wifi_config_private.h	19;"	d
+WIFI_CONFIG_EAP_SUBJECT_MATCH	include/wifi_config_private.h	23;"	d
+WIFI_CONFIG_EAP_TYPE	include/wifi_config_private.h	21;"	d
+WIFI_CONFIG_FAILURE	include/wifi_config_private.h	15;"	d
+WIFI_CONFIG_HIDDEN	include/wifi_config_private.h	14;"	d
+WIFI_CONFIG_NAME	include/wifi_config_private.h	9;"	d
+WIFI_CONFIG_PASSPHRASE	include/wifi_config_private.h	11;"	d
+WIFI_CONFIG_PROXYADDRESS	include/wifi_config_private.h	13;"	d
+WIFI_CONFIG_SECURITY_TYPE	include/wifi_config_private.h	12;"	d
+WIFI_CONFIG_SSID	include/wifi_config_private.h	10;"	d
+WIFI_CONNECTION_STATE_ASSOCIATION	include/wifi.h	/^	WIFI_CONNECTION_STATE_ASSOCIATION = 1,		\/**< Association state *\/$/;"	e	enum:__anon3
+WIFI_CONNECTION_STATE_CONFIGURATION	include/wifi.h	/^	WIFI_CONNECTION_STATE_CONFIGURATION = 2,	\/**< Configuration state *\/$/;"	e	enum:__anon3
+WIFI_CONNECTION_STATE_CONNECTED	include/wifi.h	/^	WIFI_CONNECTION_STATE_CONNECTED = 3,		\/**< Connected state *\/$/;"	e	enum:__anon3
+WIFI_CONNECTION_STATE_DISCONNECTED	include/wifi.h	/^	WIFI_CONNECTION_STATE_DISCONNECTED = 0,		\/**< Disconnected state *\/$/;"	e	enum:__anon3
+WIFI_CONNECTION_STATE_FAILURE	include/wifi.h	/^	WIFI_CONNECTION_STATE_FAILURE = -1,		\/**< Connection failed state *\/$/;"	e	enum:__anon3
+WIFI_DEVICE_STATE_ACTIVATED	include/wifi.h	/^    WIFI_DEVICE_STATE_ACTIVATED = 1, 	\/**< Wi-Fi is activated *\/$/;"	e	enum:__anon2
+WIFI_DEVICE_STATE_DEACTIVATED	include/wifi.h	/^    WIFI_DEVICE_STATE_DEACTIVATED = 0,  \/**< Wi-Fi is Deactivated *\/$/;"	e	enum:__anon2
+WIFI_EAP_AUTH_TYPE_GTC	include/wifi.h	/^    WIFI_EAP_AUTH_TYPE_GTC = 4,		\/**< EAP phase2 authentication GTC *\/$/;"	e	enum:__anon11
+WIFI_EAP_AUTH_TYPE_MD5	include/wifi.h	/^    WIFI_EAP_AUTH_TYPE_MD5 = 5,		\/**< EAP phase2 authentication MD5 *\/$/;"	e	enum:__anon11
+WIFI_EAP_AUTH_TYPE_MSCHAP	include/wifi.h	/^    WIFI_EAP_AUTH_TYPE_MSCHAP = 2,	\/**< EAP phase2 authentication MSCHAP *\/$/;"	e	enum:__anon11
+WIFI_EAP_AUTH_TYPE_MSCHAPV2	include/wifi.h	/^    WIFI_EAP_AUTH_TYPE_MSCHAPV2 = 3,	\/**< EAP phase2 authentication MSCHAPv2 *\/$/;"	e	enum:__anon11
+WIFI_EAP_AUTH_TYPE_NONE	include/wifi.h	/^    WIFI_EAP_AUTH_TYPE_NONE = 0,  	\/**< EAP phase2 authentication none *\/$/;"	e	enum:__anon11
+WIFI_EAP_AUTH_TYPE_PAP	include/wifi.h	/^    WIFI_EAP_AUTH_TYPE_PAP = 1,  	\/**< EAP phase2 authentication PAP *\/$/;"	e	enum:__anon11
+WIFI_EAP_TYPE_AKA	include/wifi.h	/^    WIFI_EAP_TYPE_AKA = 4,	\/**< EAP AKA type *\/$/;"	e	enum:__anon10
+WIFI_EAP_TYPE_PEAP	include/wifi.h	/^    WIFI_EAP_TYPE_PEAP = 0,	\/**< EAP PEAP type *\/$/;"	e	enum:__anon10
+WIFI_EAP_TYPE_SIM	include/wifi.h	/^    WIFI_EAP_TYPE_SIM = 3,	\/**< EAP SIM type *\/$/;"	e	enum:__anon10
+WIFI_EAP_TYPE_TLS	include/wifi.h	/^    WIFI_EAP_TYPE_TLS = 1,	\/**< EAP TLS type *\/$/;"	e	enum:__anon10
+WIFI_EAP_TYPE_TTLS	include/wifi.h	/^    WIFI_EAP_TYPE_TTLS = 2,	\/**< EAP TTLS type *\/$/;"	e	enum:__anon10
+WIFI_ENCRYPTION_TYPE_AES	include/wifi.h	/^    WIFI_ENCRYPTION_TYPE_AES = 3,  		\/**< AES *\/$/;"	e	enum:__anon9
+WIFI_ENCRYPTION_TYPE_NONE	include/wifi.h	/^    WIFI_ENCRYPTION_TYPE_NONE = 0,  		\/**< Encryption disabled *\/$/;"	e	enum:__anon9
+WIFI_ENCRYPTION_TYPE_TKIP	include/wifi.h	/^    WIFI_ENCRYPTION_TYPE_TKIP = 2,  		\/**< TKIP *\/$/;"	e	enum:__anon9
+WIFI_ENCRYPTION_TYPE_TKIP_AES_MIXED	include/wifi.h	/^    WIFI_ENCRYPTION_TYPE_TKIP_AES_MIXED = 4,	\/**< TKIP and AES are both supported *\/$/;"	e	enum:__anon9
+WIFI_ENCRYPTION_TYPE_WEP	include/wifi.h	/^    WIFI_ENCRYPTION_TYPE_WEP = 1,  		\/**< WEP *\/$/;"	e	enum:__anon9
+WIFI_ERROR	include/net_wifi_private.h	36;"	d
+WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED	include/wifi.h	/^    WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED = TIZEN_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED, \/**< Address family not supported *\/$/;"	e	enum:__anon1
+WIFI_ERROR_ALREADY_EXISTS	include/wifi.h	/^    WIFI_ERROR_ALREADY_EXISTS = TIZEN_ERROR_WIFI|0x0303, 				\/**< Already exists *\/$/;"	e	enum:__anon1
+WIFI_ERROR_DHCP_FAILED	include/wifi.h	/^    WIFI_ERROR_DHCP_FAILED = TIZEN_ERROR_WIFI|0x0306, 					\/**< DHCP failed *\/$/;"	e	enum:__anon1
+WIFI_ERROR_INVALID_KEY	include/wifi.h	/^    WIFI_ERROR_INVALID_KEY = TIZEN_ERROR_WIFI|0x0307,					\/**< Invalid key *\/$/;"	e	enum:__anon1
+WIFI_ERROR_INVALID_OPERATION	include/wifi.h	/^    WIFI_ERROR_INVALID_OPERATION = TIZEN_ERROR_INVALID_OPERATION, 			\/**< Invalid operation *\/$/;"	e	enum:__anon1
+WIFI_ERROR_INVALID_PARAMETER	include/wifi.h	/^    WIFI_ERROR_INVALID_PARAMETER = TIZEN_ERROR_INVALID_PARAMETER, 			\/**< Invalid parameter *\/$/;"	e	enum:__anon1
+WIFI_ERROR_NONE	include/wifi.h	/^    WIFI_ERROR_NONE = TIZEN_ERROR_NONE, 						\/**< Successful *\/$/;"	e	enum:__anon1
+WIFI_ERROR_NOT_SUPPORTED	include/wifi.h	/^    WIFI_ERROR_NOT_SUPPORTED = TIZEN_ERROR_NOT_SUPPORTED                \/**< Not Supported *\/$/;"	e	enum:__anon1
+WIFI_ERROR_NOW_IN_PROGRESS	include/wifi.h	/^    WIFI_ERROR_NOW_IN_PROGRESS = TIZEN_ERROR_NOW_IN_PROGRESS, 				\/**< Now in progress *\/$/;"	e	enum:__anon1
+WIFI_ERROR_NO_CONNECTION	include/wifi.h	/^    WIFI_ERROR_NO_CONNECTION = TIZEN_ERROR_WIFI|0x0302, 				\/**< There is no connected AP *\/$/;"	e	enum:__anon1
+WIFI_ERROR_NO_REPLY	include/wifi.h	/^    WIFI_ERROR_NO_REPLY = TIZEN_ERROR_WIFI|0x0308, 					\/**< No reply *\/$/;"	e	enum:__anon1
+WIFI_ERROR_OPERATION_ABORTED	include/wifi.h	/^    WIFI_ERROR_OPERATION_ABORTED = TIZEN_ERROR_WIFI|0x0304, 				\/**< Operation is aborted *\/$/;"	e	enum:__anon1
+WIFI_ERROR_OPERATION_FAILED	include/wifi.h	/^    WIFI_ERROR_OPERATION_FAILED = TIZEN_ERROR_WIFI|0x0301, 				\/**< Operation failed *\/$/;"	e	enum:__anon1
+WIFI_ERROR_OUT_OF_MEMORY	include/wifi.h	/^    WIFI_ERROR_OUT_OF_MEMORY = TIZEN_ERROR_OUT_OF_MEMORY, 				\/**< Out of memory error *\/$/;"	e	enum:__anon1
+WIFI_ERROR_PERMISSION_DENIED	include/wifi.h	/^    WIFI_ERROR_PERMISSION_DENIED = TIZEN_ERROR_PERMISSION_DENIED, 			\/**< Permission Denied *\/$/;"	e	enum:__anon1
+WIFI_ERROR_SECURITY_RESTRICTED	include/wifi.h	/^    WIFI_ERROR_SECURITY_RESTRICTED = TIZEN_ERROR_WIFI|0x0309, 				\/**< Restricted by security system policy *\/$/;"	e	enum:__anon1
+WIFI_FEATURE	include/net_wifi_private.h	39;"	d
+WIFI_INFO	include/net_wifi_private.h	35;"	d
+WIFI_IP_CONFIG_TYPE_AUTO	include/wifi.h	/^    WIFI_IP_CONFIG_TYPE_AUTO = 3,  	\/**< Config IP from Auto IP pool (169.254\/16). Later with DHCP client, if available *\/$/;"	e	enum:__anon5
+WIFI_IP_CONFIG_TYPE_DYNAMIC	include/wifi.h	/^    WIFI_IP_CONFIG_TYPE_DYNAMIC = 2,  	\/**< Config IP using DHCP client*\/$/;"	e	enum:__anon5
+WIFI_IP_CONFIG_TYPE_FIXED	include/wifi.h	/^    WIFI_IP_CONFIG_TYPE_FIXED = 4,  	\/**< Indicates an IP address that can not be modified *\/$/;"	e	enum:__anon5
+WIFI_IP_CONFIG_TYPE_NONE	include/wifi.h	/^    WIFI_IP_CONFIG_TYPE_NONE = 0,    	\/**< Not defined *\/$/;"	e	enum:__anon5
+WIFI_IP_CONFIG_TYPE_STATIC	include/wifi.h	/^    WIFI_IP_CONFIG_TYPE_STATIC  = 1,  	\/**< Manual IP configuration *\/$/;"	e	enum:__anon5
+WIFI_LOG	include/net_wifi_private.h	57;"	d
+WIFI_MAC_ADD_LENGTH	src/net_wifi.c	27;"	d	file:
+WIFI_MAC_ADD_PATH	src/net_wifi.c	28;"	d	file:
+WIFI_PROXY_TYPE_AUTO	include/wifi.h	/^    WIFI_PROXY_TYPE_AUTO = 1,	\/**< Auto configuration(Use PAC file). If URL property is not set, DHCP\/WPAD auto-discover will be tried *\/$/;"	e	enum:__anon7
+WIFI_PROXY_TYPE_DIRECT	include/wifi.h	/^    WIFI_PROXY_TYPE_DIRECT = 0,	\/**< Direct connection *\/$/;"	e	enum:__anon7
+WIFI_PROXY_TYPE_MANUAL	include/wifi.h	/^    WIFI_PROXY_TYPE_MANUAL  = 2	\/**< Manual configuration *\/$/;"	e	enum:__anon7
+WIFI_RSSI_LEVEL_0	include/wifi.h	/^    WIFI_RSSI_LEVEL_0 = 0,  \/**< level 0 *\/$/;"	e	enum:__anon4
+WIFI_RSSI_LEVEL_1	include/wifi.h	/^    WIFI_RSSI_LEVEL_1 = 1,  \/**< level 1 *\/$/;"	e	enum:__anon4
+WIFI_RSSI_LEVEL_2	include/wifi.h	/^    WIFI_RSSI_LEVEL_2 = 2,  \/**< level 2 *\/$/;"	e	enum:__anon4
+WIFI_RSSI_LEVEL_3	include/wifi.h	/^    WIFI_RSSI_LEVEL_3 = 3,  \/**< level 3 *\/$/;"	e	enum:__anon4
+WIFI_RSSI_LEVEL_4	include/wifi.h	/^    WIFI_RSSI_LEVEL_4 = 4,  \/**< level 4 *\/$/;"	e	enum:__anon4
+WIFI_SECURITY_EAP	src/wifi_config.c	28;"	d	file:
+WIFI_SECURITY_NONE	src/wifi_config.c	25;"	d	file:
+WIFI_SECURITY_TYPE_EAP	include/wifi.h	/^    WIFI_SECURITY_TYPE_EAP = 4,  	\/**< EAP *\/$/;"	e	enum:__anon8
+WIFI_SECURITY_TYPE_NONE	include/wifi.h	/^    WIFI_SECURITY_TYPE_NONE = 0,  	\/**< Security disabled *\/$/;"	e	enum:__anon8
+WIFI_SECURITY_TYPE_WEP	include/wifi.h	/^    WIFI_SECURITY_TYPE_WEP = 1,  	\/**< WEP *\/$/;"	e	enum:__anon8
+WIFI_SECURITY_TYPE_WPA2_PSK	include/wifi.h	/^    WIFI_SECURITY_TYPE_WPA2_PSK = 3,  	\/**< WPA2-PSK *\/$/;"	e	enum:__anon8
+WIFI_SECURITY_TYPE_WPA_PSK	include/wifi.h	/^    WIFI_SECURITY_TYPE_WPA_PSK = 2,  	\/**< WPA-PSK *\/$/;"	e	enum:__anon8
+WIFI_SECURITY_WEP	src/wifi_config.c	26;"	d	file:
+WIFI_SECURITY_WPA_PSK	src/wifi_config.c	27;"	d	file:
+WIFI_SUPPORTED_FEATURE_MAX	include/net_wifi_private.h	/^	WIFI_SUPPORTED_FEATURE_MAX,$/;"	e	enum:__anon13
+WIFI_SUPPORTED_FEATURE_WIFI	include/net_wifi_private.h	/^	WIFI_SUPPORTED_FEATURE_WIFI,$/;"	e	enum:__anon13
+WIFI_SUPPORTED_FEATURE_WIFI_TDLS	include/net_wifi_private.h	/^	WIFI_SUPPORTED_FEATURE_WIFI_TDLS,$/;"	e	enum:__anon13
+WIFI_TDLS_FEATURE	include/net_wifi_private.h	40;"	d
+WIFI_TDLS_STATE_CONNECTED	include/wifi.h	/^	WIFI_TDLS_STATE_CONNECTED = 1,     \/**< Wi-Fi TDLS is Connected *\/$/;"	e	enum:__anon12
+WIFI_TDLS_STATE_DISCONNECTED	include/wifi.h	/^	WIFI_TDLS_STATE_DISCONNECTED = 0,  \/**< Wi-Fi TDLS is Disconnected *\/$/;"	e	enum:__anon12
+WIFI_WARN	include/net_wifi_private.h	37;"	d
+__NET_CONNECTION_PRIVATE_H__	include/net_wifi_private.h	18;"	d
+__TIZEN_NETWORK_WIFI_DOC_H__	doc/wifi_doc.h	19;"	d
+__TIZEN_NETWORK_WIFI_H__	include/wifi.h	18;"	d
+__WIFI_CONFIG_H__	include/wifi_config_private.h	2;"	d
+__WIFI_DBUS_H__	include/wifi_dbus_private.h	2;"	d
+__activated_cb_idle	src/libnetwork.c	/^static gboolean __activated_cb_idle(gpointer data)$/;"	f	file:
+__ap_convert_ip_to_string	src/net_wifi_ap.c	/^static char *__ap_convert_ip_to_string(net_addr_t *ip_addr, wifi_address_family_e address_family)$/;"	f	file:
+__bgscan_cb_idle	src/libnetwork.c	/^static gboolean __bgscan_cb_idle(gpointer data)$/;"	f	file:
+__connected_cb_idle	src/libnetwork.c	/^static gboolean __connected_cb_idle(gpointer data)$/;"	f	file:
+__deactivated_cb_idle	src/libnetwork.c	/^static gboolean __deactivated_cb_idle(gpointer data)$/;"	f	file:
+__device_state_cb_idle	src/libnetwork.c	/^static gboolean __device_state_cb_idle(gpointer data)$/;"	f	file:
+__disconnected_cb_idle	src/libnetwork.c	/^static gboolean __disconnected_cb_idle(gpointer data)$/;"	f	file:
+__libnet_check_feature_supported	src/libnetwork.c	/^bool __libnet_check_feature_supported(const char *key, wifi_supported_feature_e feature)$/;"	f
+__libnet_clear_profile_list	src/libnetwork.c	/^static void __libnet_clear_profile_list(struct _profile_list_s *profile_list)$/;"	f	file:
+__libnet_connect_with_wifi_info	src/libnetwork.c	/^static int __libnet_connect_with_wifi_info(net_profile_info_t *ap_info)$/;"	f	file:
+__libnet_connected_cb	src/libnetwork.c	/^static void __libnet_connected_cb(wifi_error_e result)$/;"	f	file:
+__libnet_convert_ap_error_type_to_string	src/libnetwork.c	/^static const char *__libnet_convert_ap_error_type_to_string(wifi_error_e err_type)$/;"	f	file:
+__libnet_convert_ap_state_to_string	src/libnetwork.c	/^static const char *__libnet_convert_ap_state_to_string(wifi_connection_state_e state)$/;"	f	file:
+__libnet_convert_profile_info_to_wifi_info	src/libnetwork.c	/^static void __libnet_convert_profile_info_to_wifi_info(net_wifi_connection_info_t *wifi_info,$/;"	f	file:
+__libnet_convert_to_ap_error_type	src/libnetwork.c	/^static wifi_error_e __libnet_convert_to_ap_error_type(net_err_t err_type)$/;"	f	file:
+__libnet_disconnected_cb	src/libnetwork.c	/^static void __libnet_disconnected_cb(wifi_error_e result)$/;"	f	file:
+__libnet_evt_cb	src/libnetwork.c	/^static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)$/;"	f	file:
+__libnet_power_on_off_cb	src/libnetwork.c	/^static void __libnet_power_on_off_cb(net_event_info_t *event_cb, bool is_requested)$/;"	f	file:
+__libnet_scan_cb	src/libnetwork.c	/^static void __libnet_scan_cb(net_event_info_t *event_cb, bool is_requested)$/;"	f	file:
+__libnet_set_activated_cb	src/libnetwork.c	/^static void __libnet_set_activated_cb(wifi_activated_cb user_cb, void *user_data)$/;"	f	file:
+__libnet_set_connected_cb	src/libnetwork.c	/^static void __libnet_set_connected_cb(wifi_connected_cb user_cb, void *user_data)$/;"	f	file:
+__libnet_set_deactivated_cb	src/libnetwork.c	/^static void __libnet_set_deactivated_cb(wifi_deactivated_cb user_cb, void *user_data)$/;"	f	file:
+__libnet_set_disconnected_cb	src/libnetwork.c	/^static void __libnet_set_disconnected_cb(wifi_disconnected_cb user_cb, void *user_data)$/;"	f	file:
+__libnet_set_specific_scan_cb	src/libnetwork.c	/^static void __libnet_set_specific_scan_cb(wifi_scan_finished_cb user_cb, void *user_data)$/;"	f	file:
+__libnet_specific_scan_cb	src/libnetwork.c	/^static void __libnet_specific_scan_cb(net_event_info_t *event_cb)$/;"	f	file:
+__libnet_state_changed_cb	src/libnetwork.c	/^static void __libnet_state_changed_cb(char *profile_name, net_profile_info_t *profile_info,$/;"	f	file:
+__libnet_update_profile_iterator	src/libnetwork.c	/^static int __libnet_update_profile_iterator(void)$/;"	f	file:
+__libnet_update_specific_profile_iterator	src/libnetwork.c	/^static void __libnet_update_specific_profile_iterator(GSList *ap_list)$/;"	f	file:
+__rssi_level_changed_cb	src/net_wifi.c	/^static void __rssi_level_changed_cb(keynode_t *node, void *user_data)$/;"	f	file:
+__rssi_level_changed_cb_idle	src/net_wifi.c	/^static gboolean __rssi_level_changed_cb_idle(gpointer data)$/;"	f	file:
+__scan_request_cb_idle	src/libnetwork.c	/^static gboolean __scan_request_cb_idle(gpointer data)$/;"	f	file:
+__specific_scan_cb_idle	src/libnetwork.c	/^static gboolean __specific_scan_cb_idle(gpointer data)$/;"	f	file:
+__test_activated_callback	test/wifi_test.c	/^static void __test_activated_callback(wifi_error_e result, void* user_data)$/;"	f	file:
+__test_bg_scan_completed_callback	test/wifi_test.c	/^static void __test_bg_scan_completed_callback(wifi_error_e error_code, void* user_data)$/;"	f	file:
+__test_connected_callback	test/wifi_test.c	/^static void __test_connected_callback(wifi_error_e result, void* user_data)$/;"	f	file:
+__test_connection_state_callback	test/wifi_test.c	/^static void __test_connection_state_callback(wifi_connection_state_e state, wifi_ap_h ap, void* user_data)$/;"	f	file:
+__test_convert_error_to_string	test/wifi_test.c	/^static const char *__test_convert_error_to_string(wifi_error_e err_type)$/;"	f	file:
+__test_deactivated_callback	test/wifi_test.c	/^static void __test_deactivated_callback(wifi_error_e result, void* user_data)$/;"	f	file:
+__test_device_state_callback	test/wifi_test.c	/^static void __test_device_state_callback(wifi_device_state_e state, void* user_data)$/;"	f	file:
+__test_disconnected_callback	test/wifi_test.c	/^static void __test_disconnected_callback(wifi_error_e result, void* user_data)$/;"	f	file:
+__test_found_ap_callback	test/wifi_test.c	/^static bool __test_found_ap_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_change_ip_method_callback	test/wifi_test.c	/^static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_change_proxy_method_callback	test/wifi_test.c	/^static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_connect_ap_callback	test/wifi_test.c	/^static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_connect_wps_callback	test/wifi_test.c	/^static bool __test_found_connect_wps_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_disconnect_ap_callback	test/wifi_test.c	/^static bool __test_found_disconnect_ap_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_eap_ap_callback	test/wifi_test.c	/^static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_forget_ap_callback	test/wifi_test.c	/^static bool __test_found_forget_ap_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_print_ap_info_callback	test/wifi_test.c	/^static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_found_specific_aps_callback	test/wifi_test.c	/^static bool __test_found_specific_aps_callback(wifi_ap_h ap, void *user_data)$/;"	f	file:
+__test_print_state	test/wifi_test.c	/^static const char* __test_print_state(wifi_connection_state_e state)$/;"	f	file:
+__test_rssi_level_callback	test/wifi_test.c	/^static void __test_rssi_level_callback(wifi_rssi_level_e rssi_level, void* user_data)$/;"	f	file:
+__test_scan_request_callback	test/wifi_test.c	/^static void __test_scan_request_callback(wifi_error_e error_code, void* user_data)$/;"	f	file:
+__test_scan_specific_ap_callback	test/wifi_test.c	/^static void __test_scan_specific_ap_callback(wifi_error_e error_code, void* user_data)$/;"	f	file:
+__wifi_create_profile_name	src/net_wifi_ap.c	/^static char *__wifi_create_profile_name(const char *ssid, const int net_mode, const int sec_mode)$/;"	f	file:
+__wifi_idle_cb	src/libnetwork.c	/^static gboolean __wifi_idle_cb(gpointer user_data)$/;"	f	file:
+__wifi_idle_destroy_cb	src/libnetwork.c	/^static void __wifi_idle_destroy_cb(gpointer data)$/;"	f	file:
+__wifi_init_ap	src/net_wifi_ap.c	/^static void __wifi_init_ap(net_profile_info_t *profile_info, const char *essid)$/;"	f	file:
+__wifi_set_init	src/libnetwork.c	/^static void __wifi_set_init(bool tag)$/;"	f	file:
+__wifi_state_changed_cb	src/libnetwork.c	/^static gboolean __wifi_state_changed_cb(gpointer data)$/;"	f	file:
+_profile_list_s	src/libnetwork.c	/^struct _profile_list_s {$/;"	s	file:
+_test_config_list_cb	test/wifi_test.c	/^static bool _test_config_list_cb(const wifi_config_h config, void *user_data)$/;"	f	file:
+_wifi_activate	src/libnetwork.c	/^int _wifi_activate(wifi_activated_cb callback, gboolean wifi_picker_test,$/;"	f
+_wifi_callback_add	src/libnetwork.c	/^guint _wifi_callback_add(GSourceFunc func, gpointer user_data)$/;"	f
+_wifi_callback_cleanup	src/libnetwork.c	/^void _wifi_callback_cleanup(void)$/;"	f
+_wifi_cb_s	src/libnetwork.c	/^struct _wifi_cb_s {$/;"	s	file:
+_wifi_change_name_to_hexadecimal	src/wifi_config.c	/^static gchar *_wifi_change_name_to_hexadecimal(const gchar *name)$/;"	f	file:
+_wifi_check_feature_supported	src/libnetwork.c	/^int _wifi_check_feature_supported(const char *feature_name, ...)$/;"	f
+_wifi_config	include/wifi_config_private.h	/^struct _wifi_config {$/;"	s
+_wifi_convert_to_ap_state	src/net_wifi_ap.c	/^wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)$/;"	f
+_wifi_dbus	include/wifi_dbus_private.h	/^struct _wifi_dbus {$/;"	s
+_wifi_dbus_deinit	src/libnetwork.c	/^int _wifi_dbus_deinit(void)$/;"	f
+_wifi_dbus_init	src/libnetwork.c	/^int _wifi_dbus_init(void)$/;"	f
+_wifi_deactivate	src/libnetwork.c	/^int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)$/;"	f
+_wifi_eap_config	include/wifi_config_private.h	/^struct _wifi_eap_config {$/;"	s
+_wifi_error_to_enum	src/wifi_config.c	/^static wifi_error_e _wifi_error_to_enum(const gchar *error)$/;"	f	file:
+_wifi_get_dbus_handle	src/libnetwork.c	/^wifi_dbus *_wifi_get_dbus_handle(void)$/;"	f
+_wifi_is_init	src/libnetwork.c	/^bool _wifi_is_init(void)$/;"	f
+_wifi_last_error_to_enum	src/wifi_config.c	/^static wifi_error_e _wifi_last_error_to_enum(const gchar *last_error)$/;"	f	file:
+_wifi_libnet_add_to_ap_list	src/libnetwork.c	/^void _wifi_libnet_add_to_ap_list(wifi_ap_h ap_h)$/;"	f
+_wifi_libnet_check_ap_validity	src/libnetwork.c	/^bool _wifi_libnet_check_ap_validity(wifi_ap_h ap_h)$/;"	f
+_wifi_libnet_check_profile_name_validity	src/libnetwork.c	/^bool _wifi_libnet_check_profile_name_validity(const char *profile_name)$/;"	f
+_wifi_libnet_close_profile	src/libnetwork.c	/^int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, void *user_data)$/;"	f
+_wifi_libnet_connect_with_wps_pbc	src/libnetwork.c	/^int _wifi_libnet_connect_with_wps_pbc(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data)$/;"	f
+_wifi_libnet_connect_with_wps_pin	src/libnetwork.c	/^int _wifi_libnet_connect_with_wps_pin(wifi_ap_h ap_h, const char *pin,$/;"	f
+_wifi_libnet_deinit	src/libnetwork.c	/^bool _wifi_libnet_deinit(void)$/;"	f
+_wifi_libnet_foreach_found_aps	src/libnetwork.c	/^int _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback, void *user_data)$/;"	f
+_wifi_libnet_foreach_found_specific_aps	src/libnetwork.c	/^int _wifi_libnet_foreach_found_specific_aps(wifi_found_ap_cb callback, void *user_data)$/;"	f
+_wifi_libnet_forget_ap	src/libnetwork.c	/^int _wifi_libnet_forget_ap(wifi_ap_h ap)$/;"	f
+_wifi_libnet_get_connected_profile	src/libnetwork.c	/^int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)$/;"	f
+_wifi_libnet_get_intf_name	src/libnetwork.c	/^int _wifi_libnet_get_intf_name(char** name)$/;"	f
+_wifi_libnet_get_wifi_device_state	src/libnetwork.c	/^int _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)$/;"	f
+_wifi_libnet_get_wifi_state	src/libnetwork.c	/^int _wifi_libnet_get_wifi_state(wifi_connection_state_e *connection_state)$/;"	f
+_wifi_libnet_init	src/libnetwork.c	/^int _wifi_libnet_init(void)$/;"	f
+_wifi_libnet_open_profile	src/libnetwork.c	/^int _wifi_libnet_open_profile(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data)$/;"	f
+_wifi_libnet_remove_from_ap_list	src/libnetwork.c	/^void _wifi_libnet_remove_from_ap_list(wifi_ap_h ap_h)$/;"	f
+_wifi_libnet_scan_request	src/libnetwork.c	/^int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void *user_data)$/;"	f
+_wifi_libnet_scan_specific_ap	src/libnetwork.c	/^int _wifi_libnet_scan_specific_ap(const char *essid,$/;"	f
+_wifi_security_type_to_int	src/wifi_config.c	/^static wifi_security_type_e _wifi_security_type_to_int(const gchar *type)$/;"	f	file:
+_wifi_security_type_to_string	src/wifi_config.c	/^static gchar *_wifi_security_type_to_string(wifi_security_type_e security_type)$/;"	f	file:
+_wifi_set_background_scan_cb	src/libnetwork.c	/^int _wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void *user_data)$/;"	f
+_wifi_set_connection_state_cb	src/libnetwork.c	/^int _wifi_set_connection_state_cb(wifi_connection_state_changed_cb callback, void *user_data)$/;"	f
+_wifi_set_power_on_off_cb	src/libnetwork.c	/^int _wifi_set_power_on_off_cb(wifi_device_state_changed_cb callback, void *user_data)$/;"	f
+_wifi_set_profile_name_to_ap	src/net_wifi_ap.c	/^static bool _wifi_set_profile_name_to_ap(net_profile_info_t *ap_info)$/;"	f	file:
+_wifi_state_notify	src/libnetwork.c	/^struct _wifi_state_notify {$/;"	s	file:
+_wifi_unset_background_scan_cb	src/libnetwork.c	/^int _wifi_unset_background_scan_cb(void)$/;"	f
+_wifi_unset_connection_state_cb	src/libnetwork.c	/^int _wifi_unset_connection_state_cb()$/;"	f
+_wifi_unset_power_on_off_cb	src/libnetwork.c	/^int _wifi_unset_power_on_off_cb(void)$/;"	f
+_wifi_update_ap_info	src/libnetwork.c	/^int _wifi_update_ap_info(net_profile_info_t *ap_info)$/;"	f
+activated_cb	src/libnetwork.c	/^	wifi_activated_cb activated_cb;$/;"	m	struct:_wifi_cb_s	file:
+activated_user_data	src/libnetwork.c	/^	void *activated_user_data;$/;"	m	struct:_wifi_cb_s	file:
+address_family	include/wifi_config_private.h	/^	wifi_address_family_e address_family;$/;"	m	struct:_wifi_config
+anonymous_identity	include/wifi_config_private.h	/^	gchar *anonymous_identity;$/;"	m	struct:_wifi_eap_config
+ap_handle_list	src/libnetwork.c	/^static __thread GSList *ap_handle_list = NULL;$/;"	v	file:
+ap_info	src/libnetwork.c	/^	net_profile_info_t *ap_info;$/;"	m	struct:_wifi_state_notify	file:
+bg_scan_cb	src/libnetwork.c	/^	wifi_scan_finished_cb bg_scan_cb;$/;"	m	struct:_wifi_cb_s	file:
+bg_scan_user_data	src/libnetwork.c	/^	void *bg_scan_user_data;$/;"	m	struct:_wifi_cb_s	file:
+ca	include/wifi_dbus_private.h	/^	GCancellable *ca;$/;"	m	struct:_wifi_dbus
+ca_cert	include/wifi_config_private.h	/^	gchar *ca_cert;$/;"	m	struct:_wifi_eap_config
+client_cert	include/wifi_config_private.h	/^	gchar *client_cert;$/;"	m	struct:_wifi_eap_config
+connected_cb	src/libnetwork.c	/^	wifi_connected_cb connected_cb;$/;"	m	struct:_wifi_cb_s	file:
+connected_user_data	src/libnetwork.c	/^	void *connected_user_data;$/;"	m	struct:_wifi_cb_s	file:
+connection_state_cb	src/libnetwork.c	/^	wifi_connection_state_changed_cb connection_state_cb;$/;"	m	struct:_wifi_cb_s	file:
+connection_state_user_data	src/libnetwork.c	/^	void *connection_state_user_data;$/;"	m	struct:_wifi_cb_s	file:
+count	src/libnetwork.c	/^	int count;$/;"	m	struct:_profile_list_s	file:
+dbus_conn	include/wifi_dbus_private.h	/^	GDBusConnection *dbus_conn;$/;"	m	struct:_wifi_dbus
+deactivated_cb	src/libnetwork.c	/^	wifi_deactivated_cb deactivated_cb;$/;"	m	struct:_wifi_cb_s	file:
+deactivated_user_data	src/libnetwork.c	/^	void *deactivated_user_data;$/;"	m	struct:_wifi_cb_s	file:
+device_state_cb	src/libnetwork.c	/^	wifi_device_state_changed_cb device_state_cb;$/;"	m	struct:_wifi_cb_s	file:
+device_state_user_data	src/libnetwork.c	/^	void *device_state_user_data;$/;"	m	struct:_wifi_cb_s	file:
+disconnected_cb	src/libnetwork.c	/^	wifi_disconnected_cb disconnected_cb;$/;"	m	struct:_wifi_cb_s	file:
+disconnected_user_data	src/libnetwork.c	/^	void *disconnected_user_data;$/;"	m	struct:_wifi_cb_s	file:
+eap_auth_type	include/wifi_config_private.h	/^	wifi_eap_auth_type_e eap_auth_type;$/;"	m	struct:_wifi_eap_config
+eap_config	include/wifi_config_private.h	/^	struct _wifi_eap_config *eap_config;$/;"	m	struct:_wifi_config	typeref:struct:_wifi_config::_wifi_eap_config
+eap_type	include/wifi_config_private.h	/^	wifi_eap_type_e eap_type;$/;"	m	struct:_wifi_eap_config
+feature_supported	src/libnetwork.c	/^static __thread bool feature_supported = false;$/;"	v	file:
+func	src/libnetwork.c	/^	GSourceFunc func;$/;"	m	struct:managed_idle_data	file:
+g_dbus_h	src/libnetwork.c	/^wifi_dbus *g_dbus_h = NULL;$/;"	v
+id	src/libnetwork.c	/^	guint id;$/;"	m	struct:managed_idle_data	file:
+identity	include/wifi_config_private.h	/^	gchar *identity;$/;"	m	struct:_wifi_eap_config
+is_feature_checked	src/libnetwork.c	/^static __thread bool is_feature_checked = false;$/;"	v	file:
+is_hidden	include/wifi_config_private.h	/^	gboolean is_hidden;$/;"	m	struct:_wifi_config
+is_init	src/libnetwork.c	/^static __thread bool is_init = false;$/;"	v	file:
+is_saved	include/wifi_config_private.h	/^	gboolean is_saved;$/;"	m	struct:_wifi_config
+last_error	include/wifi_config_private.h	/^	wifi_error_e last_error;$/;"	m	struct:_wifi_config
+main	test/wifi_test.c	/^int main(int argc, char **argv)$/;"	f
+managed_idle_data	src/libnetwork.c	/^struct managed_idle_data {$/;"	s	file:
+managed_idler_list	src/libnetwork.c	/^static __thread GSList *managed_idler_list = NULL;$/;"	v	file:
+name	include/wifi_config_private.h	/^	gchar *name;$/;"	m	struct:_wifi_config
+passphrase	include/wifi_config_private.h	/^	gchar *passphrase;$/;"	m	struct:_wifi_config
+private_key	include/wifi_config_private.h	/^	gchar *private_key;$/;"	m	struct:_wifi_eap_config
+profile_iterator	src/libnetwork.c	/^static __thread struct _profile_list_s profile_iterator = { 0, NULL };$/;"	v	typeref:struct:_profile_list_s	file:
+profiles	src/libnetwork.c	/^	net_profile_info_t *profiles;$/;"	m	struct:_profile_list_s	file:
+proxy_address	include/wifi_config_private.h	/^	gchar *proxy_address;$/;"	m	struct:_wifi_config
+rssi_level_changed_cb	src/net_wifi.c	/^static __thread wifi_rssi_level_changed_cb rssi_level_changed_cb = NULL;$/;"	v	file:
+rssi_level_changed_user_data	src/net_wifi.c	/^static __thread void *rssi_level_changed_user_data = NULL;$/;"	v	file:
+scan_request_cb	src/libnetwork.c	/^	wifi_scan_finished_cb scan_request_cb;$/;"	m	struct:_wifi_cb_s	file:
+scan_request_user_data	src/libnetwork.c	/^	void *scan_request_user_data;$/;"	m	struct:_wifi_cb_s	file:
+security_type	include/wifi_config_private.h	/^	wifi_security_type_e security_type;$/;"	m	struct:_wifi_config
+specific_profile_essid	src/libnetwork.c	/^static __thread char specific_profile_essid[NET_WLAN_ESSID_LEN + 1] = { 0, };$/;"	v	file:
+specific_profile_iterator	src/libnetwork.c	/^static __thread struct _profile_list_s specific_profile_iterator = {0, NULL};$/;"	v	typeref:struct:_profile_list_s	file:
+specific_scan_cb	src/libnetwork.c	/^	wifi_scan_finished_cb specific_scan_cb;$/;"	m	struct:_wifi_cb_s	file:
+specific_scan_user_data	src/libnetwork.c	/^	void *specific_scan_user_data;$/;"	m	struct:_wifi_cb_s	file:
+state	src/libnetwork.c	/^	wifi_connection_state_e state;$/;"	m	struct:_wifi_state_notify	file:
+subject_match	include/wifi_config_private.h	/^	gchar *subject_match;$/;"	m	struct:_wifi_eap_config
+test_connect_ap	test/wifi_test.c	/^int test_connect_ap(void)$/;"	f
+test_connect_eap_ap	test/wifi_test.c	/^int test_connect_eap_ap(void)$/;"	f
+test_connect_specific_ap	test/wifi_test.c	/^int test_connect_specific_ap(void)$/;"	f
+test_connect_wps	test/wifi_test.c	/^int test_connect_wps(void)$/;"	f
+test_disconnect_ap	test/wifi_test.c	/^int test_disconnect_ap(void)$/;"	f
+test_foreach_found_aps	test/wifi_test.c	/^int test_foreach_found_aps(void)$/;"	f
+test_forget_ap	test/wifi_test.c	/^int test_forget_ap(void)$/;"	f
+test_get_ap_info	test/wifi_test.c	/^int test_get_ap_info(void)$/;"	f
+test_get_connected_ap	test/wifi_test.c	/^int test_get_connected_ap(void)$/;"	f
+test_get_connection_state	test/wifi_test.c	/^int test_get_connection_state(void)$/;"	f
+test_get_interface_name	test/wifi_test.c	/^int test_get_interface_name(void)$/;"	f
+test_get_mac_address	test/wifi_test.c	/^int test_get_mac_address(void)$/;"	f
+test_get_user_int	test/wifi_test.c	/^static bool test_get_user_int(const char *msg, int *num)$/;"	f	file:
+test_is_activated	test/wifi_test.c	/^int test_is_activated(void)$/;"	f
+test_load_configuration	test/wifi_test.c	/^int test_load_configuration(void)$/;"	f
+test_save_configuration	test/wifi_test.c	/^int test_save_configuration(void)$/;"	f
+test_scan_request	test/wifi_test.c	/^int test_scan_request(void)$/;"	f
+test_set_configuration_proxy_and_hidden	test/wifi_test.c	/^int test_set_configuration_proxy_and_hidden(void)$/;"	f
+test_set_eap_configuration	test/wifi_test.c	/^int test_set_eap_configuration(void)$/;"	f
+test_set_ip_method	test/wifi_test.c	/^int test_set_ip_method(void)$/;"	f
+test_set_proxy_method	test/wifi_test.c	/^int test_set_proxy_method(void)$/;"	f
+test_thread	test/wifi_test.c	/^gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)$/;"	f
+test_wifi_activate	test/wifi_test.c	/^int test_wifi_activate(void)$/;"	f
+test_wifi_deactivate	test/wifi_test.c	/^int test_wifi_deactivate(void)$/;"	f
+test_wifi_deinit	test/wifi_test.c	/^int  test_wifi_deinit(void)$/;"	f
+test_wifi_init	test/wifi_test.c	/^int test_wifi_init(void)$/;"	f
+test_wifi_tdls_disconnect	test/wifi_test.c	/^int test_wifi_tdls_disconnect(void)$/;"	f
+test_wifi_tdls_get_connected_peer	test/wifi_test.c	/^int test_wifi_tdls_get_connected_peer(void)$/;"	f
+user_data	src/libnetwork.c	/^	gpointer user_data;$/;"	m	struct:managed_idle_data	file:
+wifi_activate	src/net_wifi.c	/^EXPORT_API int wifi_activate(wifi_activated_cb callback, void* user_data)$/;"	f
+wifi_activate_with_wifi_picker_tested	src/net_wifi.c	/^EXPORT_API int wifi_activate_with_wifi_picker_tested($/;"	f
+wifi_activated_cb	include/wifi.h	/^typedef void(*wifi_activated_cb)(wifi_error_e result, void *user_data);$/;"	t
+wifi_address_family_e	include/wifi.h	/^} wifi_address_family_e;$/;"	t	typeref:enum:__anon6
+wifi_ap_clone	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin)$/;"	f
+wifi_ap_create	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)$/;"	f
+wifi_ap_destroy	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_destroy(wifi_ap_h ap)$/;"	f
+wifi_ap_get_bssid	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)$/;"	f
+wifi_ap_get_connection_state	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state)$/;"	f
+wifi_ap_get_dns_address	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, char** dns_address)$/;"	f
+wifi_ap_get_eap_auth_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type)$/;"	f
+wifi_ap_get_eap_ca_cert_file	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file)$/;"	f
+wifi_ap_get_eap_client_cert_file	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file)$/;"	f
+wifi_ap_get_eap_passphrase	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password_set)$/;"	f
+wifi_ap_get_eap_private_key_file	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file)$/;"	f
+wifi_ap_get_eap_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)$/;"	f
+wifi_ap_get_encryption_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type)$/;"	f
+wifi_ap_get_essid	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)$/;"	f
+wifi_ap_get_frequency	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency)$/;"	f
+wifi_ap_get_gateway_address	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, char** gateway_address)$/;"	f
+wifi_ap_get_ip_address	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, char** ip_address)$/;"	f
+wifi_ap_get_ip_config_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e* type)$/;"	f
+wifi_ap_get_max_speed	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed)$/;"	f
+wifi_ap_get_proxy_address	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, char** proxy_address)$/;"	f
+wifi_ap_get_proxy_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)$/;"	f
+wifi_ap_get_rssi	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi)$/;"	f
+wifi_ap_get_security_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type)$/;"	f
+wifi_ap_get_subnet_mask	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, char** subnet_mask)$/;"	f
+wifi_ap_h	include/wifi.h	/^typedef void* wifi_ap_h;$/;"	t
+wifi_ap_hidden_create	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_hidden_create(const char* essid, wifi_ap_h* ap)$/;"	f
+wifi_ap_is_favorite	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite)$/;"	f
+wifi_ap_is_passphrase_required	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)$/;"	f
+wifi_ap_is_passpoint	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_is_passpoint(wifi_ap_h ap, bool* passpoint)$/;"	f
+wifi_ap_is_wps_supported	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported)$/;"	f
+wifi_ap_refresh	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_refresh(wifi_ap_h ap)$/;"	f
+wifi_ap_set_dns_address	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, const char* dns_address)$/;"	f
+wifi_ap_set_eap_auth_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type)$/;"	f
+wifi_ap_set_eap_ca_cert_file	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file)$/;"	f
+wifi_ap_set_eap_client_cert_file	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file)$/;"	f
+wifi_ap_set_eap_passphrase	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* password)$/;"	f
+wifi_ap_set_eap_private_key_info	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char* password)$/;"	f
+wifi_ap_set_eap_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)$/;"	f
+wifi_ap_set_encryption_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type)$/;"	f
+wifi_ap_set_gateway_address	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* gateway_address)$/;"	f
+wifi_ap_set_ip_address	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* ip_address)$/;"	f
+wifi_ap_set_ip_config_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e type)$/;"	f
+wifi_ap_set_passphrase	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)$/;"	f
+wifi_ap_set_proxy_address	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* proxy_address)$/;"	f
+wifi_ap_set_proxy_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type)$/;"	f
+wifi_ap_set_security_type	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type)$/;"	f
+wifi_ap_set_subnet_mask	src/net_wifi_ap.c	/^EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, const char* subnet_mask)$/;"	f
+wifi_callbacks	src/libnetwork.c	/^static __thread struct _wifi_cb_s wifi_callbacks = { 0, };$/;"	v	typeref:struct:_wifi_cb_s	file:
+wifi_config_clone	src/net_wifi_config.c	/^EXPORT_API int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config)$/;"	f
+wifi_config_create	src/net_wifi_config.c	/^EXPORT_API int wifi_config_create(const char *name, const char *passphrase, wifi_security_type_e security_type, wifi_config_h *config)$/;"	f
+wifi_config_destroy	src/net_wifi_config.c	/^EXPORT_API int wifi_config_destroy(wifi_config_h config)$/;"	f
+wifi_config_foreach_configuration	src/net_wifi_config.c	/^EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_data)$/;"	f
+wifi_config_get_config_id	src/wifi_config.c	/^gchar *wifi_config_get_config_id(const gchar *name, wifi_security_type_e security_type)$/;"	f
+wifi_config_get_config_id_list	src/wifi_config.c	/^GSList *wifi_config_get_config_id_list(wifi_dbus *handle)$/;"	f
+wifi_config_get_eap_anonymous_identity	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymous_identity)$/;"	f
+wifi_config_get_eap_auth_type	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* eap_auth_type)$/;"	f
+wifi_config_get_eap_ca_cert_file	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert)$/;"	f
+wifi_config_get_eap_client_cert_file	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cert)$/;"	f
+wifi_config_get_eap_identity	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_eap_identity(wifi_config_h config, char** identity)$/;"	f
+wifi_config_get_eap_subject_match	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match)$/;"	f
+wifi_config_get_eap_type	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type)$/;"	f
+wifi_config_get_hidden_ap_property	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *hidden)$/;"	f
+wifi_config_get_last_error	src/wifi_config.c	/^int wifi_config_get_last_error(wifi_config_h config, wifi_error_e *last_error)$/;"	f
+wifi_config_get_name	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_name(wifi_config_h config, char **name)$/;"	f
+wifi_config_get_proxy_address	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *address_family, char **proxy_address)$/;"	f
+wifi_config_get_security_type	src/net_wifi_config.c	/^EXPORT_API int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *security_type)$/;"	f
+wifi_config_h	include/wifi.h	/^typedef void *wifi_config_h;$/;"	t
+wifi_config_list_cb	include/wifi.h	/^typedef bool (*wifi_config_list_cb)(const wifi_config_h config, void *user_data);$/;"	t
+wifi_config_save_configuration	src/net_wifi_config.c	/^EXPORT_API int wifi_config_save_configuration(wifi_config_h config)$/;"	f
+wifi_config_set_eap_anonymous_identity	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* anonymous_identity)$/;"	f
+wifi_config_set_eap_auth_type	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap_auth_type)$/;"	f
+wifi_config_set_eap_ca_cert_file	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert)$/;"	f
+wifi_config_set_eap_client_cert_file	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* private_key, const char* client_cert)$/;"	f
+wifi_config_set_eap_identity	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_eap_identity(wifi_config_h config, const char* identity)$/;"	f
+wifi_config_set_eap_subject_match	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_match)$/;"	f
+wifi_config_set_eap_type	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type)$/;"	f
+wifi_config_set_hidden_ap_property	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_hidden_ap_property(wifi_config_h config, bool hidden)$/;"	f
+wifi_config_set_proxy_address	src/net_wifi_config.c	/^EXPORT_API int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e address_family, const char *proxy_address)$/;"	f
+wifi_configuration_get_passphrase	src/wifi_config.c	/^int wifi_configuration_get_passphrase(wifi_dbus *handle, const gchar *config_id, gchar **passphrase)$/;"	f
+wifi_configuration_set_field	src/wifi_config.c	/^int wifi_configuration_set_field(wifi_dbus *handle, const gchar *config_id, const gchar *key, const gchar *value)$/;"	f
+wifi_connect	src/net_wifi.c	/^EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)$/;"	f
+wifi_connect_by_wps_pbc	src/net_wifi.c	/^EXPORT_API int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)$/;"	f
+wifi_connect_by_wps_pin	src/net_wifi.c	/^EXPORT_API int wifi_connect_by_wps_pin(wifi_ap_h ap, const char *pin, wifi_connected_cb callback, void* user_data)$/;"	f
+wifi_connected_cb	include/wifi.h	/^typedef void(*wifi_connected_cb)(wifi_error_e result, void *user_data);$/;"	t
+wifi_connection_state_changed_cb	include/wifi.h	/^typedef void(*wifi_connection_state_changed_cb)(wifi_connection_state_e state, wifi_ap_h ap, void *user_data);$/;"	t
+wifi_connection_state_e	include/wifi.h	/^} wifi_connection_state_e;$/;"	t	typeref:enum:__anon3
+wifi_dbus	include/wifi_dbus_private.h	/^typedef struct _wifi_dbus wifi_dbus;$/;"	t	typeref:struct:_wifi_dbus
+wifi_dbus_deinit	src/wifi_dbus.c	/^int wifi_dbus_deinit(wifi_dbus *handle)$/;"	f
+wifi_dbus_init	src/wifi_dbus.c	/^int wifi_dbus_init(wifi_dbus **handle)$/;"	f
+wifi_deactivate	src/net_wifi.c	/^EXPORT_API int wifi_deactivate(wifi_deactivated_cb callback, void* user_data)$/;"	f
+wifi_deactivated_cb	include/wifi.h	/^typedef void(*wifi_deactivated_cb)(wifi_error_e result, void *user_data);$/;"	t
+wifi_deinitialize	src/net_wifi.c	/^EXPORT_API int wifi_deinitialize(void)$/;"	f
+wifi_device_state_changed_cb	include/wifi.h	/^typedef void(*wifi_device_state_changed_cb)(wifi_device_state_e state, void *user_data);$/;"	t
+wifi_device_state_e	include/wifi.h	/^} wifi_device_state_e;$/;"	t	typeref:enum:__anon2
+wifi_disconnect	src/net_wifi.c	/^EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void* user_data)$/;"	f
+wifi_disconnected_cb	include/wifi.h	/^typedef void(*wifi_disconnected_cb)(wifi_error_e result, void *user_data);$/;"	t
+wifi_eap_auth_type_e	include/wifi.h	/^} wifi_eap_auth_type_e;$/;"	t	typeref:enum:__anon11
+wifi_eap_auth_type_to_int	src/wifi_config.c	/^wifi_eap_auth_type_e wifi_eap_auth_type_to_int(const gchar *type)$/;"	f
+wifi_eap_auth_type_to_string	src/wifi_config.c	/^gchar *wifi_eap_auth_type_to_string(wifi_eap_auth_type_e eap_auth_type)$/;"	f
+wifi_eap_type_e	include/wifi.h	/^} wifi_eap_type_e;$/;"	t	typeref:enum:__anon10
+wifi_eap_type_to_int	src/wifi_config.c	/^wifi_eap_type_e wifi_eap_type_to_int(const gchar *type)$/;"	f
+wifi_eap_type_to_string	src/wifi_config.c	/^gchar *wifi_eap_type_to_string(wifi_eap_type_e eap_type)$/;"	f
+wifi_encryption_type_e	include/wifi.h	/^} wifi_encryption_type_e;$/;"	t	typeref:enum:__anon9
+wifi_error_e	include/wifi.h	/^} wifi_error_e;$/;"	t	typeref:enum:__anon1
+wifi_feature_supported	src/libnetwork.c	/^static __thread bool wifi_feature_supported[WIFI_SUPPORTED_FEATURE_MAX] = {0, };$/;"	v	file:
+wifi_foreach_found_aps	src/net_wifi.c	/^EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback, void* user_data)$/;"	f
+wifi_foreach_found_specific_aps	src/net_wifi.c	/^EXPORT_API int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data)$/;"	f
+wifi_forget_ap	src/net_wifi.c	/^EXPORT_API int wifi_forget_ap(wifi_ap_h ap)$/;"	f
+wifi_found_ap_cb	include/wifi.h	/^typedef bool(*wifi_found_ap_cb)(wifi_ap_h ap, void *user_data);$/;"	t
+wifi_get_connected_ap	src/net_wifi.c	/^EXPORT_API int wifi_get_connected_ap(wifi_ap_h* ap)$/;"	f
+wifi_get_connection_state	src/net_wifi.c	/^EXPORT_API int wifi_get_connection_state(wifi_connection_state_e* connection_state)$/;"	f
+wifi_get_mac_address	src/net_wifi.c	/^EXPORT_API int wifi_get_mac_address(char** mac_address)$/;"	f
+wifi_get_network_interface_name	src/net_wifi.c	/^EXPORT_API int wifi_get_network_interface_name(char** name)$/;"	f
+wifi_initialize	src/net_wifi.c	/^EXPORT_API int wifi_initialize(void)$/;"	f
+wifi_ip_config_type_e	include/wifi.h	/^} wifi_ip_config_type_e;$/;"	t	typeref:enum:__anon5
+wifi_is_activated	src/net_wifi.c	/^EXPORT_API int wifi_is_activated(bool* activated)$/;"	f
+wifi_is_feature_checked	src/libnetwork.c	/^static __thread bool wifi_is_feature_checked[WIFI_SUPPORTED_FEATURE_MAX] = {0, };$/;"	v	file:
+wifi_load_configurations	src/wifi_config.c	/^int wifi_load_configurations(wifi_dbus *handle, const gchar *config_id, gchar **name, wifi_security_type_e *security_type, gchar **proxy_address, gboolean *is_hidden, wifi_error_e *last_error)$/;"	f
+wifi_load_eap_configurations	src/wifi_config.c	/^int wifi_load_eap_configurations(wifi_dbus *handle, const gchar *config_id, gchar **name, wifi_security_type_e *security_type, gchar **proxy_address, gboolean *is_hidden, struct _wifi_eap_config **eap_config, wifi_error_e *last_error)$/;"	f
+wifi_proxy_type_e	include/wifi.h	/^} wifi_proxy_type_e;$/;"	t	typeref:enum:__anon7
+wifi_rssi_level_changed_cb	include/wifi.h	/^typedef void(*wifi_rssi_level_changed_cb)(wifi_rssi_level_e rssi_level, void *user_data);$/;"	t
+wifi_rssi_level_e	include/wifi.h	/^} wifi_rssi_level_e;$/;"	t	typeref:enum:__anon4
+wifi_save_configurations	src/wifi_config.c	/^int wifi_save_configurations(wifi_dbus *handle, const gchar *name, const gchar *passphrase, wifi_security_type_e security_type, const gchar *proxy_address, gboolean is_hidden)$/;"	f
+wifi_save_eap_configurations	src/wifi_config.c	/^int wifi_save_eap_configurations(wifi_dbus *handle, const gchar *name, const gchar *passphrase, wifi_security_type_e security_type, const gchar *proxy_address, struct _wifi_eap_config *eap_config, gboolean is_hidden)$/;"	f
+wifi_scan	src/net_wifi.c	/^EXPORT_API int wifi_scan(wifi_scan_finished_cb callback, void* user_data)$/;"	f
+wifi_scan_finished_cb	include/wifi.h	/^typedef void(*wifi_scan_finished_cb)(wifi_error_e error_code, void *user_data);$/;"	t
+wifi_scan_specific_ap	src/net_wifi.c	/^EXPORT_API int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data)$/;"	f
+wifi_security_type_e	include/wifi.h	/^} wifi_security_type_e;$/;"	t	typeref:enum:__anon8
+wifi_set_background_scan_cb	src/net_wifi.c	/^EXPORT_API int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void* user_data)$/;"	f
+wifi_set_connection_state_changed_cb	src/net_wifi.c	/^EXPORT_API int wifi_set_connection_state_changed_cb(wifi_connection_state_changed_cb callback, void* user_data)$/;"	f
+wifi_set_device_state_changed_cb	src/net_wifi.c	/^EXPORT_API int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb callback, void* user_data)$/;"	f
+wifi_set_rssi_level_changed_cb	src/net_wifi.c	/^EXPORT_API int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback, void* user_data)$/;"	f
+wifi_supported_feature_e	include/net_wifi_private.h	/^} wifi_supported_feature_e;$/;"	t	typeref:enum:__anon13
+wifi_tdls_disconnect	src/net_wifi.c	/^EXPORT_API int wifi_tdls_disconnect(const char* peer_mac_addr)$/;"	f
+wifi_tdls_get_connected_peer	src/net_wifi.c	/^EXPORT_API int wifi_tdls_get_connected_peer(char** peer_mac_addr)$/;"	f
+wifi_tdls_set_state_changed_cb	src/net_wifi.c	/^EXPORT_API int wifi_tdls_set_state_changed_cb(wifi_tdls_state_changed_cb callback, void* user_data)$/;"	f
+wifi_tdls_state_changed_cb	include/wifi.h	/^typedef void(*wifi_tdls_state_changed_cb)(wifi_tdls_state_e state, char* peer_mac_addr, void* user_data);$/;"	t
+wifi_tdls_state_e	include/wifi.h	/^} wifi_tdls_state_e;$/;"	t	typeref:enum:__anon12
+wifi_tdls_unset_state_changed_cb	src/net_wifi.c	/^EXPORT_API int wifi_tdls_unset_state_changed_cb(void)$/;"	f
+wifi_unset_background_scan_cb	src/net_wifi.c	/^EXPORT_API int wifi_unset_background_scan_cb(void)$/;"	f
+wifi_unset_connection_state_changed_cb	src/net_wifi.c	/^EXPORT_API int wifi_unset_connection_state_changed_cb(void)$/;"	f
+wifi_unset_device_state_changed_cb	src/net_wifi.c	/^EXPORT_API int wifi_unset_device_state_changed_cb(void)$/;"	f
+wifi_unset_rssi_level_changed_cb	src/net_wifi.c	/^EXPORT_API int wifi_unset_rssi_level_changed_cb(void)$/;"	f
