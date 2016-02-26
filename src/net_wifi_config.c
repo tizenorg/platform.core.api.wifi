@@ -482,6 +482,8 @@ EXPORT_API int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *hi
 
 EXPORT_API int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymous_identity)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -498,6 +500,8 @@ EXPORT_API int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char
 
 EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* anonymous_identity)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -529,6 +533,8 @@ EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_config_h config, cons
 
 EXPORT_API int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -545,6 +551,8 @@ EXPORT_API int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_
 
 EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -576,6 +584,8 @@ EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char
 
 EXPORT_API int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cert)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -592,6 +602,8 @@ EXPORT_API int wifi_config_get_eap_client_cert_file(wifi_config_h config, char**
 
 EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* private_key, const char* client_cert)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -625,6 +637,8 @@ EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_config_h config, const 
 
 EXPORT_API int wifi_config_get_eap_identity(wifi_config_h config, char** identity)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -641,6 +655,8 @@ EXPORT_API int wifi_config_get_eap_identity(wifi_config_h config, char** identit
 
 EXPORT_API int wifi_config_set_eap_identity(wifi_config_h config, const char* identity)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -672,6 +688,8 @@ EXPORT_API int wifi_config_set_eap_identity(wifi_config_h config, const char* id
 
 EXPORT_API int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -688,6 +706,8 @@ EXPORT_API int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *e
 
 EXPORT_API int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -723,6 +743,8 @@ EXPORT_API int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e ea
 
 EXPORT_API int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* eap_auth_type)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -739,6 +761,8 @@ EXPORT_API int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth
 
 EXPORT_API int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap_auth_type)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -774,6 +798,8 @@ EXPORT_API int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth
 
 EXPORT_API int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
@@ -790,6 +816,8 @@ EXPORT_API int wifi_config_get_eap_subject_match(wifi_config_h config, char** su
 
 EXPORT_API int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_match)
 {
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (config == NULL)
