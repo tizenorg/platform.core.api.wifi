@@ -1539,7 +1539,7 @@ int test_wifi_tdls_disconnect(void)
 
 	char * peer_mac = NULL;
 	printf("Enter Mac_address: ");
-	if(scanf(" %ms", &peer_mac) < 1)
+	if(scanf(" %17s", &peer_mac) < 1)
 		return -1;
 
 	if (strlen(peer_mac) > 17)
