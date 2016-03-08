@@ -27,8 +27,8 @@ int wifi_dbus_init(wifi_dbus **handle)
 
 	h = g_new0(struct _wifi_dbus, 1);
 	if (!h) {
-		WIFI_LOG(WIFI_ERROR, "_wifi_dbus alloc error");
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		WIFI_LOG(WIFI_ERROR, "_wifi_dbus alloc error"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OUT_OF_MEMORY; //LCOV_EXCL_LINE
 	}
 
 #if !GLIB_CHECK_VERSION(2, 36, 0)
@@ -37,10 +37,10 @@ int wifi_dbus_init(wifi_dbus **handle)
 
 	h->dbus_conn = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &error);
 	if (!h->dbus_conn) {
-		WIFI_LOG(WIFI_ERROR, "dbus connection get failed: %s", error->message);
-		g_error_free(error);
-		g_free(h);
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		WIFI_LOG(WIFI_ERROR, "dbus connection get failed: %s", error->message); //LCOV_EXCL_LINE
+		g_error_free(error); //LCOV_EXCL_LINE
+		g_free(h); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OUT_OF_MEMORY; //LCOV_EXCL_LINE
 	}
 	h->ca = g_cancellable_new();
 

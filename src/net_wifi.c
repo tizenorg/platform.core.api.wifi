@@ -30,6 +30,7 @@
 static __thread wifi_rssi_level_changed_cb rssi_level_changed_cb = NULL;
 static __thread void *rssi_level_changed_user_data = NULL;
 
+//LCOV_EXCL_START
 static gboolean __rssi_level_changed_cb_idle(gpointer data)
 {
 	int rssi_level = 0;
@@ -46,7 +47,7 @@ static gboolean __rssi_level_changed_cb_idle(gpointer data)
 static void __rssi_level_changed_cb(keynode_t *node, void *user_data)
 {
 	if (_wifi_is_init() != true) {
-		WIFI_LOG(WIFI_ERROR, "Application is not registered"
+		WIFI_LOG(WIFI_ERROR, "Application is not registered" //LCOV_EXCL_LINE
 				"If multi-threaded, thread integrity be broken.");
 		return;
 	}
@@ -54,6 +55,7 @@ static void __rssi_level_changed_cb(keynode_t *node, void *user_data)
 	if (rssi_level_changed_cb != NULL)
 		_wifi_callback_add(__rssi_level_changed_cb_idle, NULL);
 }
+//LCOV_EXCL_STOP
 
 EXPORT_API int wifi_initialize(void)
 {
@@ -68,11 +70,11 @@ EXPORT_API int wifi_initialize(void)
 
 	rv = _wifi_libnet_init();
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	} else if (rv != NET_ERR_NONE) {
-		WIFI_LOG(WIFI_ERROR, "Init failed[%d]", rv);
-		return WIFI_ERROR_OPERATION_FAILED;
+		WIFI_LOG(WIFI_ERROR, "Init failed[%d]", rv); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	_wifi_dbus_init();
@@ -92,8 +94,8 @@ EXPORT_API int wifi_deinitialize(void)
 	}
 
 	if (_wifi_libnet_deinit() == false) {
-		WIFI_LOG(WIFI_ERROR, "Deinit failed");
-		return WIFI_ERROR_OPERATION_FAILED;
+		WIFI_LOG(WIFI_ERROR, "Deinit failed"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	wifi_unset_rssi_level_changed_cb();
@@ -119,7 +121,7 @@ EXPORT_API int wifi_activate(wifi_activated_cb callback, void* user_data)
 
 	rv = _wifi_activate(callback, FALSE, user_data);
 	if (rv != WIFI_ERROR_NONE)
-		WIFI_LOG(WIFI_ERROR, "Failed to activate Wi-Fi[%d]", rv);
+		WIFI_LOG(WIFI_ERROR, "Failed to activate Wi-Fi[%d]", rv); //LCOV_EXCL_LINE
 
 	return rv;
 }
@@ -132,13 +134,13 @@ EXPORT_API int wifi_activate_with_wifi_picker_tested(
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	rv = _wifi_activate(callback, TRUE, user_data);
 	if (rv != WIFI_ERROR_NONE)
-		WIFI_LOG(WIFI_ERROR, "Failed to activate Wi-Fi[%d]", rv);
+		WIFI_LOG(WIFI_ERROR, "Failed to activate Wi-Fi[%d]", rv); //LCOV_EXCL_LINE
 
 	return rv;
 }
@@ -150,13 +152,13 @@ EXPORT_API int wifi_deactivate(wifi_deactivated_cb callback, void* user_data)
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	rv = _wifi_deactivate(callback, user_data);
 	if (rv != WIFI_ERROR_NONE)
-		WIFI_LOG(WIFI_ERROR, "Wi-Fi deactivation failed");
+		WIFI_LOG(WIFI_ERROR, "Wi-Fi deactivation failed"); //LCOV_EXCL_LINE
 
 	return rv;
 }
@@ -200,15 +202,15 @@ EXPORT_API int wifi_get_mac_address(char** mac_address)
 		fp = fopen(WIFI_MAC_ADD_PATH, "r");
 
 	if (fp == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Failed to open file"
+		WIFI_LOG(WIFI_ERROR, "Failed to open file" //LCOV_EXCL_LINE
 				" %s\n", WIFI_MAC_ADD_PATH);
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
 
 	if (fgets(buf, sizeof(buf), fp) == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Failed to get MAC"
-				" info from %s\n", WIFI_MAC_ADD_PATH);
-		fclose(fp);
+				" info from %s\n", WIFI_MAC_ADD_PATH); //LCOV_EXCL_LINE
+		fclose(fp); //LCOV_EXCL_LINE
 		return WIFI_ERROR_OPERATION_FAILED;
 	}
 
@@ -216,8 +218,8 @@ EXPORT_API int wifi_get_mac_address(char** mac_address)
 
 	*mac_address = (char *)g_try_malloc0(WIFI_MAC_ADD_LENGTH + 1);
 	if (*mac_address == NULL) {
-		WIFI_LOG(WIFI_ERROR, "malloc() failed");
-		fclose(fp);
+		WIFI_LOG(WIFI_ERROR, "malloc() failed"); //LCOV_EXCL_LINE
+		fclose(fp); //LCOV_EXCL_LINE
 		return WIFI_ERROR_OUT_OF_MEMORY;
 	}
 	g_strlcpy(*mac_address, buf, WIFI_MAC_ADD_LENGTH + 1);
@@ -226,9 +228,9 @@ EXPORT_API int wifi_get_mac_address(char** mac_address)
 	*mac_address = vconf_get_str(VCONFKEY_WIFI_BSSID_ADDRESS);
 
 	if (*mac_address == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Failed to get vconf"
+		WIFI_LOG(WIFI_ERROR, "Failed to get vconf" //LCOV_EXCL_LINE
 			" from %s", VCONFKEY_WIFI_BSSID_ADDRESS);
-		return WIFI_ERROR_OPERATION_FAILED;
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 #endif
 
@@ -259,13 +261,13 @@ EXPORT_API int wifi_scan(wifi_scan_finished_cb callback, void* user_data)
 	}
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	rv = _wifi_libnet_scan_request(callback, user_data);
 	if (rv != WIFI_ERROR_NONE)
-		WIFI_LOG(WIFI_ERROR, "Wi-Fi scan failed");
+		WIFI_LOG(WIFI_ERROR, "Wi-Fi scan failed"); //LCOV_EXCL_LINE
 
 	return rv;
 }
@@ -282,14 +284,14 @@ EXPORT_API int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb ca
 	}
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
 
-		return WIFI_ERROR_INVALID_OPERATION;
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	rv = _wifi_libnet_scan_specific_ap(essid, callback, user_data);
 	if (rv != WIFI_ERROR_NONE)
-		WIFI_LOG(WIFI_ERROR, "Wi-Fi hidden scan failed.\n");
+		WIFI_LOG(WIFI_ERROR, "Wi-Fi hidden scan failed.\n"); //LCOV_EXCL_LINE
 
 	return rv;
 }
@@ -342,8 +344,8 @@ EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void* user
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
@@ -359,8 +361,8 @@ EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
@@ -371,6 +373,7 @@ EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void
 	return _wifi_libnet_close_profile(ap, callback, user_data);
 }
 
+//LCOV_EXCL_START
 EXPORT_API int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void* user_data)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
@@ -409,14 +412,15 @@ EXPORT_API int wifi_connect_by_wps_pin(wifi_ap_h ap, const char *pin, wifi_conne
 
 	return _wifi_libnet_connect_with_wps_pin(ap, pin, callback, user_data);
 }
+//LCOV_EXCL_STOP
 
 EXPORT_API int wifi_forget_ap(wifi_ap_h ap)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (_wifi_libnet_check_ap_validity(ap) == false) {
@@ -449,8 +453,8 @@ EXPORT_API int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb cal
 	}
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	return _wifi_set_power_on_off_cb(callback, user_data);
@@ -473,8 +477,8 @@ EXPORT_API int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void*
 	}
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	return _wifi_set_background_scan_cb(callback, user_data);
@@ -497,8 +501,8 @@ EXPORT_API int wifi_set_connection_state_changed_cb(wifi_connection_state_change
 	}
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	return _wifi_set_connection_state_cb(callback, user_data);
@@ -523,7 +527,7 @@ EXPORT_API int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callbac
 	if (rssi_level_changed_cb == NULL)
 		vconf_notify_key_changed(VCONFKEY_WIFI_STRENGTH, __rssi_level_changed_cb, NULL);
 	else
-		return WIFI_ERROR_INVALID_OPERATION;
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 
 	rssi_level_changed_cb = callback;
 	rssi_level_changed_user_data = user_data;
@@ -538,7 +542,7 @@ EXPORT_API int wifi_unset_rssi_level_changed_cb(void)
 	if (rssi_level_changed_cb != NULL)
 		vconf_ignore_key_changed(VCONFKEY_WIFI_STRENGTH, __rssi_level_changed_cb);
 	else
-		return WIFI_ERROR_INVALID_OPERATION;
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 
 	rssi_level_changed_cb = NULL;
 	rssi_level_changed_user_data = NULL;
@@ -546,6 +550,7 @@ EXPORT_API int wifi_unset_rssi_level_changed_cb(void)
 	return WIFI_ERROR_NONE;
 }
 
+//LCOV_EXCL_START
 EXPORT_API int wifi_tdls_disconnect(const char* peer_mac_addr)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
@@ -616,3 +621,4 @@ EXPORT_API int wifi_tdls_unset_state_changed_cb(void)
 	CHECK_FEATURE_SUPPORTED(WIFI_TDLS_FEATURE);
 	return WIFI_ERROR_NONE;
 }
+//LCOV_EXCL_STOP

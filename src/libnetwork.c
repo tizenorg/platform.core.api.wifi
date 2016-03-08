@@ -82,6 +82,7 @@ static void __wifi_set_init(bool tag)
 	is_init = tag;
 }
 
+//LCOV_EXCL_START
 static wifi_error_e __libnet_convert_to_ap_error_type(net_err_t err_type)
 {
 	switch (err_type) {
@@ -169,6 +170,7 @@ static const char *__libnet_convert_ap_state_to_string(wifi_connection_state_e s
 		return "UNKNOWN";
 	}
 }
+//LCOV_EXCL_STOP
 
 static void __libnet_clear_profile_list(struct _profile_list_s *profile_list)
 {
@@ -190,8 +192,8 @@ static int __libnet_update_profile_iterator(void)
 	WIFI_LOG(WIFI_INFO, "Wi-Fi profile count: %d", wifi_profiles.count);
 
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	}
 
 	if (wifi_profiles.count == 0)
@@ -203,6 +205,7 @@ static int __libnet_update_profile_iterator(void)
 	return WIFI_ERROR_NONE;
 }
 
+//LCOV_EXCL_START
 static void __libnet_update_specific_profile_iterator(GSList *ap_list)
 {
 	int count = 0;
@@ -232,6 +235,7 @@ static void __libnet_update_specific_profile_iterator(GSList *ap_list)
 
 	WIFI_LOG(WIFI_INFO, "Specific AP count : %d\n", count);
 }
+//LCOV_EXCL_STOP
 
 static void __libnet_convert_profile_info_to_wifi_info(net_wifi_connection_info_t *wifi_info,
 								net_profile_info_t *ap_info)
@@ -260,6 +264,7 @@ static int __libnet_connect_with_wifi_info(net_profile_info_t *ap_info)
 	return WIFI_ERROR_NONE;
 }
 
+//LCOV_EXCL_START
 static gboolean __wifi_state_changed_cb(gpointer data)
 {
 	wifi_ap_h ap_info;
@@ -589,6 +594,7 @@ static void __libnet_disconnected_cb(wifi_error_e result)
 	if (wifi_callbacks.disconnected_cb != NULL)
 		_wifi_callback_add(__disconnected_cb_idle, (gpointer)result);
 }
+//LCOV_EXCL_STOP
 
 static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 {
@@ -756,22 +762,23 @@ int _wifi_activate(wifi_activated_cb callback, gboolean wifi_picker_test,
 	int rv = NET_ERR_NONE;
 
 	rv = net_wifi_power_on(wifi_picker_test);
-	if (rv == NET_ERR_NONE) {
+	if (rv == NET_ERR_ACCESS_DENIED) {
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
+	} else if (rv == NET_ERR_INVALID_OPERATION)
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_ALREADY_EXISTS)
+		return WIFI_ERROR_ALREADY_EXISTS; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_IN_PROGRESS)
+		return WIFI_ERROR_NOW_IN_PROGRESS; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_SECURITY_RESTRICTED)
+		return WIFI_ERROR_SECURITY_RESTRICTED; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_NONE) {
 		__libnet_set_activated_cb(callback, user_data);
 		return WIFI_ERROR_NONE;
-	} else if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
-	} else if (rv == NET_ERR_INVALID_OPERATION)
-		return WIFI_ERROR_INVALID_OPERATION;
-	else if (rv == NET_ERR_ALREADY_EXISTS)
-		return WIFI_ERROR_ALREADY_EXISTS;
-	else if (rv == NET_ERR_IN_PROGRESS)
-		return WIFI_ERROR_NOW_IN_PROGRESS;
-	else if (rv == NET_ERR_SECURITY_RESTRICTED)
-		return WIFI_ERROR_SECURITY_RESTRICTED;
+	}
 
-	return WIFI_ERROR_OPERATION_FAILED;
+	return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 }
 
 int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
@@ -779,22 +786,23 @@ int _wifi_deactivate(wifi_deactivated_cb callback, void *user_data)
 	int rv = NET_ERR_NONE;
 
 	rv = net_wifi_power_off();
-	if (rv == NET_ERR_NONE) {
+	if (rv == NET_ERR_ACCESS_DENIED) {
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
+	} else if (rv == NET_ERR_INVALID_OPERATION)
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_ALREADY_EXISTS)
+		return WIFI_ERROR_ALREADY_EXISTS; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_IN_PROGRESS)
+		return WIFI_ERROR_NOW_IN_PROGRESS; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_SECURITY_RESTRICTED)
+		return WIFI_ERROR_SECURITY_RESTRICTED; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_NONE) {
 		__libnet_set_deactivated_cb(callback, user_data);
 		return WIFI_ERROR_NONE;
-	} else if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
-	} else if (rv == NET_ERR_INVALID_OPERATION)
-		return WIFI_ERROR_INVALID_OPERATION;
-	else if (rv == NET_ERR_ALREADY_EXISTS)
-		return WIFI_ERROR_ALREADY_EXISTS;
-	else if (rv == NET_ERR_IN_PROGRESS)
-		return WIFI_ERROR_NOW_IN_PROGRESS;
-	else if (rv == NET_ERR_SECURITY_RESTRICTED)
-		return WIFI_ERROR_SECURITY_RESTRICTED;
+	}
 
-	return WIFI_ERROR_OPERATION_FAILED;
+	return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 }
 
 bool _wifi_libnet_check_ap_validity(wifi_ap_h ap_h)
@@ -841,8 +849,8 @@ bool _wifi_libnet_check_profile_name_validity(const char *profile_name)
 
 	while (profile_name[i] != '\0') {
 		if (isgraph(profile_name[i]) == 0) {
-			WIFI_LOG(WIFI_INFO, "Invalid format: %s", profile_name);
-			return false;
+			WIFI_LOG(WIFI_INFO, "Invalid format: %s", profile_name); //LCOV_EXCL_LINE
+			return false; //LCOV_EXCL_LINE
 		}
 		i++;
 	}
@@ -857,11 +865,11 @@ int _wifi_libnet_get_wifi_device_state(wifi_device_state_e *device_state)
 	int rv = NET_ERR_NONE;
 	rv = net_get_technology_properties(NET_DEVICE_WIFI, &tech_info);
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	} else if (rv != NET_ERR_NONE) {
-		WIFI_LOG(WIFI_ERROR, "Failed to get technology properties");
-		return WIFI_ERROR_OPERATION_FAILED;
+		WIFI_LOG(WIFI_ERROR, "Failed to get technology properties"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	if (tech_info.powered)
@@ -879,14 +887,15 @@ int _wifi_libnet_get_wifi_state(wifi_connection_state_e *connection_state)
 
 	rv = net_get_wifi_state(&wlan_state);
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	} else if (rv != NET_ERR_NONE) {
-		WIFI_LOG(WIFI_ERROR, "Failed to get Wi-Fi state");
-		return WIFI_ERROR_OPERATION_FAILED;
+		WIFI_LOG(WIFI_ERROR, "Failed to get Wi-Fi state"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	switch (wlan_state) {
+	//LCOV_EXCL_START
 	case WIFI_OFF:
 	case WIFI_ON:
 		*connection_state = WIFI_CONNECTION_STATE_DISCONNECTED;
@@ -906,6 +915,7 @@ int _wifi_libnet_get_wifi_state(wifi_connection_state_e *connection_state)
 	default:
 		WIFI_LOG(WIFI_ERROR, "Unknown state");
 		return WIFI_ERROR_OPERATION_FAILED;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -918,14 +928,14 @@ int _wifi_libnet_get_intf_name(char** name)
 	if (profile_iterator.count == 0) {
 		rv = __libnet_update_profile_iterator();
 		if (rv == NET_ERR_ACCESS_DENIED) {
-			WIFI_LOG(WIFI_ERROR, "Access denied");
-			return WIFI_ERROR_PERMISSION_DENIED;
+			WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+			return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 		}
 	}
 
 	if (profile_iterator.count == 0) {
-		WIFI_LOG(WIFI_ERROR, "There is no AP");
-		return WIFI_ERROR_OPERATION_FAILED;
+		WIFI_LOG(WIFI_ERROR, "There is no AP"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	*name = g_strdup(profile_iterator.profiles->ProfileInfo.Wlan.net_info.DevName);
@@ -940,17 +950,18 @@ int _wifi_libnet_scan_request(wifi_scan_finished_cb callback, void *user_data)
 	int rv;
 	rv = net_scan_wifi();
 
-	if (rv == NET_ERR_NONE) {
+	if (rv == NET_ERR_ACCESS_DENIED) {
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
+	} else if (rv == NET_ERR_INVALID_OPERATION)
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_NONE) {
 		wifi_callbacks.scan_request_cb = callback;
 		wifi_callbacks.scan_request_user_data = user_data;
 		return WIFI_ERROR_NONE;
-	} else if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
-	} else if (rv == NET_ERR_INVALID_OPERATION)
-		return WIFI_ERROR_INVALID_OPERATION;
+	}
 
-	return WIFI_ERROR_OPERATION_FAILED;
+	return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 }
 
 int _wifi_libnet_scan_specific_ap(const char *essid,
@@ -959,17 +970,18 @@ int _wifi_libnet_scan_specific_ap(const char *essid,
 	int rv;
 	rv = net_specific_scan_wifi(essid);
 
-	if (rv == NET_ERR_NONE) {
+	if (rv == NET_ERR_ACCESS_DENIED) {
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
+	} else if (rv == NET_ERR_INVALID_OPERATION)
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
+	else if (rv == NET_ERR_NONE) {
 		g_strlcpy(specific_profile_essid, essid, NET_WLAN_ESSID_LEN+1);
 		__libnet_set_specific_scan_cb(callback, user_data);
 		return WIFI_ERROR_NONE;
-	} else if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
-	} else if (rv == NET_ERR_INVALID_OPERATION)
-		return WIFI_ERROR_INVALID_OPERATION;
+	}
 
-	return WIFI_ERROR_OPERATION_FAILED;
+	return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 }
 
 int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
@@ -979,8 +991,8 @@ int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
 
 	rv = __libnet_update_profile_iterator();
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	}
 
 	for (i = 0; i < profile_iterator.count; i++) {
@@ -992,8 +1004,8 @@ int _wifi_libnet_get_connected_profile(wifi_ap_h *ap)
 	}
 
 	if (ap_h == NULL) {
-		WIFI_LOG(WIFI_ERROR, "There is no connected AP");
-		return WIFI_ERROR_NO_CONNECTION;
+		WIFI_LOG(WIFI_ERROR, "There is no connected AP"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_NO_CONNECTION; //LCOV_EXCL_LINE
 	}
 
 	*ap = g_try_malloc0(sizeof(net_profile_info_t));
@@ -1013,13 +1025,13 @@ int _wifi_libnet_foreach_found_aps(wifi_found_ap_cb callback, void *user_data)
 
 	rv = __libnet_update_profile_iterator();
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	}
 
 	if (profile_iterator.count == 0) {
-		WIFI_LOG(WIFI_WARN, "There is no AP");
-		return WIFI_ERROR_NONE;
+		WIFI_LOG(WIFI_WARN, "There is no AP"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_NONE; //LCOV_EXCL_LINE
 	}
 
 	for (i = 0; i < profile_iterator.count; i++) {
@@ -1042,13 +1054,13 @@ int _wifi_libnet_foreach_found_specific_aps(wifi_found_ap_cb callback, void *use
 
 		rv = __libnet_update_profile_iterator();
 		if (rv == NET_ERR_ACCESS_DENIED) {
-			WIFI_LOG(WIFI_ERROR, "Access denied");
-			return WIFI_ERROR_PERMISSION_DENIED;
+			WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+			return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 		}
 
 		if (profile_iterator.count == 0) {
-			WIFI_LOG(WIFI_WARN, "There is no APs");
-			return WIFI_ERROR_NONE;
+			WIFI_LOG(WIFI_WARN, "There is no APs"); //LCOV_EXCL_LINE
+			return WIFI_ERROR_NONE; //LCOV_EXCL_LINE
 		}
 
 		for (i = 0; i < profile_iterator.count; i++) {
@@ -1102,16 +1114,17 @@ int _wifi_libnet_close_profile(wifi_ap_h ap_h, wifi_disconnected_cb callback, vo
 
 	rv = net_close_connection(ap_info->ProfileName);
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	} else if (rv != NET_ERR_NONE)
-		return WIFI_ERROR_OPERATION_FAILED;
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 
 	__libnet_set_disconnected_cb(callback, user_data);
 
 	return WIFI_ERROR_NONE;
 }
 
+//LCOV_EXCL_START
 int _wifi_libnet_connect_with_wps_pbc(wifi_ap_h ap_h, wifi_connected_cb callback, void *user_data)
 {
 	int rv;
@@ -1159,6 +1172,7 @@ int _wifi_libnet_connect_with_wps_pin(wifi_ap_h ap_h, const char *pin,
 
 	return WIFI_ERROR_NONE;
 }
+//LCOV_EXCL_STOP
 
 int _wifi_libnet_forget_ap(wifi_ap_h ap)
 {
@@ -1166,16 +1180,16 @@ int _wifi_libnet_forget_ap(wifi_ap_h ap)
 	net_profile_info_t *ap_info = ap;
 
 	if (ap_info == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_PARAMETER; //LCOV_EXCL_LINE
 	}
 
 	rv = net_delete_profile(ap_info->ProfileName);
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	} else if (rv != NET_ERR_NONE)
-		return WIFI_ERROR_OPERATION_FAILED;
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 
 	ap_info->Favourite = (char)FALSE;
 
@@ -1256,10 +1270,10 @@ int _wifi_update_ap_info(net_profile_info_t *ap_info)
 	rv = net_modify_profile(ap_info->ProfileName, ap_info);
 
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	} else if (rv != NET_ERR_NONE)
-		return WIFI_ERROR_OPERATION_FAILED;
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 
 	return WIFI_ERROR_NONE;
 }
@@ -1325,6 +1339,7 @@ void _wifi_callback_cleanup(void)
 	struct managed_idle_data *data;
 
 	while (cur) {
+		//LCOV_EXCL_START
 		GSList *next = cur->next;
 		data = (struct managed_idle_data *)cur->data;
 
@@ -1334,6 +1349,7 @@ void _wifi_callback_cleanup(void)
 			cur = managed_idler_list;
 		} else
 			cur = next;
+		//LCOV_EXCL_STOP
 	}
 
 	g_slist_free(managed_idler_list);
@@ -1344,9 +1360,9 @@ bool __libnet_check_feature_supported(const char *key, wifi_supported_feature_e 
 {
 	if (!wifi_is_feature_checked[feature]) {
 		if (system_info_get_platform_bool(key, &wifi_feature_supported[feature]) < 0) {
-			WIFI_LOG(WIFI_ERROR, "Error - Feature getting from System Info");
-			set_last_result(WIFI_ERROR_OPERATION_FAILED);
-			return WIFI_ERROR_OPERATION_FAILED;
+			WIFI_LOG(WIFI_ERROR, "Error - Feature getting from System Info"); //LCOV_EXCL_LINE
+			set_last_result(WIFI_ERROR_OPERATION_FAILED); //LCOV_EXCL_LINE
+			return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 		}
 		wifi_is_feature_checked[feature] = true;
 	}
@@ -1373,10 +1389,10 @@ int _wifi_check_feature_supported(const char *feature_name, ...)
 		if (!key) break;
 	}
 	if (!feature_supported) {
-		WIFI_LOG(WIFI_ERROR, "Error - Feature is not supported");
-		set_last_result(WIFI_ERROR_NOT_SUPPORTED);
+		WIFI_LOG(WIFI_ERROR, "Error - Feature is not supported"); //LCOV_EXCL_LINE
+		set_last_result(WIFI_ERROR_NOT_SUPPORTED); //LCOV_EXCL_LINE
 		va_end(list);
-		return WIFI_ERROR_NOT_SUPPORTED;
+		return WIFI_ERROR_NOT_SUPPORTED; //LCOV_EXCL_LINE
 	}
 
 	va_end(list);
@@ -1390,7 +1406,7 @@ int _wifi_dbus_init(void)
 
 	rv = wifi_dbus_init(&g_dbus_h);
 	if (rv != NET_ERR_NONE)
-		return rv;
+		return rv; //LCOV_EXCL_LINE
 
 	return NET_ERR_NONE;
 }
@@ -1406,8 +1422,8 @@ int _wifi_dbus_deinit(void)
 wifi_dbus *_wifi_get_dbus_handle(void)
 {
 	if (g_dbus_h == NULL) {
-		WIFI_LOG(WIFI_ERROR, "g_dbus_h is NULL");
-		return NULL;
+		WIFI_LOG(WIFI_ERROR, "g_dbus_h is NULL"); //LCOV_EXCL_LINE
+		return NULL; //LCOV_EXCL_LINE
 	}
 
 	return g_dbus_h;

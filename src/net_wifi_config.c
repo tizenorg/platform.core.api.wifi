@@ -28,8 +28,8 @@ EXPORT_API int wifi_config_create(const char *name, const char *passphrase, wifi
 	struct _wifi_config *h = NULL;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL || name == NULL) {
@@ -53,10 +53,10 @@ EXPORT_API int wifi_config_create(const char *name, const char *passphrase, wifi
 	if (security_type == WIFI_SECURITY_TYPE_EAP) {
 		h->eap_config = g_new0(struct _wifi_eap_config, 1);
 		if (h->eap_config == NULL) {
-			g_free(h->name);
-			g_free(h->passphrase);
-			g_free(h);
-			return WIFI_ERROR_OUT_OF_MEMORY;
+			g_free(h->name); //LCOV_EXCL_LINE
+			g_free(h->passphrase); //LCOV_EXCL_LINE
+			g_free(h); //LCOV_EXCL_LINE
+			return WIFI_ERROR_OUT_OF_MEMORY; //LCOV_EXCL_LINE
 		}
 
 		h->eap_config->ca_cert = NULL;
@@ -82,8 +82,8 @@ EXPORT_API int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_con
 	struct _wifi_config *config = NULL;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (origin == NULL || cloned_config == NULL) {
@@ -108,11 +108,11 @@ EXPORT_API int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_con
 	if (config->eap_config) {
 		h->eap_config = g_new0(struct _wifi_eap_config, 1);
 		if (h->eap_config == NULL) {
-			g_free(h->name);
-			g_free(h->passphrase);
-			g_free(h->proxy_address);
-			g_free(h);
-			return WIFI_ERROR_OUT_OF_MEMORY;
+			g_free(h->name); //LCOV_EXCL_LINE
+			g_free(h->passphrase); //LCOV_EXCL_LINE
+			g_free(h->proxy_address); //LCOV_EXCL_LINE
+			g_free(h); //LCOV_EXCL_LINE
+			return WIFI_ERROR_OUT_OF_MEMORY; //LCOV_EXCL_LINE
 		}
 
 		h->eap_config->ca_cert = g_strdup(config->eap_config->ca_cert);
@@ -137,8 +137,8 @@ EXPORT_API int wifi_config_destroy(wifi_config_h config)
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL) {
@@ -172,8 +172,8 @@ EXPORT_API int wifi_config_save_configuration(wifi_config_h config)
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL || h->name == NULL) {
@@ -183,18 +183,18 @@ EXPORT_API int wifi_config_save_configuration(wifi_config_h config)
 
 	dbus_h = _wifi_get_dbus_handle();
 	if (dbus_h == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized for wifi dbus connection");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized for wifi dbus connection"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (h->security_type == WIFI_SECURITY_TYPE_EAP) {
 		ret = wifi_save_eap_configurations(dbus_h, h->name, h->passphrase, h->security_type, h->proxy_address, h->eap_config, h->is_hidden);
 		if (ret != WIFI_ERROR_NONE)
-			WIFI_LOG(WIFI_ERROR, "Fail to wifi_save_eap_configurations");
+			WIFI_LOG(WIFI_ERROR, "Fail to wifi_save_eap_configurations"); //LCOV_EXCL_LINE
 	} else {
 		ret = wifi_save_configurations(dbus_h, h->name, h->passphrase, h->security_type, h->proxy_address, h->is_hidden);
 		if (ret != WIFI_ERROR_NONE)
-			WIFI_LOG(WIFI_ERROR, "Fail to save configurations [%d]", ret);
+			WIFI_LOG(WIFI_ERROR, "Fail to save configurations [%d]", ret); //LCOV_EXCL_LINE
 	}
 
 	h->is_saved = TRUE;
@@ -211,8 +211,8 @@ EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, v
 	GSList *config_ids = NULL;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (callback == NULL) {
@@ -222,14 +222,14 @@ EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, v
 
 	dbus_h = _wifi_get_dbus_handle();
 	if (dbus_h == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized for wifi dbus connection");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized for wifi dbus connection"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	config_ids = wifi_config_get_config_id_list(dbus_h);
 	if (config_ids == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Fail to wifi_get_config_id_list");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Fail to wifi_get_config_id_list"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	while (config_ids) {
@@ -257,8 +257,8 @@ EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, v
 		}
 
 		if (ret != WIFI_ERROR_NONE) {
-			WIFI_LOG(WIFI_ERROR, "Fail to load configurations [%d]", ret);
-			return ret;
+			WIFI_LOG(WIFI_ERROR, "Fail to load configurations [%d]", ret); //LCOV_EXCL_LINE
+			return ret; //LCOV_EXCL_LINE
 		}
 
 		h->address_family = WIFI_ADDRESS_FAMILY_IPV4;
@@ -297,8 +297,8 @@ EXPORT_API int wifi_config_get_name(wifi_config_h config, char **name)
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL || name == NULL) {
@@ -321,8 +321,8 @@ EXPORT_API int wifi_config_get_security_type(wifi_config_h config, wifi_security
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL || security_type == NULL) {
@@ -346,8 +346,8 @@ EXPORT_API int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_
 	int ret = WIFI_ERROR_NONE;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL) {
@@ -355,19 +355,20 @@ EXPORT_API int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 	if ((address_family != WIFI_ADDRESS_FAMILY_IPV4 && address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
-		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
-		return WIFI_ERROR_INVALID_PARAMETER;
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_PARAMETER; //LCOV_EXCL_LINE
 	}
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
-		WIFI_LOG(WIFI_ERROR, "Not supported yet");
-		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED;
+		WIFI_LOG(WIFI_ERROR, "Not supported yet"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED; //LCOV_EXCL_LINE
 	}
 
 	h->address_family = address_family;
 	h->proxy_address = g_strdup(proxy_address);
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		gchar *config_id = NULL;
 
@@ -384,6 +385,7 @@ EXPORT_API int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_
 			WIFI_LOG(WIFI_ERROR, "Fail to set proxy address [%d]", ret);
 
 		g_free(config_id);
+		//LCOV_EXCL_STOP
 	}
 
 	return ret;
@@ -396,8 +398,8 @@ EXPORT_API int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL || address_family == NULL || proxy_address == NULL) {
@@ -419,8 +421,8 @@ EXPORT_API int wifi_config_set_hidden_ap_property(wifi_config_h config, bool hid
 	int ret = WIFI_ERROR_NONE;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL) {
@@ -431,6 +433,7 @@ EXPORT_API int wifi_config_set_hidden_ap_property(wifi_config_h config, bool hid
 	h->is_hidden = hidden;
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		char *config_id = NULL;
 		char *hidden = NULL;
@@ -454,6 +457,7 @@ EXPORT_API int wifi_config_set_hidden_ap_property(wifi_config_h config, bool hid
 
 		g_free(hidden);
 		g_free(config_id);
+		//LCOV_EXCL_STOP
 	}
 
 	return ret;
@@ -466,8 +470,8 @@ EXPORT_API int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *hi
 	struct _wifi_config *h = (struct _wifi_config *)config;
 
 	if (_wifi_is_init() == false) {
-		WIFI_LOG(WIFI_ERROR, "Not initialized");
-		return WIFI_ERROR_INVALID_OPERATION;
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
 	}
 
 	if (config == NULL || hidden == NULL) {
@@ -512,6 +516,7 @@ EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_config_h config, cons
 	h->eap_config->anonymous_identity = g_strdup(anonymous_identity);
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		gchar *config_id = NULL;
 
@@ -526,6 +531,7 @@ EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_config_h config, cons
 		wifi_configuration_set_field(dbus_h, config_id, WIFI_CONFIG_EAP_ANONYMOUS_IDENTITY, anonymous_identity);
 
 		g_free(config_id);
+		//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -563,6 +569,7 @@ EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char
 	h->eap_config->ca_cert = g_strdup(ca_cert);
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		gchar *config_id = NULL;
 
@@ -577,6 +584,7 @@ EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char
 		wifi_configuration_set_field(dbus_h, config_id, WIFI_CONFIG_EAP_CACERT, ca_cert);
 
 		g_free(config_id);
+		//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -615,6 +623,7 @@ EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_config_h config, const 
 	h->eap_config->client_cert = g_strdup(client_cert);
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		gchar *config_id = NULL;
 
@@ -630,6 +639,7 @@ EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_config_h config, const 
 		wifi_configuration_set_field(dbus_h, config_id, WIFI_CONFIG_EAP_PRIVATEKEY, private_key);
 
 		g_free(config_id);
+		//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -667,6 +677,7 @@ EXPORT_API int wifi_config_set_eap_identity(wifi_config_h config, const char* id
 	h->eap_config->identity = g_strdup(identity);
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		gchar *config_id = NULL;
 
@@ -681,6 +692,7 @@ EXPORT_API int wifi_config_set_eap_identity(wifi_config_h config, const char* id
 		wifi_configuration_set_field(dbus_h, config_id, WIFI_CONFIG_EAP_IDENTITY, identity);
 
 		g_free(config_id);
+		//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -718,6 +730,7 @@ EXPORT_API int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e ea
 	h->eap_config->eap_type = eap_type;
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		gchar *config_id = NULL;
 		gchar *value = NULL;
@@ -736,6 +749,7 @@ EXPORT_API int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e ea
 
 		g_free(config_id);
 		g_free(value);
+		//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -773,6 +787,7 @@ EXPORT_API int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth
 	h->eap_config->eap_auth_type = eap_auth_type;
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		gchar *config_id = NULL;
 		gchar *value = NULL;
@@ -791,6 +806,7 @@ EXPORT_API int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth
 
 		g_free(config_id);
 		g_free(value);
+		//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -828,6 +844,7 @@ EXPORT_API int wifi_config_set_eap_subject_match(wifi_config_h config, const cha
 	h->eap_config->subject_match = g_strdup(subject_match);
 
 	if (h->is_saved == TRUE) {
+		//LCOV_EXCL_START
 		wifi_dbus *dbus_h = NULL;
 		gchar *config_id = NULL;
 
@@ -842,6 +859,7 @@ EXPORT_API int wifi_config_set_eap_subject_match(wifi_config_h config, const cha
 		wifi_configuration_set_field(dbus_h, config_id, WIFI_CONFIG_EAP_SUBJECT_MATCH, subject_match);
 
 		g_free(config_id);
+		//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;

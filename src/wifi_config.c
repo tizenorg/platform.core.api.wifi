@@ -27,6 +27,7 @@
 #define WIFI_SECURITY_WPA_PSK		"psk"
 #define WIFI_SECURITY_EAP			"ieee8021x"
 
+//LCOV_EXCL_START
 static wifi_error_e _wifi_error_to_enum(const gchar *error)
 {
 	if (NULL != strstr(error, "NoReply"))
@@ -95,6 +96,7 @@ static wifi_error_e _wifi_last_error_to_enum(const gchar *last_error)
 
 	return ret;
 }
+//LCOV_EXCL_STOP
 
 static gchar *_wifi_change_name_to_hexadecimal(const gchar *name)
 {
@@ -121,6 +123,7 @@ static gchar *_wifi_change_name_to_hexadecimal(const gchar *name)
 	return hex;
 }
 
+//LCOV_EXCL_START
 gchar *wifi_eap_type_to_string(wifi_eap_type_e eap_type)
 {
 	gchar *type = NULL;
@@ -281,6 +284,7 @@ int wifi_config_get_last_error(wifi_config_h config, wifi_error_e *last_error)
 
 	return WIFI_ERROR_NONE;
 }
+//LCOV_EXCL_STOP
 
 gchar *wifi_config_get_config_id(const gchar *name, wifi_security_type_e security_type)
 {
@@ -317,9 +321,9 @@ GSList *wifi_config_get_config_id_list(wifi_dbus *handle)
 					     &error);
 
 	if (error) {
-		WIFI_LOG(WIFI_ERROR, "Fail to GetConfigId [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		return NULL;
+		WIFI_LOG(WIFI_ERROR, "Fail to GetConfigId [%d: %s]", error->code, error->message); //LCOV_EXCL_LINE
+		g_error_free(error); //LCOV_EXCL_LINE
+		return NULL; //LCOV_EXCL_LINE
 	}
 
 	g_variant_get(result, "(as)", &iter);
@@ -345,12 +349,12 @@ int wifi_save_configurations(wifi_dbus *handle, const gchar *name, const gchar *
 
 	if (security_type != WIFI_SECURITY_TYPE_NONE) {
 		if (passphrase == NULL) {
-			WIFI_LOG(WIFI_ERROR, "Fail to wifi_save_configurations [secu_type is not NONE[%d] but passphrase is NULL]", security_type);
-			return WIFI_ERROR_INVALID_PARAMETER;
+			WIFI_LOG(WIFI_ERROR, "Fail to wifi_save_configurations [secu_type is not NONE[%d] but passphrase is NULL]", security_type); //LCOV_EXCL_LINE
+			return WIFI_ERROR_INVALID_PARAMETER; //LCOV_EXCL_LINE
 		} else {
 			if (strlen(passphrase) == 0) {
-				WIFI_LOG(WIFI_ERROR, "Fail to wifi_save_configurations passphrase length is 0");
-				return WIFI_ERROR_INVALID_PARAMETER;
+				WIFI_LOG(WIFI_ERROR, "Fail to wifi_save_configurations passphrase length is 0"); //LCOV_EXCL_LINE
+				return WIFI_ERROR_INVALID_PARAMETER; //LCOV_EXCL_LINE
 			}
 		}
 	}
@@ -383,9 +387,9 @@ int wifi_save_configurations(wifi_dbus *handle, const gchar *name, const gchar *
 					     &error);
 
 	if (error) {
-		WIFI_LOG(WIFI_ERROR, "Fail to SaveConfiguration [%d: %s]", error->code, error->message);
-		ret = _wifi_error_to_enum(error->message);
-		g_error_free(error);
+		WIFI_LOG(WIFI_ERROR, "Fail to SaveConfiguration [%d: %s]", error->code, error->message); //LCOV_EXCL_LINE
+		ret = _wifi_error_to_enum(error->message); //LCOV_EXCL_LINE
+		g_error_free(error); //LCOV_EXCL_LINE
 	}
 
 	if (result != NULL)
@@ -411,10 +415,10 @@ int wifi_load_configurations(wifi_dbus *handle, const gchar *config_id, gchar **
 					     &error);
 
 	if (error) {
-		WIFI_LOG(WIFI_ERROR, "Fail to LoadConfiguration [%d: %s]", error->code, error->message);
-		ret = _wifi_error_to_enum(error->message);
-		g_error_free(error);
-		return ret;
+		WIFI_LOG(WIFI_ERROR, "Fail to LoadConfiguration [%d: %s]", error->code, error->message); //LCOV_EXCL_LINE
+		ret = _wifi_error_to_enum(error->message); //LCOV_EXCL_LINE
+		g_error_free(error); //LCOV_EXCL_LINE
+		return ret; //LCOV_EXCL_LINE
 	}
 
 	if (result) {
@@ -454,6 +458,7 @@ int wifi_load_configurations(wifi_dbus *handle, const gchar *config_id, gchar **
 	return WIFI_ERROR_NONE;
 }
 
+//LCOV_EXCL_START
 int wifi_save_eap_configurations(wifi_dbus *handle, const gchar *name, const gchar *passphrase, wifi_security_type_e security_type, const gchar *proxy_address, struct _wifi_eap_config *eap_config, gboolean is_hidden)
 {
 	wifi_error_e ret = WIFI_ERROR_NONE;
@@ -690,3 +695,4 @@ int wifi_configuration_get_passphrase(wifi_dbus *handle, const gchar *config_id,
 
 	return ret;
 }
+//LCOV_EXCL_STOP

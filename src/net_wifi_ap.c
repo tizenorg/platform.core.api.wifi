@@ -38,12 +38,14 @@ static char *__ap_convert_ip_to_string(net_addr_t *ip_addr, wifi_address_family_
 
 		inet_ntop(AF_INET, ipaddr, ipstr, INET_ADDRSTRLEN);
 	} else {
+		//LCOV_EXCL_START
 		ipaddr = (unsigned char *)&ip_addr->Data.Ipv6;
 		ipstr = g_try_malloc0(INET6_ADDRSTRLEN);
 		if (ipstr == NULL)
 			return NULL;
 
 		inet_ntop(AF_INET6, ipaddr, ipstr, INET6_ADDRSTRLEN);
+		//LCOV_EXCL_STOP
 	}
 	return ipstr;
 }
@@ -73,11 +75,12 @@ static char *__wifi_create_profile_name(const char *ssid, const int net_mode, co
 	char *g_sec = NULL;
 
 	if (net_mode == NETPM_WLAN_CONNMODE_ADHOC) {
-		WIFI_LOG(WIFI_ERROR, "wlan_mode is adhoc");
-		return NULL;
+		WIFI_LOG(WIFI_ERROR, "wlan_mode is adhoc"); //LCOV_EXCL_LINE
+		return NULL; //LCOV_EXCL_LINE
 	}
 
 	switch (sec_mode) {
+	//LCOV_EXCL_START
 	case WLAN_SEC_MODE_NONE:
 		g_sec = "none";
 		break;
@@ -94,6 +97,7 @@ static char *__wifi_create_profile_name(const char *ssid, const int net_mode, co
 	default:
 		WIFI_LOG(WIFI_ERROR, "Invalid security type");
 		return NULL;
+	//LCOV_EXCL_STOP
 	}
 
 	if (NULL != ssid) {
@@ -133,8 +137,8 @@ static bool _wifi_set_profile_name_to_ap(net_profile_info_t *ap_info)
 	char *profile_name = NULL;
 
 	if (ap_info == NULL) {
-		WIFI_LOG(WIFI_ERROR, "profile_info is NULL");
-		return false;
+		WIFI_LOG(WIFI_ERROR, "profile_info is NULL"); //LCOV_EXCL_LINE
+		return false; //LCOV_EXCL_LINE
 	}
 
 	profile_name = __wifi_create_profile_name(
@@ -143,8 +147,8 @@ static bool _wifi_set_profile_name_to_ap(net_profile_info_t *ap_info)
 			ap_info->ProfileInfo.Wlan.wlan_mode,
 			ap_info->ProfileInfo.Wlan.security_info.sec_mode);
 	if (profile_name == NULL) {
-		WIFI_LOG(WIFI_ERROR, "Failed to make a group name");
-		return false;
+		WIFI_LOG(WIFI_ERROR, "Failed to make a group name"); //LCOV_EXCL_LINE
+		return false; //LCOV_EXCL_LINE
 	}
 
 	g_strlcpy(ap_info->ProfileInfo.Wlan.net_info.ProfileName,
@@ -218,7 +222,7 @@ EXPORT_API int wifi_ap_hidden_create(const char* essid, wifi_ap_h* ap)
 
 	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
 	if (ap_info == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY; //LCOV_EXCL_LINE
 
 	__wifi_init_ap(ap_info, essid);
 	ap_info->ProfileInfo.Wlan.is_hidden = TRUE;
@@ -254,7 +258,7 @@ EXPORT_API int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin)
 
 	net_profile_info_t *ap_info = g_try_malloc0(sizeof(net_profile_info_t));
 	if (ap_info == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY; //LCOV_EXCL_LINE
 
 	memcpy(ap_info, origin, sizeof(net_profile_info_t));
 
@@ -279,11 +283,11 @@ EXPORT_API int wifi_ap_refresh(wifi_ap_h ap)
 	int rv = NET_ERR_NONE;
 	rv = net_get_profile_info(ap_info->ProfileName, &ap_info_local);
 	if (rv == NET_ERR_ACCESS_DENIED) {
-		WIFI_LOG(WIFI_ERROR, "Access denied");
-		return WIFI_ERROR_PERMISSION_DENIED;
+		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
 	} else if (rv != NET_ERR_NONE) {
-		WIFI_LOG(WIFI_ERROR, "Failed to getprofile_info");
-		return WIFI_ERROR_OPERATION_FAILED;
+		WIFI_LOG(WIFI_ERROR, "Failed to getprofile_info"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	memcpy(ap, &ap_info_local, sizeof(net_profile_info_t));
@@ -304,7 +308,7 @@ EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid)
 	net_profile_info_t *profile_info = ap;
 	*essid = g_strdup(profile_info->ProfileInfo.Wlan.essid);
 	if (*essid == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY; //LCOV_EXCL_LINE
 
 	return WIFI_ERROR_NONE;
 }
@@ -321,7 +325,7 @@ EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid)
 	net_profile_info_t *profile_info = ap;
 	*bssid = g_strdup(profile_info->ProfileInfo.Wlan.bssid);
 	if (*bssid == NULL)
-		return WIFI_ERROR_OUT_OF_MEMORY;
+		return WIFI_ERROR_OUT_OF_MEMORY; //LCOV_EXCL_LINE
 
 	return WIFI_ERROR_NONE;
 }
@@ -423,7 +427,7 @@ EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_
 	*state = _wifi_convert_to_ap_state(profile_info->ProfileState);
 
 	if (*state < 0)
-		return WIFI_ERROR_OPERATION_FAILED;
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 
 	return WIFI_ERROR_NONE;
 }
@@ -446,10 +450,11 @@ EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV4)
 		profileType = profile_info->ProfileInfo.Wlan.net_info.IpConfigType ;
 	else
-		profileType = profile_info->ProfileInfo.Wlan.net_info.IpConfigType6 ;
+		profileType = profile_info->ProfileInfo.Wlan.net_info.IpConfigType6 ; //LCOV_EXCL_LINE
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV4) {
 		switch (profileType) {
+		//LCOV_EXCL_START
 		case NET_IP_CONFIG_TYPE_STATIC:
 			*type = WIFI_IP_CONFIG_TYPE_STATIC;
 			break;
@@ -472,8 +477,10 @@ EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 
 		default:
 			return WIFI_ERROR_OPERATION_FAILED;
+		//LCOV_EXCL_STOP
 		}
 	} else {
+		//LCOV_EXCL_START
 		switch (profileType) {
 		case NET_IP_CONFIG_TYPE_STATIC:
 			*type = WIFI_IP_CONFIG_TYPE_STATIC;
@@ -487,6 +494,7 @@ EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		default:
 			return WIFI_ERROR_OPERATION_FAILED;
 		}
+		//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -513,6 +521,7 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV4) {
 		switch (type) {
+		//LCOV_EXCL_START
 		case WIFI_IP_CONFIG_TYPE_STATIC:
 			*profileType = NET_IP_CONFIG_TYPE_STATIC;
 			profile_info->ProfileInfo.Wlan.net_info.IpAddr.Data.Ipv4.s_addr = 0;
@@ -538,8 +547,10 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 
 		default:
 			return WIFI_ERROR_INVALID_PARAMETER;
+		//LCOV_EXCL_STOP
 		}
 	} else {
+	//LCOV_EXCL_START
 		switch (type) {
 		case WIFI_IP_CONFIG_TYPE_STATIC:
 			*profileType = NET_IP_CONFIG_TYPE_STATIC;
@@ -556,6 +567,7 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		default:
 			return WIFI_ERROR_INVALID_PARAMETER;
 		}
+	//LCOV_EXCL_STOP
 	}
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
@@ -612,12 +624,14 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 				&(profile_info->ProfileInfo.Wlan.net_info.IpAddr.Data.Ipv4)) == 0)
 			return WIFI_ERROR_INVALID_PARAMETER;
 	} else {
+	//LCOV_EXCL_START
 		if (ip_address == NULL)
 			inet_pton(AF_INET6, "::",
 				&profile_info->ProfileInfo.Wlan.net_info.IpAddr6.Data.Ipv6);
 		else if (inet_pton(AF_INET6, ip_address,
 				&profile_info->ProfileInfo.Wlan.net_info.IpAddr6.Data.Ipv6) == 0)
 			return WIFI_ERROR_INVALID_PARAMETER;
+	//LCOV_EXCL_STOP
 	}
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
@@ -645,6 +659,7 @@ EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 			&profile_info->ProfileInfo.Wlan.net_info.SubnetMask,
 			address_family);
 	else {
+		//LCOV_EXCL_START
 		prefixlen = g_try_malloc0(MAX_PREFIX_LENGTH);
 		if (prefixlen != NULL) {
 			snprintf(prefixlen, MAX_PREFIX_LENGTH, "%d",
@@ -652,6 +667,7 @@ EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 			*subnet_mask = prefixlen;
 		} else
 			*subnet_mask = NULL;
+		//LCOV_EXCL_STOP
 	}
 
 	if (*subnet_mask == NULL)
@@ -678,6 +694,7 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 	 * Ipv6 address subnet mask is a ipv6 address.
 	 */
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
+		//LCOV_EXCL_START
 		if (subnet_mask == NULL)
 			profile_info->ProfileInfo.Wlan.net_info.PrefixLen6 = 0;
 		else {
@@ -687,6 +704,7 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 			profile_info->ProfileInfo.Wlan.net_info.PrefixLen6 =
 				atoi(subnet_mask) ;
 		}
+		//LCOV_EXCL_STOP
 	} else {
 		if (subnet_mask == NULL)
 			profile_info->ProfileInfo.Wlan.net_info.SubnetMask.Data.Ipv4.s_addr = 0;
@@ -725,7 +743,7 @@ EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 			&profile_info->ProfileInfo.Wlan.net_info.GatewayAddr,
 			address_family);
 	else
-		*gateway_address = __ap_convert_ip_to_string(
+		*gateway_address = __ap_convert_ip_to_string( //LCOV_EXCL_LINE
 			&profile_info->ProfileInfo.Wlan.net_info.GatewayAddr6,
 			address_family);
 
@@ -748,12 +766,14 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 
 	net_profile_info_t *profile_info = ap;
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
+		//LCOV_EXCL_START
 		if (gateway_address == NULL)
 			inet_pton(AF_INET6, "::",
 				&profile_info->ProfileInfo.Wlan.net_info.GatewayAddr6.Data.Ipv6);
 		else if (inet_pton(AF_INET6, gateway_address,
 				&profile_info->ProfileInfo.Wlan.net_info.GatewayAddr6.Data.Ipv6) < 1)
 			return WIFI_ERROR_INVALID_PARAMETER;
+		//LCOV_EXCL_STOP
 	} else {
 		if (gateway_address == NULL)
 			profile_info->ProfileInfo.Wlan.net_info.GatewayAddr.Data.Ipv4.s_addr = 0;
@@ -825,6 +845,7 @@ EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.net_info.ProxyMethod) {
+	//LCOV_EXCL_START
 	case NET_PROXY_TYPE_DIRECT:
 		*type = WIFI_PROXY_TYPE_DIRECT;
 		break;
@@ -839,6 +860,7 @@ EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type)
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -857,6 +879,7 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type
 	int rv;
 
 	switch (proxy_type) {
+	//LCOV_EXCL_START
 	case WIFI_PROXY_TYPE_DIRECT:
 		profile_info->ProfileInfo.Wlan.net_info.ProxyMethod = NET_PROXY_TYPE_DIRECT;
 		break;
@@ -870,6 +893,7 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
+	//LCOV_EXCL_STOP
 	}
 
 	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName) == false)
@@ -905,7 +929,7 @@ EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 				&profile_info->ProfileInfo.Wlan.net_info.DnsAddr[order-1],
 				address_family);
 	else
-		*dns_address = __ap_convert_ip_to_string(
+		*dns_address = __ap_convert_ip_to_string( //LCOV_EXCL_LINE
 				&profile_info->ProfileInfo.Wlan.net_info.DnsAddr6[order-1],
 				address_family);
 
@@ -931,6 +955,7 @@ EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 	net_profile_info_t *profile_info = ap;
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
+		//LCOV_EXCL_START
 		profile_info->ProfileInfo.Wlan.net_info.DnsAddr6[order-1].Type =
 			NET_ADDR_IPV6;
 		if (dns_address == NULL)
@@ -942,6 +967,7 @@ EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 
 		if (profile_info->ProfileInfo.Wlan.net_info.DnsCount6 < order)
 			profile_info->ProfileInfo.Wlan.net_info.DnsCount6 = order;
+		//LCOV_EXCL_STOP
 	} else {
 		profile_info->ProfileInfo.Wlan.net_info.DnsAddr[order-1].Type =
 			NET_ADDR_IPV4;
@@ -974,23 +1000,25 @@ EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* typ
 	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.sec_mode) {
+	//LCOV_EXCL_START
 	case WLAN_SEC_MODE_NONE:
 		*type = WIFI_SECURITY_TYPE_NONE;
 		break;
 	case WLAN_SEC_MODE_WEP:
-		*type = WIFI_SECURITY_TYPE_WEP;
+		*type = WIFI_SECURITY_TYPE_WEP; //LCOV_EXCL_LINE
 		break;
 	case WLAN_SEC_MODE_IEEE8021X:
-		*type = WIFI_SECURITY_TYPE_EAP;
+		*type = WIFI_SECURITY_TYPE_EAP; //LCOV_EXCL_LINE
 		break;
 	case WLAN_SEC_MODE_WPA_PSK:
-		*type = WIFI_SECURITY_TYPE_WPA_PSK;
+		*type = WIFI_SECURITY_TYPE_WPA_PSK; //LCOV_EXCL_LINE
 		break;
 	case WLAN_SEC_MODE_WPA2_PSK:
-		*type = WIFI_SECURITY_TYPE_WPA2_PSK;
+		*type = WIFI_SECURITY_TYPE_WPA2_PSK; //LCOV_EXCL_LINE
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -1008,23 +1036,25 @@ EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type
 	net_profile_info_t *profile_info = ap;
 
 	switch (type) {
+	//LCOV_EXCL_START
 	case WIFI_SECURITY_TYPE_NONE:
-		profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_NONE;
+		profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_NONE; //LCOV_EXCL_LINE
 		break;
 	case WIFI_SECURITY_TYPE_WEP:
-		profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_WEP;
+		profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_WEP; //LCOV_EXCL_LINE
 		break;
 	case WIFI_SECURITY_TYPE_EAP:
 		profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_IEEE8021X;
 		break;
 	case WIFI_SECURITY_TYPE_WPA_PSK:
-		profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_WPA_PSK;
+		profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_WPA_PSK; //LCOV_EXCL_LINE
 		break;
 	case WIFI_SECURITY_TYPE_WPA2_PSK:
 		profile_info->ProfileInfo.Wlan.security_info.sec_mode = WLAN_SEC_MODE_WPA2_PSK;
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
+	//LCOV_EXCL_STOP
 	}
 
 	_wifi_set_profile_name_to_ap(profile_info);
@@ -1044,23 +1074,25 @@ EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e*
 	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.enc_mode) {
+	//LCOV_EXCL_START
 	case WLAN_ENC_MODE_NONE:
 		*type = WIFI_ENCRYPTION_TYPE_NONE;
 		break;
 	case WLAN_ENC_MODE_WEP:
-		*type = WIFI_ENCRYPTION_TYPE_WEP;
+		*type = WIFI_ENCRYPTION_TYPE_WEP; //LCOV_EXCL_LINE
 		break;
 	case WLAN_ENC_MODE_TKIP:
-		*type = WIFI_ENCRYPTION_TYPE_TKIP;
+		*type = WIFI_ENCRYPTION_TYPE_TKIP; //LCOV_EXCL_LINE
 		break;
 	case WLAN_ENC_MODE_AES:
-		*type = WIFI_ENCRYPTION_TYPE_AES;
+		*type = WIFI_ENCRYPTION_TYPE_AES; //LCOV_EXCL_LINE
 		break;
 	case WLAN_ENC_MODE_TKIP_AES_MIXED:
-		*type = WIFI_ENCRYPTION_TYPE_TKIP_AES_MIXED;
+		*type = WIFI_ENCRYPTION_TYPE_TKIP_AES_MIXED; //LCOV_EXCL_LINE
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -1078,23 +1110,25 @@ EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e 
 	net_profile_info_t *profile_info = ap;
 
 	switch (type) {
+	//LCOV_EXCL_START
 	case WIFI_ENCRYPTION_TYPE_NONE:
-		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_NONE;
+		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_NONE; //LCOV_EXCL_LINE
 		break;
 	case WIFI_ENCRYPTION_TYPE_WEP:
-		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_WEP;
+		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_WEP; //LCOV_EXCL_LINE
 		break;
 	case WIFI_ENCRYPTION_TYPE_TKIP:
-		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_TKIP;
+		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_TKIP; //LCOV_EXCL_LINE
 		break;
 	case WIFI_ENCRYPTION_TYPE_AES:
 		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_AES;
 		break;
 	case WIFI_ENCRYPTION_TYPE_TKIP_AES_MIXED:
-		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_TKIP_AES_MIXED;
+		profile_info->ProfileInfo.Wlan.security_info.enc_mode = WLAN_ENC_MODE_TKIP_AES_MIXED; //LCOV_EXCL_LINE
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -1117,6 +1151,7 @@ EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 	}
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.sec_mode) {
+	//LCOV_EXCL_START
 	case WLAN_SEC_MODE_NONE:
 		*required = false;
 		break;
@@ -1128,6 +1163,7 @@ EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required)
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -1145,6 +1181,7 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 	net_profile_info_t *profile_info = ap;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.sec_mode) {
+	//LCOV_EXCL_START
 	case WLAN_SEC_MODE_WEP:
 		g_strlcpy(profile_info->ProfileInfo.Wlan.security_info.authentication.wep.wepKey,
 				passphrase, NETPM_WLAN_MAX_WEP_KEY_LEN+1);
@@ -1158,6 +1195,7 @@ EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase)
 	case WLAN_SEC_MODE_IEEE8021X:
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -1377,6 +1415,7 @@ EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.authentication.eap.eap_type) {
+	//LCOV_EXCL_START
 	case WLAN_SEC_EAP_TYPE_PEAP:
 		*type = WIFI_EAP_TYPE_PEAP;
 		break;
@@ -1394,6 +1433,7 @@ EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type)
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -1413,6 +1453,7 @@ EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	switch (type) {
+	//LCOV_EXCL_START
 	case WIFI_EAP_TYPE_PEAP:
 		profile_info->ProfileInfo.Wlan.security_info.authentication.eap.eap_type = WLAN_SEC_EAP_TYPE_PEAP;
 		break;
@@ -1430,6 +1471,7 @@ EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type)
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -1449,6 +1491,7 @@ EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* typ
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	switch (profile_info->ProfileInfo.Wlan.security_info.authentication.eap.eap_auth) {
+	//LCOV_EXCL_START
 	case WLAN_SEC_EAP_AUTH_NONE:
 		*type = WIFI_EAP_AUTH_TYPE_NONE;
 		break;
@@ -1469,6 +1512,7 @@ EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* typ
 		break;
 	default:
 		return WIFI_ERROR_OPERATION_FAILED;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
@@ -1488,6 +1532,7 @@ EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type
 		return WIFI_ERROR_INVALID_OPERATION;
 
 	switch (type) {
+	//LCOV_EXCL_START
 	case WIFI_EAP_AUTH_TYPE_NONE:
 		profile_info->ProfileInfo.Wlan.security_info.authentication.eap.eap_auth = WLAN_SEC_EAP_AUTH_NONE;
 		break;
@@ -1508,6 +1553,7 @@ EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type
 		break;
 	default:
 		return WIFI_ERROR_INVALID_PARAMETER;
+	//LCOV_EXCL_STOP
 	}
 
 	return WIFI_ERROR_NONE;
