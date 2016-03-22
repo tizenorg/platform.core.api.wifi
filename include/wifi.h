@@ -901,9 +901,7 @@ int wifi_unset_rssi_level_changed_cb(void);
 /**
  * @brief Creates the access point handle.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
- * @remarks http://tizen.org/privilege/network.profile (public level privilege) is no longer required to use this API since 3.0. \n
- *          http://tizen.org/privilege/network.get (public level privilege) is no longer required to use this API since 3.0. \n
- *			You must release @a ap using wifi_ap_destroy().
+ * @remarks You must release @a ap using wifi_ap_destroy().
  * @param[in] essid  The ESSID (Extended Service Set Identifier) should be null-terminated and can be UTF-8 encoded
  * @param[out] ap  The access point handle
  * @return 0 on success, otherwise negative error value
