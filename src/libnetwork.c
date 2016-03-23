@@ -273,11 +273,6 @@ static gboolean __wifi_state_changed_cb(gpointer data)
 	if (notify == NULL)
 		return FALSE;
 
-	if (notify->ap_info == NULL) {
-		g_free(notify);
-		return FALSE;
-	}
-
 	ap_info = (wifi_ap_h)notify->ap_info;
 
 	_wifi_libnet_add_to_ap_list(ap_info);
@@ -312,18 +307,14 @@ static void __libnet_state_changed_cb(char *profile_name, net_profile_info_t *pr
 	if (profile_name == NULL)
 		return;
 
-	if (profile_info == NULL) {
-		SECURE_WIFI_LOG(WIFI_ERROR, "Failed to find: %s", profile_name);
-		return;
-	}
-
 	ap_info = g_try_malloc0(sizeof(net_profile_info_t));
 	if (ap_info == NULL) {
 		WIFI_LOG(WIFI_ERROR, "Memory allocation error");
 		return;
 	}
 
-	memcpy(ap_info, profile_info, sizeof(net_profile_info_t));
+	if(profile_info)
+		memcpy(ap_info, profile_info, sizeof(net_profile_info_t));
 
 	notify = g_try_new0(struct _wifi_state_notify, 1);
 	if (notify == NULL) {
