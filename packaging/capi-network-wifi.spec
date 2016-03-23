@@ -1,6 +1,6 @@
 Name:		capi-network-wifi
 Summary:	Network Wi-Fi library in TIZEN C API
-Version:	1.0.69
+Version:	1.0.70
 Release:	1
 Group:		System/Network
 License:	Apache-2.0
