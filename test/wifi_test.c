@@ -228,7 +228,7 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (strcmp(ap_name, ap_name_part) == 0) {
 		bool required = false;
 
 		if (wifi_ap_is_passphrase_required(ap, &required) == WIFI_ERROR_NONE)
