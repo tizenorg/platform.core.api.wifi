@@ -191,6 +191,18 @@ static const char* __test_print_state(wifi_connection_state_e state)
 	return "Unknown";
 }
 
+static bool __test_compare_ap_name(const char *ap_name, const char *ap_name_part)
+{
+	int ap_name_len = strlen(ap_name);
+	int ap_name_part_len = strlen(ap_name_part);
+
+	if (strncmp(ap_name, ap_name_part,
+				ap_name_len > ap_name_part_len ? ap_name_len : ap_name_part_len) == 0)
+		return true;
+	else
+		return false;
+}
+
 static bool __test_found_ap_callback(wifi_ap_h ap, void *user_data)
 {
 	int rv = 0;
@@ -228,7 +240,7 @@ static bool __test_found_connect_ap_callback(wifi_ap_h ap, void *user_data)
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (__test_compare_ap_name(ap_name, ap_name_part)) {
 		bool required = false;
 
 		if (wifi_ap_is_passphrase_required(ap, &required) == WIFI_ERROR_NONE)
@@ -275,7 +287,7 @@ static bool __test_found_connect_wps_callback(wifi_ap_h ap, void *user_data)
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (__test_compare_ap_name(ap_name, ap_name_part)) {
 		int user_sel;
 		char pin[32] = {0,};
 
@@ -322,7 +334,7 @@ static bool __test_found_disconnect_ap_callback(wifi_ap_h ap, void *user_data)
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (__test_compare_ap_name(ap_name, ap_name_part)) {
 		rv = wifi_disconnect(ap, __test_disconnected_callback, NULL);
 		if (rv != WIFI_ERROR_NONE)
 			printf("Fail to disconnection reqeust %s : [%s]\n", ap_name, __test_convert_error_to_string(rv));
@@ -349,7 +361,7 @@ static bool __test_found_forget_ap_callback(wifi_ap_h ap, void *user_data)
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (__test_compare_ap_name(ap_name, ap_name_part)) {
 		rv = wifi_forget_ap(ap);
 		if (rv != WIFI_ERROR_NONE)
 			printf("Fail to forget [%s] : %s\n", ap_name, __test_convert_error_to_string(rv));
@@ -376,7 +388,7 @@ static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (__test_compare_ap_name(ap_name, ap_name_part)) {
 		wifi_security_type_e type;
 
 		if (wifi_ap_get_security_type(ap, &type) == WIFI_ERROR_NONE)
@@ -459,7 +471,7 @@ static bool __test_found_change_ip_method_callback(wifi_ap_h ap, void *user_data
 		return false;
 	}
 
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (__test_compare_ap_name(ap_name, ap_name_part)) {
 		wifi_ip_config_type_e type;
 		int method;
 		int address_type;
@@ -581,7 +593,7 @@ static bool __test_found_change_proxy_method_callback(wifi_ap_h ap, void *user_d
 	}
 
 	printf("ap_name %s, user input name %s\n", ap_name, ap_name_part);
-	if (strstr(ap_name, ap_name_part) != NULL) {
+	if (__test_compare_ap_name(ap_name, ap_name_part)) {
 		wifi_proxy_type_e type;
 		char proxy_addr[65];
 		int method;
@@ -671,8 +683,7 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 	}
 
 	printf("ap_name %s, user input name %s\n", ap_name, ap_name_part);
-	if (strstr(ap_name, ap_name_part) != NULL) {
-
+	if (__test_compare_ap_name(ap_name, ap_name_part)) {
 		/* Basic info */
 		printf("ESSID : %s\n", ap_name);
 
