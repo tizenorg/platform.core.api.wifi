@@ -1539,11 +1539,10 @@ int test_wifi_tdls_disconnect(void)
 
 	char peer_mac[18];
 	printf("Enter Mac_address: ");
-	if(scanf(" %17s", peer_mac) < 1)
+	if (scanf(" %17s", peer_mac) < 1)
 		return -1;
 
-	if (strlen(peer_mac) > 17)
-	{
+	if (strlen(peer_mac) > 17) {
 		printf("Wrong Mac_address\n");
 		return -1;
 	}
@@ -1566,7 +1565,7 @@ int test_wifi_tdls_get_connected_peer(void)
 		printf("wifi_tdls_get_connected_peer() is failed [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
 	}
-	printf("Peer Mac address is [%s]\n",mac_addr);
+	printf("Peer Mac address is [%s]\n", mac_addr);
 	g_free(mac_addr);
 	return 1;
 }

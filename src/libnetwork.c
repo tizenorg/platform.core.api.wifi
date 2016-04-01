@@ -313,7 +313,7 @@ static void __libnet_state_changed_cb(char *profile_name, net_profile_info_t *pr
 		return;
 	}
 
-	if(profile_info)
+	if (profile_info)
 		memcpy(ap_info, profile_info, sizeof(net_profile_info_t));
 
 	notify = g_try_new0(struct _wifi_state_notify, 1);

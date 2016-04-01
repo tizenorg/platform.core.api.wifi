@@ -298,7 +298,7 @@ EXPORT_API int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb ca
 
 
 
-EXPORT_API int wifi_get_connected_ap(wifi_ap_h* ap)
+EXPORT_API int wifi_get_connected_ap(wifi_ap_h *ap)
 {
 	int rv;
 
@@ -431,7 +431,7 @@ EXPORT_API int wifi_forget_ap(wifi_ap_h ap)
 	return _wifi_libnet_forget_ap(ap);
 }
 
-EXPORT_API int wifi_get_connection_state(wifi_connection_state_e* connection_state)
+EXPORT_API int wifi_get_connection_state(wifi_connection_state_e *connection_state)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
 
