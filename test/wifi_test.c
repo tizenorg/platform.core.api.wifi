@@ -857,6 +857,33 @@ static bool _test_config_list_cb(const wifi_config_h config, void *user_data)
 	return true;
 }
 
+struct _wifi_conf{
+	char name[33];
+	int type;
+};
+static bool _test_config_list_cb_for_remove(const wifi_config_h config, void *user_data)
+{
+
+	struct _wifi_conf *c = (struct _wifi_conf *)user_data;
+	gchar *name = NULL;
+	wifi_security_type_e security_type;
+
+	wifi_config_get_name(config, &name);
+	wifi_config_get_security_type(config, &security_type);
+
+	if(strncmp(name, c->name, sizeof(c->name)) == 0 && security_type == c->type) {
+		int rv = wifi_config_remove(config);
+		if (rv != WIFI_ERROR_NONE)
+			printf("Fail to remove configurations [%s]\n", __test_convert_error_to_string(rv));
+		else
+			printf("Success to remove configuration [%s]\n", name);
+		g_free(name);
+		return false;
+	}
+
+	return true;
+}
+
 static bool __test_found_specific_aps_callback(wifi_ap_h ap, void *user_data)
 {
 	printf("Found specific ap Completed\n");
@@ -1384,8 +1411,10 @@ int test_load_configuration(void)
 	int rv;
 
 	rv = wifi_config_foreach_configuration(_test_config_list_cb, NULL);
-	if (rv != WIFI_ERROR_NONE)
+	if (rv != WIFI_ERROR_NONE) {
+		printf("Fail to get configurations [%s]\n", __test_convert_error_to_string(rv));
 		return -1;
+	}
 
 	return 1;
 }
@@ -1425,6 +1454,31 @@ int test_save_configuration(void)
 	rv = wifi_config_destroy(config);
 	if (rv != WIFI_ERROR_NONE)
 		return -1;
+
+	return 1;
+}
+
+int test_remove_configuration(void)
+{
+	int rv;
+	struct _wifi_conf c;
+
+	printf("Input AP configuration\n");
+	printf("Name : ");
+	rv = scanf("%32s", c.name);
+	if (rv <= 0)
+		return -1;
+
+	printf("Security type(None(0), WEP(1), WPA-PSK(2), EAP(4) : ");
+	rv = scanf("%d", &c.type);
+	if (rv <= 0)
+		return -1;
+
+	rv = wifi_config_foreach_configuration(_test_config_list_cb_for_remove, &c);
+	if (rv != WIFI_ERROR_NONE) {
+		printf("Fail to get configurations [%s]\n", __test_convert_error_to_string(rv));
+		return -1;
+	}
 
 	return 1;
 }
@@ -1629,10 +1683,11 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("k   - Connect Specific AP\n");
 		printf("l   - Load configuration\n");
 		printf("m   - Save configuration\n");
-		printf("n   - Set configuration proxy and hidden\n");
-		printf("o   - Set EAP configuration\n");
-		printf("p   - TDLS TearDown\n");
-		printf("q   - TDLS Get Connected Peer\n");
+		printf("n   - Remove configuration\n");
+		printf("o   - Set configuration proxy and hidden\n");
+		printf("p   - Set EAP configuration\n");
+		printf("q   - TDLS TearDown\n");
+		printf("r   - TDLS Get Connected Peer\n");
 		printf(LOG_RED "0   - Exit \n" LOG_END);
 
 		printf("ENTER  - Show options menu.......\n");
@@ -1706,15 +1761,18 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		rv = test_save_configuration();
 		break;
 	case 'n':
-		rv = test_set_configuration_proxy_and_hidden();
+		rv = test_remove_configuration();
 		break;
 	case 'o':
-		rv = test_set_eap_configuration();
+		rv = test_set_configuration_proxy_and_hidden();
 		break;
 	case 'p':
-		rv = test_wifi_tdls_disconnect();
+		rv = test_set_eap_configuration();
 		break;
 	case 'q':
+		rv = test_wifi_tdls_disconnect();
+		break;
+	case 'r':
 		rv = test_wifi_tdls_get_connected_peer();
 		break;
 

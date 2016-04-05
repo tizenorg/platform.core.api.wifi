@@ -55,6 +55,7 @@ int wifi_config_get_last_error(wifi_config_h config, wifi_error_e *last_error);
 
 int wifi_save_configurations(wifi_dbus *handle, const gchar *name, const gchar *passphrase, wifi_security_type_e security_type, const gchar *proxy_address, gboolean is_hidden);
 int wifi_load_configurations(wifi_dbus *handle, const gchar *config_id, gchar **name, wifi_security_type_e *security_type, gchar **proxy_address, gboolean *is_hidden, wifi_error_e *last_error);
+int wifi_remove_configurations(wifi_dbus *handle, const gchar *config_id);
 int wifi_configuration_set_field(wifi_dbus *handle, const gchar *config_id, const gchar *key, const gchar *value);
 int wifi_configuration_get_passphrase(wifi_dbus *handle, const gchar *config_id, gchar **passphrase);
 
