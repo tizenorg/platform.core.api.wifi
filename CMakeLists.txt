@@ -35,7 +35,7 @@ FOREACH(flag ${${fw_name}_CFLAGS})
 ENDFOREACH(flag)
 
 #SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Werror -fvisibility=hidden")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -fprofile-arcs -ftest-coverage -flto")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -fprofile-arcs -ftest-coverage -flto -fvisibility=hidden")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
 IF("${ARCH}" STREQUAL "arm")
@@ -44,6 +44,7 @@ ENDIF("${ARCH}" STREQUAL "arm")
 
 ADD_DEFINITIONS("-DPREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 ADD_DEFINITIONS("-DTIZEN_DEBUG")
+ADD_DEFINITIONS("-DEXPORT_API=__attribute__((visibility(\"default\")))")
 
 SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed -Wl,--rpath=${LIBDIR}")
 

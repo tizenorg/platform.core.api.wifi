@@ -19,6 +19,10 @@
 
 #include <tizen.h>
 
+#ifndef EXPORT_API
+#define EXPORT_API
+#endif // EXPORT_API
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -417,7 +421,7 @@ typedef bool (*wifi_config_list_cb)(const wifi_config_h config, void *user_data)
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_initialize(void);
+EXPORT_API int wifi_initialize(void);
 
 /**
  * @brief Deinitializes Wi-Fi.
@@ -428,7 +432,7 @@ int wifi_initialize(void);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_deinitialize(void);
+EXPORT_API int wifi_deinitialize(void);
 
 /**
 * @}
@@ -461,7 +465,7 @@ int wifi_deinitialize(void);
  * @see wifi_activated_cb()
  * @see wifi_deactivate()
  */
-int wifi_activate(wifi_activated_cb callback, void *user_data);
+EXPORT_API int wifi_activate(wifi_activated_cb callback, void *user_data);
 
 /**
  * @brief Activates Wi-Fi asynchronously and displays Wi-Fi picker (popup) when Wi-Fi is not automatically connected.
@@ -484,7 +488,7 @@ int wifi_activate(wifi_activated_cb callback, void *user_data);
  * @see wifi_activated_cb()
  * @see wifi_deactivate()
  */
-int wifi_activate_with_wifi_picker_tested(wifi_activated_cb callback, void *user_data);
+EXPORT_API int wifi_activate_with_wifi_picker_tested(wifi_activated_cb callback, void *user_data);
 
 /**
  * @brief Deactivates Wi-Fi asynchronously.
@@ -506,7 +510,7 @@ int wifi_activate_with_wifi_picker_tested(wifi_activated_cb callback, void *user
  * @see wifi_deactivated_cb()
  * @see wifi_activate()
  */
-int wifi_deactivate(wifi_deactivated_cb callback, void *user_data);
+EXPORT_API int wifi_deactivate(wifi_deactivated_cb callback, void *user_data);
 
 /**
  * @brief Checks whether Wi-Fi is activated.
@@ -522,7 +526,7 @@ int wifi_deactivate(wifi_deactivated_cb callback, void *user_data);
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_is_activated(bool* activated);
+EXPORT_API int wifi_is_activated(bool* activated);
 
 /**
  * @brief Gets the local MAC address.
@@ -535,7 +539,7 @@ int wifi_is_activated(bool* activated);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_get_mac_address(char** mac_address);
+EXPORT_API int wifi_get_mac_address(char** mac_address);
 
 /**
  * @brief Gets the name of the network interface.
@@ -552,7 +556,7 @@ int wifi_get_mac_address(char** mac_address);
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_get_network_interface_name(char** name);
+EXPORT_API int wifi_get_network_interface_name(char** name);
 
 /**
  * @brief Starts scan asynchronously.
@@ -572,7 +576,7 @@ int wifi_get_network_interface_name(char** name);
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  * @post This function invokes wifi_scan_finished_cb().
  */
-int wifi_scan(wifi_scan_finished_cb callback, void *user_data);
+EXPORT_API int wifi_scan(wifi_scan_finished_cb callback, void *user_data);
 
 /**
  * @brief Starts specific ap scan, asynchronously.
@@ -593,7 +597,7 @@ int wifi_scan(wifi_scan_finished_cb callback, void *user_data);
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  * @post This function invokes wifi_scan_finished_cb().
  */
-int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data);
+EXPORT_API int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data);
 
 /**
  * @brief Gets the handle of the connected access point.
@@ -610,7 +614,7 @@ int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb callback, voi
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_get_connected_ap(wifi_ap_h* ap);
+EXPORT_API int wifi_get_connected_ap(wifi_ap_h* ap);
 
 /**
  * @brief Gets the result of the scan.
@@ -627,7 +631,7 @@ int wifi_get_connected_ap(wifi_ap_h* ap);
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  * @post This function invokes wifi_found_ap_cb().
  */
-int wifi_foreach_found_aps(wifi_found_ap_cb callback, void *user_data);
+EXPORT_API int wifi_foreach_found_aps(wifi_found_ap_cb callback, void *user_data);
 
 /**
  * @brief Gets the result of specific ap scan.
@@ -645,7 +649,7 @@ int wifi_foreach_found_aps(wifi_found_ap_cb callback, void *user_data);
  * @post This function invokes wifi_found_ap_cb().
  * @see wifi_scan_specific_ap()
  */
-int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data);
+EXPORT_API int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data);
 
 /**
  * @brief Connects the access point asynchronously.
@@ -671,7 +675,7 @@ int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data);
  * @see wifi_connect_by_wps_pin()
  * @see wifi_disconnect()
  */
-int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
+EXPORT_API int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
 
 /**
  * @brief Disconnects the access point asynchronously.
@@ -697,7 +701,7 @@ int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
  * @see wifi_connect_by_wps_pin()
  * @see wifi_connect()
  */
-int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void *user_data);
+EXPORT_API int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void *user_data);
 
 /**
  * @brief Connects the access point with WPS PBC asynchronously.
@@ -723,7 +727,7 @@ int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void *user_data
  * @see wifi_disconnect()
  * @see wifi_ap_is_wps_supported()
  */
-int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
+EXPORT_API int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
 
 /**
  * @brief Connects the access point with WPS PIN asynchronously.
@@ -749,7 +753,7 @@ int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void *user
  * @see wifi_disconnect()
  * @see wifi_ap_is_wps_supported()
  */
-int wifi_connect_by_wps_pin(wifi_ap_h ap, const char *pin, wifi_connected_cb callback, void *user_data);
+EXPORT_API int wifi_connect_by_wps_pin(wifi_ap_h ap, const char *pin, wifi_connected_cb callback, void *user_data);
 
 /**
  * @brief Deletes the information of stored access point and disconnects it when it connected.
@@ -769,7 +773,7 @@ int wifi_connect_by_wps_pin(wifi_ap_h ap, const char *pin, wifi_connected_cb cal
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_forget_ap(wifi_ap_h ap);
+EXPORT_API int wifi_forget_ap(wifi_ap_h ap);
 
 /**
 * @}
@@ -794,7 +798,7 @@ int wifi_forget_ap(wifi_ap_h ap);
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_get_connection_state(wifi_connection_state_e* connection_state);
+EXPORT_API int wifi_get_connection_state(wifi_connection_state_e* connection_state);
 
 /**
  * @brief Registers the callback called when the device state is changed.
@@ -807,7 +811,7 @@ int wifi_get_connection_state(wifi_connection_state_e* connection_state);
  * @retval #WIFI_ERROR_INVALID_PARAMETER   Invalid parameter
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb callback, void *user_data);
+EXPORT_API int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb callback, void *user_data);
 
 /**
  * @brief Unregisters the callback called when the device state is changed.
@@ -817,7 +821,7 @@ int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb callback, void
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_unset_device_state_changed_cb(void);
+EXPORT_API int wifi_unset_device_state_changed_cb(void);
 
 /**
  * @brief Registers the callback called when the background scan is finished periodically.
@@ -830,7 +834,7 @@ int wifi_unset_device_state_changed_cb(void);
  * @retval #WIFI_ERROR_INVALID_PARAMETER   Invalid parameter
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void *user_data);
+EXPORT_API int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void *user_data);
 
 /**
  * @brief Unregisters the callback called when the scan is finished periodically.
@@ -840,7 +844,7 @@ int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void *user_data)
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_unset_background_scan_cb(void);
+EXPORT_API int wifi_unset_background_scan_cb(void);
 
 /**
  * @brief Registers the callback called when the connection state is changed.
@@ -853,7 +857,7 @@ int wifi_unset_background_scan_cb(void);
  * @retval #WIFI_ERROR_INVALID_PARAMETER   Invalid parameter
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_set_connection_state_changed_cb(wifi_connection_state_changed_cb callback, void *user_data);
+EXPORT_API int wifi_set_connection_state_changed_cb(wifi_connection_state_changed_cb callback, void *user_data);
 
 /**
  * @brief Unregisters the callback called when the connection state is changed.
@@ -863,7 +867,7 @@ int wifi_set_connection_state_changed_cb(wifi_connection_state_changed_cb callba
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_unset_connection_state_changed_cb(void);
+EXPORT_API int wifi_unset_connection_state_changed_cb(void);
 
 /**
  * @brief Registers callback called when the RSSI of connected Wi-Fi is changed.
@@ -876,7 +880,7 @@ int wifi_unset_connection_state_changed_cb(void);
  * @retval #WIFI_ERROR_INVALID_PARAMETER   Invalid parameter
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback, void *user_data);
+EXPORT_API int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback, void *user_data);
 
 /**
  * @brief Unregisters callback called when the RSSI of connected Wi-Fi is changed.
@@ -886,7 +890,7 @@ int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback, void *us
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_unset_rssi_level_changed_cb(void);
+EXPORT_API int wifi_unset_rssi_level_changed_cb(void);
 
 /**
 * @}
@@ -912,7 +916,7 @@ int wifi_unset_rssi_level_changed_cb(void);
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  * @see wifi_ap_destroy()
  */
-int wifi_ap_create(const char* essid, wifi_ap_h* ap);
+EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap);
 
 /**
  * @brief Creates the hidden access point handle.
@@ -927,7 +931,7 @@ int wifi_ap_create(const char* essid, wifi_ap_h* ap);
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  * @see wifi_ap_destroy()
  */
-int wifi_ap_hidden_create(const char* essid, wifi_ap_h* ap);
+EXPORT_API int wifi_ap_hidden_create(const char* essid, wifi_ap_h* ap);
 
 /**
  * @brief Destroys the access point handle.
@@ -939,7 +943,7 @@ int wifi_ap_hidden_create(const char* essid, wifi_ap_h* ap);
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  * @see wifi_ap_create()
  */
-int wifi_ap_destroy(wifi_ap_h ap);
+EXPORT_API int wifi_ap_destroy(wifi_ap_h ap);
 
 /**
  * @brief Clones the access point handle.
@@ -954,7 +958,7 @@ int wifi_ap_destroy(wifi_ap_h ap);
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  * @see wifi_ap_destroy()
  */
-int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin);
+EXPORT_API int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin);
 
 /**
  * @brief Refreshes the access point information.
@@ -971,7 +975,7 @@ int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin);
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_ap_refresh(wifi_ap_h ap);
+EXPORT_API int wifi_ap_refresh(wifi_ap_h ap);
 
 /**
 * @}
@@ -995,7 +999,7 @@ int wifi_ap_refresh(wifi_ap_h ap);
  * @retval #WIFI_ERROR_OUT_OF_MEMORY  Out of memory
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_ap_get_essid(wifi_ap_h ap, char** essid);
+EXPORT_API int wifi_ap_get_essid(wifi_ap_h ap, char** essid);
 
 /**
  * @brief Gets BSSID (Basic Service Set Identifier).
@@ -1009,7 +1013,7 @@ int wifi_ap_get_essid(wifi_ap_h ap, char** essid);
  * @retval #WIFI_ERROR_OUT_OF_MEMORY  Out of memory
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid);
+EXPORT_API int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid);
 
 /**
  * @brief Gets the RSSI.
@@ -1022,7 +1026,7 @@ int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi);
+EXPORT_API int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi);
 
 /**
  * @brief Gets the frequency band (MHz).
@@ -1035,7 +1039,7 @@ int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency);
+EXPORT_API int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency);
 
 /**
  * @brief Gets the max speed (Mbps).
@@ -1048,7 +1052,7 @@ int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed);
+EXPORT_API int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed);
 
 /**
  * @brief Checks whether the access point is favorite or not.
@@ -1062,7 +1066,7 @@ int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite);
+EXPORT_API int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite);
 
 /**
  * @brief Checks whether the access point is passpoint or not.
@@ -1076,7 +1080,7 @@ int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
-int wifi_ap_is_passpoint(wifi_ap_h ap, bool* passpoint);
+EXPORT_API int wifi_ap_is_passpoint(wifi_ap_h ap, bool* passpoint);
 
 /**
  * @brief Gets the connection state.
@@ -1089,7 +1093,7 @@ int wifi_ap_is_passpoint(wifi_ap_h ap, bool* passpoint);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state);
+EXPORT_API int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state);
 
 /**
  * @brief Gets the config type of IP.
@@ -1104,7 +1108,7 @@ int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state);
  * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED  Address family not supported
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e* type);
+EXPORT_API int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e* type);
 
 /**
  * @brief Sets the config type of IP.
@@ -1126,7 +1130,7 @@ int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_famil
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e type);
+EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e type);
 
 /**
  * @brief Gets the IP address.
@@ -1142,7 +1146,7 @@ int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_famil
  * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED  Address family not supported
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, char** ip_address);
+EXPORT_API int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, char** ip_address);
 
 /**
  * @brief Sets the IP address.
@@ -1162,7 +1166,7 @@ int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, c
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* ip_address);
+EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* ip_address);
 
 /**
  * @brief Gets the subnet mask.
@@ -1178,7 +1182,7 @@ int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, c
  * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED  Address family not supported
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, char** subnet_mask);
+EXPORT_API int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, char** subnet_mask);
 
 /**
  * @brief Sets the subnet mask.
@@ -1198,7 +1202,7 @@ int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, 
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, const char* subnet_mask);
+EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, const char* subnet_mask);
 
 /**
  * @brief Gets the gateway address.
@@ -1214,7 +1218,7 @@ int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, 
  * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED  Address family not supported
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, char** gateway_address);
+EXPORT_API int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, char** gateway_address);
 
 /**
  * @brief Sets the gateway address.
@@ -1235,7 +1239,7 @@ int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_fami
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* gateway_address);
+EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* gateway_address);
 
 /**
  * @brief Gets the proxy address.
@@ -1251,7 +1255,7 @@ int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_fami
  * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED  Address family not supported
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, char** proxy_address);
+EXPORT_API int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, char** proxy_address);
 
 /**
  * @brief Sets the proxy address.
@@ -1272,7 +1276,7 @@ int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* proxy_address);
+EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* proxy_address);
 
 /**
  * @brief Gets the Proxy type.
@@ -1285,7 +1289,7 @@ int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type);
+EXPORT_API int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type);
 
 /**
  * @brief Sets the Proxy address.
@@ -1304,7 +1308,7 @@ int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type);
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type);
+EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type);
 
 /**
  * @brief Gets the DNS address.
@@ -1321,7 +1325,7 @@ int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type);
  * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED  Address family not supported
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, char** dns_address);
+EXPORT_API int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, char** dns_address);
 
 /**
  * @brief Sets the DNS address.
@@ -1345,7 +1349,7 @@ int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e addre
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, const char* dns_address);
+EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, const char* dns_address);
 
 /**
 * @}
@@ -1368,7 +1372,7 @@ int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e addre
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type);
+EXPORT_API int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type);
 
 /**
  * @brief Sets the Wi-Fi security mode.
@@ -1381,7 +1385,7 @@ int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type);
+EXPORT_API int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type);
 
 /**
  * @brief Gets the Wi-Fi encryption type.
@@ -1394,7 +1398,7 @@ int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type);
+EXPORT_API int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type);
 
 /**
  * @brief Sets the Wi-Fi encryption type.
@@ -1407,7 +1411,7 @@ int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type);
+EXPORT_API int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type);
 
 /**
  * @brief Checks whether the passphrase is required or not.
@@ -1422,7 +1426,7 @@ int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required);
+EXPORT_API int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required);
 
 /**
  * @brief Sets the passphrase.
@@ -1435,7 +1439,7 @@ int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase);
+EXPORT_API int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase);
 
 /**
  * @brief Checks whether the WPS(Wi-Fi Protected Setup) is supported or not.
@@ -1451,7 +1455,7 @@ int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase);
  * @see wifi_connect_by_wps_pbc()
  * @see wifi_connect_by_wps_pin()
  */
-int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported);
+EXPORT_API int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported);
 
 /**
 * @}
@@ -1481,7 +1485,7 @@ int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported);
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* password);
+EXPORT_API int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* password);
 
 /**
  * @brief Gets the passphrase of EAP.
@@ -1499,7 +1503,7 @@ int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* 
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password_set);
+EXPORT_API int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password_set);
 
 /**
  * @brief Gets the CA Certificate of EAP.
@@ -1515,7 +1519,7 @@ int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file);
+EXPORT_API int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file);
 
 /**
  * @brief Sets the CA Certificate of EAP.
@@ -1529,7 +1533,7 @@ int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file);
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file);
+EXPORT_API int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file);
 
 /**
  * @brief Gets the Client Certificate of EAP.
@@ -1545,7 +1549,7 @@ int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file);
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file);
+EXPORT_API int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file);
 
 /**
  * @brief Sets the CA Certificate of EAP.
@@ -1559,7 +1563,7 @@ int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file);
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file);
+EXPORT_API int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file);
 
 /**
  * @brief Gets the private key file of EAP.
@@ -1575,7 +1579,7 @@ int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file);
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file);
+EXPORT_API int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file);
 
 /**
  * @brief Sets the private key information of EAP.
@@ -1590,7 +1594,7 @@ int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file);
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char* password);
+EXPORT_API int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char* password);
 
 /**
  * @brief Gets the EAP type of Wi-Fi.
@@ -1604,7 +1608,7 @@ int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char*
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type);
+EXPORT_API int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type);
 
 /**
  * @brief Sets the EAP type of Wi-Fi.
@@ -1617,7 +1621,7 @@ int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type);
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type);
+EXPORT_API int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type);
 
 /**
  * @brief Gets the type of EAP phase2 authentication of Wi-Fi.
@@ -1631,7 +1635,7 @@ int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type);
  * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type);
+EXPORT_API int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type);
 
 /**
  * @brief Sets the type of EAP phase2 authentication of Wi-Fi.
@@ -1644,7 +1648,7 @@ int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type);
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED   Not supported
  */
-int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type);
+EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type);
 
 /**
 * @}
@@ -1674,7 +1678,7 @@ int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type);
  * @see wifi_config_destroy()
  * @pre This API needs wifi_initialize() before use
  */
-int wifi_config_create(const char *name, const char *passphrase, wifi_security_type_e security_type, wifi_config_h *config);
+EXPORT_API int wifi_config_create(const char *name, const char *passphrase, wifi_security_type_e security_type, wifi_config_h *config);
 
 /**
  * @brief Clones the access point configuration handle.
@@ -1692,7 +1696,7 @@ int wifi_config_create(const char *name, const char *passphrase, wifi_security_t
  * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
  * @see wifi_config_destroy()
  */
-int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config);
+EXPORT_API int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config);
 
 /**
  * @brief Destroys the access point configuration handle.
@@ -1708,7 +1712,7 @@ int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config);
  * @see wifi_config_create()
  * @see wifi_config_clone()
  */
-int wifi_config_destroy(wifi_config_h config);
+EXPORT_API int wifi_config_destroy(wifi_config_h config);
 
 /**
  * @brief Saves Wi-Fi configuration of access point.
@@ -1726,7 +1730,7 @@ int wifi_config_destroy(wifi_config_h config);
  * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
  * @see wifi_config_create()
  */
-int wifi_config_save_configuration(wifi_config_h config);
+EXPORT_API int wifi_config_save_configuration(wifi_config_h config);
 
 /**
  * @brief Gets the result of access point configurations repeatedly.
@@ -1747,7 +1751,7 @@ int wifi_config_save_configuration(wifi_config_h config);
  * @pre This API needs wifi_initialize() before use.
  * @post This function invokes wifi_config_list_cb().
  */
-int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_data);
+EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_data);
 
 /**
  * @brief Gets the name of access point from configuration.
@@ -1764,7 +1768,7 @@ int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_d
  * @retval #WIFI_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
  */
-int wifi_config_get_name(wifi_config_h config, char **name);
+EXPORT_API int wifi_config_get_name(wifi_config_h config, char **name);
 
 /**
  * @brief Gets the security type of access point from configuration.
@@ -1779,7 +1783,7 @@ int wifi_config_get_name(wifi_config_h config, char **name);
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
  */
-int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *security_type);
+EXPORT_API int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *security_type);
 
 /**
  * @brief Sets access point proxy address configuration.
@@ -1799,7 +1803,7 @@ int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *se
  * @retval #WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED Not supported address family
  * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
  */
-int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e address_family, const char *proxy_address);
+EXPORT_API int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e address_family, const char *proxy_address);
 
 /**
  * @brief Gets the proxy address of access point from configuration.
@@ -1817,7 +1821,7 @@ int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e ad
  * @retval #WIFI_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
  */
-int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *address_family, char **proxy_address);
+EXPORT_API int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *address_family, char **proxy_address);
 
 /**
  * @brief Sets the hidden property of access point from the configuration.
@@ -1835,7 +1839,7 @@ int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *a
  * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
  */
-int wifi_config_set_hidden_ap_property(wifi_config_h config, bool is_hidden);
+EXPORT_API int wifi_config_set_hidden_ap_property(wifi_config_h config, bool is_hidden);
 
 /**
  * @brief Gets the hidden property of access point from the configuration.
@@ -1850,7 +1854,7 @@ int wifi_config_set_hidden_ap_property(wifi_config_h config, bool is_hidden);
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
  */
-int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *is_hidden);
+EXPORT_API int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *is_hidden);
 
 /**
  * @brief Gets access point anonymous identity from configuration.
@@ -1864,7 +1868,7 @@ int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *is_hidden);
  * @retval #WIFI_ERROR_NONE					Successful
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  */
-int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymous_identity);
+EXPORT_API int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymous_identity);
 
 /**
  * @brief Sets access point anonymous identity to configuration.
@@ -1880,7 +1884,7 @@ int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymou
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
  */
-int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* anonymous_identity);
+EXPORT_API int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* anonymous_identity);
 
 /**
  * @brief Gets access point cacert file from configuration.
@@ -1898,7 +1902,7 @@ int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* ano
  * @retval #WIFI_ERROR_NONE					Successful
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  */
-int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert);
+EXPORT_API int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert);
 
 /**
  * @brief Sets access point cacert file to configuration.
@@ -1918,7 +1922,7 @@ int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert);
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
  */
-int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert);
+EXPORT_API int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert);
 
 /**
  * @brief Gets access point client cert file from configuration.
@@ -1932,7 +1936,7 @@ int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert);
  * @retval #WIFI_ERROR_NONE					Successful
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  */
-int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cert);
+EXPORT_API int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cert);
 
 /**
  * @brief Sets access point client cert file to configuration.
@@ -1949,7 +1953,7 @@ int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cer
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
  */
-int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* private_key, const char* client_cert);
+EXPORT_API int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* private_key, const char* client_cert);
 
 /**
  * @brief Gets access point identity from configuration.
@@ -1963,7 +1967,7 @@ int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* priva
  * @retval #WIFI_ERROR_NONE					Successful
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  */
-int wifi_config_get_eap_identity(wifi_config_h config, char** identity);
+EXPORT_API int wifi_config_get_eap_identity(wifi_config_h config, char** identity);
 
 /**
  * @brief Sets access point identity to configuration.
@@ -1979,7 +1983,7 @@ int wifi_config_get_eap_identity(wifi_config_h config, char** identity);
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
  */
-int wifi_config_set_eap_identity(wifi_config_h config, const char* identity);
+EXPORT_API int wifi_config_set_eap_identity(wifi_config_h config, const char* identity);
 
 /**
  * @brief Gets access point eap type from configuration.
@@ -1992,7 +1996,7 @@ int wifi_config_set_eap_identity(wifi_config_h config, const char* identity);
  * @retval #WIFI_ERROR_NONE					Successful
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  */
-int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type);
+EXPORT_API int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type);
 
 /**
  * @brief Sets access point eap type to configuration.
@@ -2008,7 +2012,7 @@ int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type);
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
  */
-int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type);
+EXPORT_API int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type);
 
 /**
  * @brief Gets access point eap auth type from configuration.
@@ -2021,7 +2025,7 @@ int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type);
  * @retval #WIFI_ERROR_NONE					Successful
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  */
-int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* eap_auth_type);
+EXPORT_API int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* eap_auth_type);
 
 /**
  * @brief Sets access point eap auth type to configuration.
@@ -2037,7 +2041,7 @@ int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* ea
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
  */
-int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap_auth_type);
+EXPORT_API int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap_auth_type);
 
 /**
  * @brief Gets access point subject match from configuration.
@@ -2051,7 +2055,7 @@ int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap
  * @retval #WIFI_ERROR_NONE					Successful
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  */
-int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match);
+EXPORT_API int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match);
 
 /**
  * @brief Sets access point subject match to configuration.
@@ -2067,7 +2071,7 @@ int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match
  * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission Denied
  */
-int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_match);
+EXPORT_API int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_match);
 
 /**
  * @}
@@ -2116,7 +2120,7 @@ typedef void(*wifi_tdls_state_changed_cb)(wifi_tdls_state_e state, char* peer_ma
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
  */
-int wifi_tdls_disconnect(const char* peer_mac_addr);
+EXPORT_API int wifi_tdls_disconnect(const char* peer_mac_addr);
 
 /**
  * @brief Gets Peer Mac address of Connected peer.
@@ -2136,7 +2140,7 @@ int wifi_tdls_disconnect(const char* peer_mac_addr);
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
  */
-int wifi_tdls_get_connected_peer(char** peer_mac_addr);
+EXPORT_API int wifi_tdls_get_connected_peer(char** peer_mac_addr);
 
 /**
  * @brief Registers the callback called when TDLS state is changed.
@@ -2151,7 +2155,7 @@ int wifi_tdls_get_connected_peer(char** peer_mac_addr);
  * @retval #WIFI_ERROR_INVALID_PARAMETER   Invalid parameter
  * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
  */
-int wifi_tdls_set_state_changed_cb(wifi_tdls_state_changed_cb callback, void* user_data);
+EXPORT_API int wifi_tdls_set_state_changed_cb(wifi_tdls_state_changed_cb callback, void* user_data);
 
 /**
  * @brief Unregisters the callback called when TDLS state is changed.
@@ -2162,7 +2166,7 @@ int wifi_tdls_set_state_changed_cb(wifi_tdls_state_changed_cb callback, void* us
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
  * @retval #WIFI_ERROR_NOT_SUPPORTED     Not supported
  */
-int wifi_tdls_unset_state_changed_cb(void);
+EXPORT_API int wifi_tdls_unset_state_changed_cb(void);
 
 /**
  * @}
