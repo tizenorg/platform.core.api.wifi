@@ -512,6 +512,22 @@ EXPORT_API int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e ad
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	int rv = _wifi_libnet_check_get_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
+	rv = _wifi_libnet_check_profile_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
 	net_profile_info_t *profile_info = ap;
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV4)
@@ -615,6 +631,22 @@ EXPORT_API int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e addres
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	int rv = _wifi_libnet_check_get_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
+	rv = _wifi_libnet_check_profile_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
 	net_profile_info_t *profile_info = ap;
 
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV4) {
@@ -685,6 +717,22 @@ EXPORT_API int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e addre
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	int rv = _wifi_libnet_check_get_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
+	rv = _wifi_libnet_check_profile_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	net_profile_info_t *profile_info = ap;
@@ -764,6 +812,22 @@ EXPORT_API int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e a
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	int rv = _wifi_libnet_check_get_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
+	rv = _wifi_libnet_check_profile_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
 	net_profile_info_t *profile_info = ap;
 	if (address_family == WIFI_ADDRESS_FAMILY_IPV6) {
 		//LCOV_EXCL_START
@@ -817,6 +881,22 @@ EXPORT_API int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e add
 	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	int rv = _wifi_libnet_check_get_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
+	rv = _wifi_libnet_check_profile_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	net_profile_info_t *profile_info = ap;
@@ -875,8 +955,23 @@ EXPORT_API int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type
 		return WIFI_ERROR_INVALID_PARAMETER;
 	}
 
+	int rv = _wifi_libnet_check_get_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
+	rv = _wifi_libnet_check_profile_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
 	net_profile_info_t *profile_info = ap;
-	int rv;
 
 	switch (proxy_type) {
 	//LCOV_EXCL_START
@@ -950,6 +1045,22 @@ EXPORT_API int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_fam
 	    order > NET_DNS_ADDR_MAX) {
 		WIFI_LOG(WIFI_ERROR, "Invalid parameter");
 		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	int rv = _wifi_libnet_check_get_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
+	}
+
+	rv = _wifi_libnet_check_profile_privilege();
+	if (rv == WIFI_ERROR_PERMISSION_DENIED)
+		return rv;
+	else if (rv != WIFI_ERROR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to get statistics"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	net_profile_info_t *profile_info = ap;

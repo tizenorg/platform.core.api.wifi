@@ -124,6 +124,9 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state);
 guint _wifi_callback_add(GSourceFunc func, gpointer user_data);
 void _wifi_callback_cleanup(void);
 
+int _wifi_libnet_check_get_privilege();
+int _wifi_libnet_check_profile_privilege();
+
 bool __libnet_check_feature_supported(const char *key, wifi_supported_feature_e feature);
 int _wifi_check_feature_supported(const char *feature_name, ...);
 
