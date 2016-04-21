@@ -202,6 +202,44 @@ EXPORT_API int wifi_config_save_configuration(wifi_config_h config)
 	return ret;
 }
 
+EXPORT_API int wifi_config_remove(wifi_config_h config)
+{
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	int ret = WIFI_ERROR_NONE;
+	struct _wifi_config *h = (struct _wifi_config *)config;
+
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "Not initialized"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_OPERATION; //LCOV_EXCL_LINE
+	}
+
+	if (config == NULL || h->name == NULL) {
+		WIFI_LOG(WIFI_ERROR, "Invalid parameter"); //LCOV_EXCL_LINE
+		return WIFI_ERROR_INVALID_PARAMETER; //LCOV_EXCL_LINE
+	}
+
+	if (h->is_saved == TRUE) {
+		wifi_dbus *dbus_h = NULL;
+		gchar *config_id = NULL;
+
+		dbus_h = _wifi_get_dbus_handle();
+		if (dbus_h == NULL) {
+			WIFI_LOG(WIFI_ERROR, "Not initialized for wifi dbus connection");
+			return WIFI_ERROR_INVALID_OPERATION;
+		}
+
+		config_id = wifi_config_get_config_id(h->name, h->security_type);
+
+		ret = wifi_remove_configurations(dbus_h, config_id);
+		if (ret != WIFI_ERROR_NONE)
+			WIFI_LOG(WIFI_ERROR, "Fail to remove configurations [%d]", ret);
+
+		g_free(config_id);
+	}
+
+	return ret;
+}
+
 EXPORT_API int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_data)
 {
 	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);

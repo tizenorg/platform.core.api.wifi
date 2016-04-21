@@ -458,6 +458,34 @@ int wifi_load_configurations(wifi_dbus *handle, const gchar *config_id, gchar **
 	return WIFI_ERROR_NONE;
 }
 
+int wifi_remove_configurations(wifi_dbus *handle, const gchar *config_id)
+{
+	wifi_error_e ret = WIFI_ERROR_NONE;
+	GError *error = NULL;
+	GVariant *result = NULL;
+
+	result = g_dbus_connection_call_sync(handle->dbus_conn,
+					     NETCONFIG_SERVICE,
+					     NETCONFIG_WIFI_PATH,
+					     NETCONFIG_IWIFI,
+					     "RemoveConfiguration",
+					     g_variant_new("(s)", config_id),
+					     NULL, G_DBUS_CALL_FLAGS_NONE,
+					     DBUS_REPLY_TIMEOUT, handle->ca,
+					     &error);
+
+	if (error) {
+		WIFI_LOG(WIFI_ERROR, "Fail to RemoveConfiguration [%d: %s]", error->code, error->message);
+		ret = _wifi_error_to_enum(error->message);
+		g_error_free(error);
+	}
+
+	if (result != NULL)
+		g_variant_unref(result);
+
+	return ret;
+}
+
 //LCOV_EXCL_START
 int wifi_save_eap_configurations(wifi_dbus *handle, const gchar *name, const gchar *passphrase, wifi_security_type_e security_type, const gchar *proxy_address, struct _wifi_eap_config *eap_config, gboolean is_hidden)
 {

@@ -1729,6 +1729,25 @@ int wifi_config_destroy(wifi_config_h config);
 int wifi_config_save_configuration(wifi_config_h config);
 
 /**
+ * @brief Removes Wi-Fi configuration of access point.
+ * @since_tizen 3.0
+ * @privlevel public
+ * @privilege %http://tizen.org/privilege/network.profile
+ *
+ * @param[in] config	The access point configuration handle
+ *
+ * @return 0 on success, otherwise negative error value
+ * @retval #WIFI_ERROR_NONE					Successful
+ * @retval #WIFI_ERROR_INVALID_OPERATION	Invalid operation
+ * @retval #WIFI_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval #WIFI_ERROR_PERMISSION_DENIED	Permission denied
+ * @retval #WIFI_ERROR_NOT_SUPPORTED		Not supported
+ * @see wifi_config_create()
+ * @see wifi_config_foreach_configuration()
+ */
+int wifi_config_remove(wifi_config_h config);
+
+/**
  * @brief Gets the result of access point configurations repeatedly.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
  * @privlevel public
