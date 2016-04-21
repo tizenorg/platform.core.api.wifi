@@ -427,6 +427,48 @@ static bool __test_found_eap_ap_callback(wifi_ap_h ap, void *user_data)
 
 		printf("name : %s, is password set : %s\n", inputed_name, is_pass_set ? "TRUE" : "FALSE");
 
+		printf("Input certificate file:\n");
+		rv = scanf("%99s", input_str1);
+
+		rv = wifi_ap_set_eap_ca_cert_file(ap, input_str1);
+		if (rv != WIFI_ERROR_NONE) {
+			printf("Fail to set eap certificatefile : %s\n", __test_convert_error_to_string(rv));
+			g_free(ap_name);
+			return false;
+		}
+
+		int input_int;
+		printf("Input EAP type:\n");
+		printf("0 -> WIFI_EAP_TYPE_PEAP\n");
+		printf("1 -> WIFI_EAP_TYPE_TLS\n");
+		printf("2 -> WIFI_EAP_TYPE_TTLS\n");
+		printf("3 -> WIFI_EAP_TYPE_SIM\n");
+		printf("4 -> WIFI_EAP_TYPE_AKA\n");
+		rv = scanf("%d", &input_int);
+
+		rv = wifi_ap_set_eap_type(ap, input_int);
+		if (rv != WIFI_ERROR_NONE) {
+			printf("Fail to set eap type : %s\n", __test_convert_error_to_string(rv));
+			g_free(ap_name);
+			return false;
+		}
+
+		printf("Input EAP authentication type:\n");
+		printf("0 -> WIFI_EAP_AUTH_TYPE_NONE\n");
+		printf("1 -> WIFI_EAP_AUTH_TYPE_PAP\n");
+		printf("2 -> WIFI_EAP_AUTH_TYPE_MSCHAP\n");
+		printf("3 -> WIFI_EAP_AUTH_TYPE_MSCHAPV2\n");
+		printf("4 -> WIFI_EAP_AUTH_TYPE_GTC\n");
+		printf("5 -> WIFI_EAP_AUTH_TYPE_MD5\n");
+		rv = scanf("%d", &input_int);
+
+		rv = wifi_ap_set_eap_auth_type(ap, input_int);
+		if (rv != WIFI_ERROR_NONE) {
+			printf("Fail to set eap auth type : %s\n", __test_convert_error_to_string(rv));
+			g_free(ap_name);
+			return false;
+		}
+
 		rv = wifi_connect(ap, __test_connected_callback, NULL);
 		if (rv != WIFI_ERROR_NONE)
 			printf("Fail to connection request [%s] : %s\n", ap_name, __test_convert_error_to_string(rv));
