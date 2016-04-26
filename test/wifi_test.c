@@ -910,7 +910,7 @@ static bool _test_config_list_cb(const wifi_config_h config, void *user_data)
 	return true;
 }
 
-struct _wifi_conf{
+struct _wifi_conf {
 	char name[33];
 	int type;
 };
@@ -924,7 +924,7 @@ static bool _test_config_list_cb_for_remove(const wifi_config_h config, void *us
 	wifi_config_get_name(config, &name);
 	wifi_config_get_security_type(config, &security_type);
 
-	if(strncmp(name, c->name, sizeof(c->name)) == 0 && security_type == c->type) {
+	if (strncmp(name, c->name, sizeof(c->name)) == 0 && security_type == c->type) {
 		int rv = wifi_config_remove(config);
 		if (rv != WIFI_ERROR_NONE)
 			printf("Fail to remove configurations [%s]\n", __test_convert_error_to_string(rv));
