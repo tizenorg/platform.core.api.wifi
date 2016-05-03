@@ -250,7 +250,7 @@ typedef void* wifi_ap_h;
 
 /**
  * @brief The Wi-Fi access point configuration handle
- * @since_tizen 2.4
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  */
 typedef void *wifi_config_h;
 
@@ -384,7 +384,7 @@ typedef void(*wifi_rssi_level_changed_cb)(wifi_rssi_level_e rssi_level, void *us
 
 /**
  * @brief Called when you get the found access point configurations repeatedly.
- * @since_tizen 2.4
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks @a config is valid only in this function. In order to use @a config outside this function, you must copy the config with wifi_config_clone().
  *
  * @param[in]  config		The access point configuration handle
@@ -1657,7 +1657,7 @@ int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type);
 
 /**
  * @brief Gets access point configuration handle.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a config using wifi_config_destroy().
  *
  * @param[in] name				The access point name
@@ -1678,7 +1678,7 @@ int wifi_config_create(const char *name, const char *passphrase, wifi_security_t
 
 /**
  * @brief Clones the access point configuration handle.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a cloned_config using wifi_config_destroy().
  *
  * @param[in] origin				The origin access point configuration handle
@@ -1696,7 +1696,7 @@ int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config);
 
 /**
  * @brief Destroys the access point configuration handle.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
  * @param[in] config	The access point configuration handle
  *
@@ -1712,7 +1712,7 @@ int wifi_config_destroy(wifi_config_h config);
 
 /**
  * @brief Saves Wi-Fi configuration of access point.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -1749,7 +1749,7 @@ int wifi_config_remove(wifi_config_h config);
 
 /**
  * @brief Gets the result of access point configurations repeatedly.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -1770,7 +1770,7 @@ int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_d
 
 /**
  * @brief Gets the name of access point from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a name using free().
  *
  * @param[in] config	The access point configuration handle
@@ -1787,7 +1787,7 @@ int wifi_config_get_name(wifi_config_h config, char **name);
 
 /**
  * @brief Gets the security type of access point from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
  * @param[in] config			The access point configuration handle
  * @param[out] security_type	The security type of access point
@@ -1802,7 +1802,7 @@ int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *se
 
 /**
  * @brief Sets access point proxy address configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -1822,7 +1822,7 @@ int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e ad
 
 /**
  * @brief Gets the proxy address of access point from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a proxy_address using free().
  *
  * @param[in] config			The access point configuration handle
@@ -1840,7 +1840,7 @@ int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *a
 
 /**
  * @brief Sets the hidden property of access point from the configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -1858,7 +1858,7 @@ int wifi_config_set_hidden_ap_property(wifi_config_h config, bool is_hidden);
 
 /**
  * @brief Gets the hidden property of access point from the configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
  * @param[in] config		The access point configuration handle
  * @param[out] is_hidden	The hidden property of access point
@@ -1873,7 +1873,7 @@ int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *is_hidden);
 
 /**
  * @brief Gets access point anonymous identity from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a anonymous_identity using free().
  *
  * @param[in] config				The access point configuration handle
@@ -1887,7 +1887,7 @@ int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymou
 
 /**
  * @brief Sets access point anonymous identity to configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -1903,7 +1903,7 @@ int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* ano
 
 /**
  * @brief Gets access point cacert file from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a ca_cert using free().
  * @remarks The mediastorage privilege http://tizen.org/privilege/mediastorage is needed \n
  * 			 if @a image_path is relevant to media storage.\n
@@ -1921,7 +1921,7 @@ int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert);
 
 /**
  * @brief Sets access point cacert file to configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  * @remarks The mediastorage privilege http://tizen.org/privilege/mediastorage is needed \n
@@ -1941,7 +1941,7 @@ int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert);
 
 /**
  * @brief Gets access point client cert file from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a client_crt using free().
  *
  * @param[in] config		The access point configuration handle
@@ -1955,7 +1955,7 @@ int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cer
 
 /**
  * @brief Sets access point client cert file to configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -1972,7 +1972,7 @@ int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* priva
 
 /**
  * @brief Gets access point identity from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a identity using free().
  *
  * @param[in] config		The access point configuration handle
@@ -1986,7 +1986,7 @@ int wifi_config_get_eap_identity(wifi_config_h config, char** identity);
 
 /**
  * @brief Sets access point identity to configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -2002,7 +2002,7 @@ int wifi_config_set_eap_identity(wifi_config_h config, const char* identity);
 
 /**
  * @brief Gets access point eap type from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
  * @param[in] config		The access point configuration handle
  * @param[out] eap_type	The eap type of access point
@@ -2015,7 +2015,7 @@ int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type);
 
 /**
  * @brief Sets access point eap type to configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -2031,7 +2031,7 @@ int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type);
 
 /**
  * @brief Gets access point eap auth type from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
  * @param[in] config			The access point configuration handle
  * @param[out] eap_auth_type	The eap auth type of access point
@@ -2044,7 +2044,7 @@ int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* ea
 
 /**
  * @brief Sets access point eap auth type to configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
@@ -2060,7 +2060,7 @@ int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap
 
 /**
  * @brief Gets access point subject match from configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a subject_match using free().
  *
  * @param[in] config			The access point configuration handle
@@ -2074,7 +2074,7 @@ int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match
 
 /**
  * @brief Sets access point subject match to configuration.
- * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/network.profile
  *
