@@ -413,7 +413,7 @@ typedef bool (*wifi_config_list_cb)(const wifi_config_h config, void *user_data)
  * @return @c 0 on success, otherwise negative error value
  * @retval #WIFI_ERROR_NONE  Successful
  * @retval #WIFI_ERROR_INVALID_OPERATION  Invalid operation
- * @retval #WIFI_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_ERROR_OPERATION_FAILED  Already initialized
  * @retval #WIFI_ERROR_PERMISSION_DENIED Permission Denied
  * @retval #WIFI_ERROR_NOT_SUPPORTED	Not supported
  */
