@@ -1263,7 +1263,9 @@ int _wifi_update_ap_info(net_profile_info_t *ap_info)
 	if (rv == NET_ERR_ACCESS_DENIED) {
 		WIFI_LOG(WIFI_ERROR, "Access denied"); //LCOV_EXCL_LINE
 		return WIFI_ERROR_PERMISSION_DENIED; //LCOV_EXCL_LINE
-	} else if (rv != NET_ERR_NONE)
+	} else if (rv == NET_ERR_SECURITY_RESTRICTED)
+		return WIFI_ERROR_SECURITY_RESTRICTED; //LCOV_EXCL_LINE
+	else if (rv != NET_ERR_NONE)
 		return WIFI_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 
 	return WIFI_ERROR_NONE;
