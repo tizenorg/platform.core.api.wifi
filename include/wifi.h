@@ -41,7 +41,7 @@ typedef enum
     WIFI_ERROR_NONE = TIZEN_ERROR_NONE, 						/**< Successful */
     WIFI_ERROR_INVALID_PARAMETER = TIZEN_ERROR_INVALID_PARAMETER, 			/**< Invalid parameter */
     WIFI_ERROR_OUT_OF_MEMORY = TIZEN_ERROR_OUT_OF_MEMORY, 				/**< Out of memory error */
-    WIFI_ERROR_INVALID_OPERATION = TIZEN_ERROR_INVALID_OPERATION, 			/**< Invalid operation */
+    WIFI_ERROR_INVALID_OPERATION = TIZEN_ERROR_INVALID_OPERATION, 			/**< Function not implemented or Invalid operation (e.g., already initialized)*/
     WIFI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED = TIZEN_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED, /**< Address family not supported */
     WIFI_ERROR_OPERATION_FAILED = TIZEN_ERROR_WIFI|0x0301, 				/**< Operation failed */
     WIFI_ERROR_NO_CONNECTION = TIZEN_ERROR_WIFI|0x0302, 				/**< There is no connected AP */
