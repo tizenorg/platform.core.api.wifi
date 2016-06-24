@@ -550,6 +550,29 @@ EXPORT_API int wifi_unset_rssi_level_changed_cb(void)
 	return WIFI_ERROR_NONE;
 }
 
+EXPORT_API int wifi_connect_by_wps_pbc_without_ssid(wifi_connected_cb callback,
+				void* user_data)
+{
+#if defined TIZEN_TV
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	WIFI_LOG(WIFI_INFO, "[App-->TizenMW] WiFi Connect by WPS_PBC without SSID\n");
+
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "[App<--TizenMW] Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	if (callback == NULL) {
+		WIFI_LOG(WIFI_ERROR, "[App<--TizenMW] Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	return _wifi_libnet_connect_with_wps_pbc_without_ssid(callback, user_data);
+#else
+	return WIFI_ERROR_NOT_SUPPORTED;
+#endif
+}
+
 //LCOV_EXCL_START
 EXPORT_API int wifi_tdls_disconnect(const char* peer_mac_addr)
 {
