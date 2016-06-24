@@ -189,6 +189,124 @@ wifi_connection_state_e _wifi_convert_to_ap_state(net_state_type_t state)
 	return ap_state;
 }
 
+wifi_disconnect_reason_e _wifi_convert_to_ap_disconnect_reason(int reason)
+{
+	wifi_disconnect_reason_e dis_reason;
+
+	switch (reason) {
+	case WIFI_REASON_UNSPECIFIED:
+		dis_reason = WIFI_REASON_UNSPECIFIED;
+		break;
+	case WIFI_REASON_PREV_AUTH_NOT_VALID:
+		dis_reason = WIFI_REASON_PREV_AUTH_NOT_VALID;
+		break;
+	case WIFI_REASON_DEAUTH_LEAVING:
+		dis_reason = WIFI_REASON_DEAUTH_LEAVING;
+		break;
+	case WIFI_REASON_DISASSOC_DUE_TO_INACTIVITY:
+		dis_reason = WIFI_REASON_DISASSOC_DUE_TO_INACTIVITY;
+		break;
+	case WIFI_REASON_DISASSOC_AP_BUSY:
+		dis_reason = WIFI_REASON_DISASSOC_AP_BUSY;
+		break;
+	case WIFI_REASON_CLASS2_FRAME_FROM_NONAUTH_STA:
+		dis_reason = WIFI_REASON_CLASS2_FRAME_FROM_NONAUTH_STA;
+		break;
+	case WIFI_REASON_CLASS3_FRAME_FROM_NONASSOC_STA:
+		dis_reason = WIFI_REASON_CLASS3_FRAME_FROM_NONASSOC_STA;
+		break;
+	case WIFI_REASON_DISASSOC_STA_HAS_LEFT:
+		dis_reason = WIFI_REASON_DISASSOC_STA_HAS_LEFT;
+		break;
+	case WIFI_REASON_STA_REQ_ASSOC_WITHOUT_AUTH:
+		dis_reason = WIFI_REASON_STA_REQ_ASSOC_WITHOUT_AUTH;
+		break;
+	case WIFI_REASON_PWR_CAPABILITY_NOT_VALID:
+		dis_reason = WIFI_REASON_PWR_CAPABILITY_NOT_VALID;
+		break;
+	case WIFI_REASON_SUPPORTED_CHANNEL_NOT_VALID:
+		dis_reason = WIFI_REASON_SUPPORTED_CHANNEL_NOT_VALID;
+		break;
+	case WIFI_REASON_INVALID_IE:
+		dis_reason = WIFI_REASON_INVALID_IE;
+		break;
+	case WIFI_REASON_MICHAEL_MIC_FAILURE:
+		dis_reason = WIFI_REASON_MICHAEL_MIC_FAILURE;
+		break;
+	case WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT:
+		dis_reason = WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT;
+		break;
+	case WIFI_REASON_GROUP_KEY_UPDATE_TIMEOUT:
+		dis_reason = WIFI_REASON_GROUP_KEY_UPDATE_TIMEOUT;
+		break;
+	case WIFI_REASON_IE_IN_4WAY_DIFFERS:
+		dis_reason = WIFI_REASON_IE_IN_4WAY_DIFFERS;
+		break;
+	case WIFI_REASON_GROUP_CIPHER_NOT_VALID:
+		dis_reason = WIFI_REASON_GROUP_CIPHER_NOT_VALID;
+		break;
+	case WIFI_REASON_PAIRWISE_CIPHER_NOT_VALID:
+		dis_reason = WIFI_REASON_PAIRWISE_CIPHER_NOT_VALID;
+		break;
+	case WIFI_REASON_AKMP_NOT_VALID:
+		dis_reason = WIFI_REASON_AKMP_NOT_VALID;
+		break;
+	case WIFI_REASON_UNSUPPORTED_RSN_IE_VERSION:
+		dis_reason = WIFI_REASON_UNSUPPORTED_RSN_IE_VERSION;
+		break;
+	case WIFI_REASON_INVALID_RSN_IE_CAPAB:
+		dis_reason = WIFI_REASON_INVALID_RSN_IE_CAPAB;
+		break;
+	case WIFI_REASON_IEEE_802_1X_AUTH_FAILED:
+		dis_reason = WIFI_REASON_IEEE_802_1X_AUTH_FAILED;
+		break;
+	case WIFI_REASON_CIPHER_SUITE_REJECTED:
+		dis_reason = WIFI_REASON_CIPHER_SUITE_REJECTED;
+		break;
+	case WIFI_REASON_TDLS_TEARDOWN_UNREACHABLE:
+		dis_reason = WIFI_REASON_TDLS_TEARDOWN_UNREACHABLE;
+		break;
+	case WIFI_REASON_TDLS_TEARDOWN_UNSPECIFIED:
+		dis_reason = WIFI_REASON_TDLS_TEARDOWN_UNSPECIFIED;
+		break;
+	case WIFI_REASON_DISASSOC_LOW_ACK:
+		dis_reason = WIFI_REASON_DISASSOC_LOW_ACK;
+		break;
+	case WIFI_REASON_MESH_PEERING_CANCELLED:
+		dis_reason = WIFI_REASON_MESH_PEERING_CANCELLED;
+		break;
+	case WIFI_REASON_MESH_MAX_PEERS:
+		dis_reason = WIFI_REASON_MESH_MAX_PEERS;
+		break;
+	case WIFI_REASON_MESH_CONFIG_POLICY_VIOLATION:
+		dis_reason = WIFI_REASON_MESH_CONFIG_POLICY_VIOLATION;
+		break;
+	case WIFI_REASON_MESH_CLOSE_RCVD:
+		dis_reason = WIFI_REASON_MESH_CLOSE_RCVD;
+		break;
+	case WIFI_REASON_MESH_MAX_RETRIES:
+		dis_reason = WIFI_REASON_MESH_MAX_RETRIES;
+		break;
+	case WIFI_REASON_MESH_CONFIRM_TIMEOUT:
+		dis_reason = WIFI_REASON_MESH_CONFIRM_TIMEOUT;
+		break;
+	case WIFI_REASON_MESH_INVALID_GTK:
+		dis_reason = WIFI_REASON_MESH_INVALID_GTK;
+		break;
+	case WIFI_REASON_MESH_INCONSISTENT_PARAMS:
+		dis_reason = WIFI_REASON_MESH_INCONSISTENT_PARAMS;
+		break;
+	case WIFI_REASON_MESH_INVALID_SECURITY_CAP:
+		dis_reason = WIFI_REASON_MESH_INVALID_SECURITY_CAP;
+		break;
+	default:
+		dis_reason = -1;
+		break;
+	}
+
+	return dis_reason;
+}
+
 /* Wi-Fi AP ******************************************************************/
 EXPORT_API int wifi_ap_create(const char* essid, wifi_ap_h* ap)
 {
@@ -1641,3 +1759,36 @@ EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type
 
 	return WIFI_ERROR_NONE;
 }
+
+EXPORT_API int wifi_ap_get_disconnect_reason(wifi_ap_h ap, wifi_disconnect_reason_e *disconnect_reason)
+{
+
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	int rv = NET_ERR_NONE;
+
+	if (_wifi_libnet_check_ap_validity(ap) == false || disconnect_reason == NULL) {
+		WIFI_LOG(WIFI_ERROR, "[App<--TizenMW] Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	net_profile_info_t *profile_info = ap;
+	net_profile_info_t ap_info_local;
+
+	rv = net_get_profile_info(profile_info->ProfileName, &ap_info_local);
+	if (rv == NET_ERR_ACCESS_DENIED) {
+		WIFI_LOG(WIFI_ERROR, "Access denied");
+		return WIFI_ERROR_PERMISSION_DENIED;
+	} else if (rv != NET_ERR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to Get profile_info");
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+
+	*disconnect_reason = _wifi_convert_to_ap_disconnect_reason(
+				ap_info_local.ProfileInfo.Wlan.disconnect_reason);
+
+	WIFI_LOG(WIFI_INFO, "[App<--TizenMW]disconnect_reason %d\n",*disconnect_reason);
+
+	return WIFI_ERROR_NONE;
+}
+
