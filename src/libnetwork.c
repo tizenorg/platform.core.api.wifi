@@ -22,6 +22,11 @@
 #include "wifi_dbus_private.h"
 #include "net_wifi_private.h"
 
+#if defined TIZEN_TV
+bool is_disconnect_wps_pbc = false;
+bool is_disconnect_wps_pin = false;
+#endif
+
 static __thread bool is_init = false;
 static __thread GSList *ap_handle_list = NULL;
 
@@ -656,6 +661,29 @@ static void __libnet_evt_cb(net_event_info_t *event_cb, void *user_data)
 			else
 				__libnet_state_changed_cb(event_cb->ProfileName, NULL,
 						WIFI_CONNECTION_STATE_DISCONNECTED);
+#if defined TIZEN_TV
+			WIFI_LOG(WIFI_INFO, "Connection close succeeded!\n");
+			/* Checking if disconnection request was sent when WPS PBC connection
+			 * was requested, if true then start WPS PBC connection request */
+			if(is_disconnect_wps_pbc) {
+				net_wifi_wps_info_t wps_info;
+				memset(&wps_info, 0, sizeof(net_wifi_wps_info_t));
+				wps_info.type = WIFI_WPS_PBC;
+				if (net_wifi_enroll_wps_without_ssid(&wps_info) != NET_ERR_NONE)
+					__libnet_connected_cb(WIFI_ERROR_OPERATION_FAILED);
+				is_disconnect_wps_pbc = false;
+			}
+			/* Checking if disconnection request was sent when WPS PIN connection
+			 * was requested, if true then start WPS PBC connection request */
+			else if (is_disconnect_wps_pin) {
+				net_wifi_wps_info_t wps_info;
+				memset(&wps_info, 0, sizeof(net_wifi_wps_info_t));
+				wps_info.type = WIFI_WPS_PIN;
+				if (net_wifi_enroll_wps_without_ssid(&wps_info) != NET_ERR_NONE)
+					__libnet_connected_cb(WIFI_ERROR_OPERATION_FAILED);
+				is_disconnect_wps_pin = false;
+			}
+#endif
 			return;
 		default:
 			break;
@@ -1387,6 +1415,42 @@ bool __libnet_check_feature_supported(const char *key, wifi_supported_feature_e 
 	}
 	return wifi_feature_supported[feature];
 }
+
+#if defined TIZEN_TV
+int _wifi_libnet_connect_with_wps_pbc_without_ssid(wifi_connected_cb callback, void *user_data)
+{
+	int i = 0;
+	net_wifi_wps_info_t wps_info;
+
+	memset(&wps_info, 0, sizeof(net_wifi_wps_info_t));
+
+	wps_info.type = WIFI_WPS_PBC;
+
+	WIFI_LOG(WIFI_INFO, "start\n");
+
+	/* Disconnect if already connected to an AP */
+	__libnet_update_profile_iterator();
+
+	for (;i < profile_iterator.count;i++) {
+		if (profile_iterator.profiles[i].ProfileState == NET_STATE_TYPE_ASSOCIATION ||
+				profile_iterator.profiles[i].ProfileState == NET_STATE_TYPE_CONFIGURATION ||
+				profile_iterator.profiles[i].ProfileState == NET_STATE_TYPE_READY ||
+				profile_iterator.profiles[i].ProfileState == NET_STATE_TYPE_ONLINE) {
+			if (net_close_connection(profile_iterator.profiles[i].ProfileName) != NET_ERR_NONE)
+				return WIFI_ERROR_OPERATION_FAILED;
+			is_disconnect_wps_pbc = true;
+		}
+	}
+
+	if(!is_disconnect_wps_pbc)
+		if (net_wifi_enroll_wps_without_ssid(&wps_info) != NET_ERR_NONE)
+			return WIFI_ERROR_OPERATION_FAILED;
+
+	__libnet_set_connected_cb(callback, user_data);
+
+	return WIFI_ERROR_NONE;
+}
+#endif
 
 int _wifi_check_feature_supported(const char *feature_name, ...)
 {
