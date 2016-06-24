@@ -1641,3 +1641,147 @@ EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type
 
 	return WIFI_ERROR_NONE;
 }
+
+EXPORT_API int wifi_ap_get_dns_config_type(wifi_ap_h ap,
+		wifi_address_family_e address_family,
+		wifi_dns_config_type_e* type)
+{
+#if defined TIZEN_TV
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	net_dns_config_type_t profileType;
+
+	if (_wifi_libnet_check_ap_validity(ap) == false ||
+		(address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
+		address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
+		WIFI_LOG(WIFI_ERROR, "[App<--TizenMW]Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	net_profile_info_t *profile_info = ap;
+
+	if(address_family == WIFI_ADDRESS_FAMILY_IPV4) {
+		profileType = profile_info->ProfileInfo.Wlan.net_info.
+			DnsConfigType;
+	} else
+		profileType = profile_info->ProfileInfo.Wlan.net_info.
+			DnsConfigType6;
+
+	switch (profileType) {
+		case NET_DNS_CONFIG_TYPE_STATIC:
+			*type = WIFI_DNS_CONFIG_TYPE_STATIC;
+			break;
+		case NET_DNS_CONFIG_TYPE_DYNAMIC:
+			*type = WIFI_DNS_CONFIG_TYPE_DYNAMIC;
+			break;
+		default:
+			WIFI_LOG(WIFI_ERROR, "[App<--TizenMW] Operation Failed\n");
+			return WIFI_ERROR_OPERATION_FAILED;
+	}
+
+	WIFI_LOG(WIFI_INFO, "[App<--TizenMW] WiFi DNS Config Type[%d]\n",*type);
+	return WIFI_ERROR_NONE;
+#else
+	return WIFI_ERROR_NOT_SUPPORTED;
+#endif
+}
+
+EXPORT_API int wifi_ap_set_dns_config_type(wifi_ap_h ap,
+					   wifi_address_family_e address_family,
+					   wifi_dns_config_type_e type)
+{
+#if defined TIZEN_TV
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	net_dns_config_type_t *profileType = NULL;
+	net_dns_config_type_t *profileType6 = NULL;
+
+	if (_wifi_libnet_check_ap_validity(ap) == false ||
+	    (address_family != WIFI_ADDRESS_FAMILY_IPV4 &&
+	     address_family != WIFI_ADDRESS_FAMILY_IPV6)) {
+		WIFI_LOG(WIFI_ERROR, "[App<--TizenMW]Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	WIFI_LOG(WIFI_INFO, "[App-->TizenMW] address_family: %d, type: %d\n",
+		 address_family, type);
+
+	net_profile_info_t *profile_info = ap;
+
+	/* Currently Connman doesn't support mix DNS Config Type. So both
+	 * IPv4 and IPv6 Network should have same DNS Config Type */
+	profileType = &profile_info->ProfileInfo.Wlan.net_info.DnsConfigType;
+	profileType6 = &profile_info->ProfileInfo.Wlan.net_info.DnsConfigType6;
+
+	switch (type) {
+	case WIFI_DNS_CONFIG_TYPE_STATIC:
+		*profileType = NET_DNS_CONFIG_TYPE_STATIC;
+		*profileType6 = NET_DNS_CONFIG_TYPE_STATIC;
+		break;
+	case WIFI_DNS_CONFIG_TYPE_DYNAMIC:
+		*profileType = NET_DNS_CONFIG_TYPE_DYNAMIC;
+		*profileType6 = NET_DNS_CONFIG_TYPE_DYNAMIC;
+		break;
+	default:
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName)
+	    == false)
+		return WIFI_ERROR_NONE;
+
+	return _wifi_update_ap_info(profile_info);
+#else
+	return WIFI_ERROR_NOT_SUPPORTED;
+#endif
+}
+
+EXPORT_API int wifi_ap_get_prefix_length(wifi_ap_h ap, unsigned char* prefix_len
+					 )
+{
+#if defined TIZEN_TV
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	if (_wifi_libnet_check_ap_validity(ap) == false ||
+			prefix_len == NULL) {
+		WIFI_LOG(WIFI_ERROR, "[App<--TizenMW]Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	WIFI_LOG(WIFI_ERROR, "prefix_len: %d\n", prefix_len);
+
+	net_profile_info_t *profile_info = ap;
+
+	*prefix_len =  profile_info->ProfileInfo.Wlan.net_info.PrefixLen6;
+
+	return WIFI_ERROR_NONE;
+#else
+	return WIFI_ERROR_NOT_SUPPORTED;
+#endif
+}
+
+EXPORT_API int wifi_ap_set_prefix_length(wifi_ap_h ap, unsigned char prefix_len)
+{
+#if defined TIZEN_TV
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	if (_wifi_libnet_check_ap_validity(ap) == false) {
+		WIFI_LOG(WIFI_ERROR, "[App<--TizenMW]Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	WIFI_LOG(WIFI_ERROR, "[App-->TizenMW] Prefix_len: %d\n", prefix_len);
+
+	net_profile_info_t *profile_info = ap;
+
+	profile_info->ProfileInfo.Wlan.net_info.PrefixLen6 = prefix_len;
+
+	if (_wifi_libnet_check_profile_name_validity(profile_info->ProfileName)
+			== false)
+		return WIFI_ERROR_NONE;
+
+	return _wifi_update_ap_info(profile_info);
+#else
+	return WIFI_ERROR_NOT_SUPPORTED;
+#endif
+}
