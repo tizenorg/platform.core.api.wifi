@@ -1451,6 +1451,47 @@ int _wifi_libnet_connect_with_wps_pbc_without_ssid(wifi_connected_cb callback, v
 
 	return WIFI_ERROR_NONE;
 }
+
+int _wifi_libnet_connect_with_wps_pin_without_ssid(const char *pin,
+		wifi_connected_cb callback, void* user_data)
+{
+	int i = 0;
+	net_wifi_wps_info_t wps_info;
+
+	memset(&wps_info, 0, sizeof(net_wifi_wps_info_t));
+
+	wps_info.type = WIFI_WPS_PIN;
+	g_strlcpy(wps_info.pin, pin, NET_WLAN_MAX_WPSPIN_LEN + 1);
+
+	WIFI_LOG(WIFI_INFO, "pin: %s\n", pin);
+
+	/* Disconnect if already connected to an AP */
+	__libnet_update_profile_iterator();
+
+	for(; i < profile_iterator.count;i++) {
+		if (profile_iterator.profiles[i].ProfileState ==
+				NET_STATE_TYPE_ASSOCIATION ||
+				profile_iterator.profiles[i].ProfileState ==
+				NET_STATE_TYPE_CONFIGURATION ||
+				profile_iterator.profiles[i].ProfileState ==
+				NET_STATE_TYPE_READY ||
+				profile_iterator.profiles[i].ProfileState ==
+				NET_STATE_TYPE_ONLINE) {
+			if (net_close_connection(profile_iterator.profiles[i].ProfileName) !=
+					NET_ERR_NONE)
+				return WIFI_ERROR_OPERATION_FAILED;
+			is_disconnect_wps_pin = true;
+		}
+	}
+
+	if (!is_disconnect_wps_pin)
+		if(net_wifi_enroll_wps_without_ssid(&wps_info) != NET_ERR_NONE)
+			return WIFI_ERROR_OPERATION_FAILED;
+
+	__libnet_set_connected_cb(callback,user_data);
+
+	return WIFI_ERROR_NONE;
+}
 #endif
 
 int _wifi_check_feature_supported(const char *feature_name, ...)
