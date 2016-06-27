@@ -600,6 +600,29 @@ EXPORT_API int wifi_connect_by_wps_pin_without_ssid(const char *pin,
 	return _wifi_libnet_connect_with_wps_pin_without_ssid(pin,callback,user_data);
 }
 
+EXPORT_API int wifi_cancel_wps(void)
+{
+
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+	WIFI_LOG(WIFI_INFO, "[App-->TizenMW] cancel wps request\n");
+
+	int rv;
+
+	if (_wifi_is_init() == false) {
+		WIFI_LOG(WIFI_ERROR, "[App<--TizenMW] Not initialized\n");
+		return WIFI_ERROR_INVALID_OPERATION;
+	}
+
+	rv = _wifi_libnet_cancel_wps();
+
+	if (rv != WIFI_ERROR_NONE)
+		WIFI_LOG(WIFI_ERROR,
+			"[App<--TizenMW] Error!! WPS Cancel Request failed. rv[%d]\n",
+			rv);
+
+	return rv;
+}
+
 //LCOV_EXCL_START
 EXPORT_API int wifi_tdls_disconnect(const char* peer_mac_addr)
 {
