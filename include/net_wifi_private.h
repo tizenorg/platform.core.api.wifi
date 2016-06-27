@@ -129,8 +129,13 @@ int _wifi_libnet_check_profile_privilege();
 
 bool __libnet_check_feature_supported(const char *key, wifi_supported_feature_e feature);
 int _wifi_check_feature_supported(const char *feature_name, ...);
+#if defined TIZEN_TV
+int _wifi_libnet_cancel_wps(void);
 int _wifi_libnet_connect_with_wps_pbc_without_ssid(wifi_connected_cb callback,
 			void *user_data);
+int _wifi_libnet_connect_with_wps_pin_without_ssid(const char *pin,
+				wifi_connected_cb callback, void* user_data);
+#endif
 
 int        _wifi_dbus_init(void);
 int        _wifi_dbus_deinit(void);
