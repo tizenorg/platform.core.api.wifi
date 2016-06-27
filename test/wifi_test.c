@@ -1836,7 +1836,6 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 	case 'r':
 		rv = test_wifi_tdls_get_connected_peer();
 		break;
-
 	default:
 		break;
 	}
