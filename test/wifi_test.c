@@ -30,6 +30,10 @@
 #include <wifi.h>
 #include <tizen_error.h>
 
+#if defined TIZEN_TV
+#include "wifi_extension.h"
+#endif
+
 #define LOG_RED "\033[0;31m"
 #define LOG_GREEN "\033[0;32m"
 #define LOG_BROWN "\033[0;33m"
@@ -1338,6 +1342,44 @@ int test_connect_wps(void)
 	return 1;
 }
 
+#if defined TIZEN_TV
+static void __test_wps_pbc_connected_callback(wifi_error_e result,
+					      void* user_data)
+{
+	if (result == WIFI_ERROR_NONE)
+		printf("Wi-Fi WPS PBC Connection Succeeded\n");
+	else
+		printf("Wi-Fi WPS PBC Connection Failed! error : %s\n",
+					__test_convert_error_to_string(result));
+}
+
+int test_connect_wps_without_ssid(void)
+{
+	int rv;
+	rv = wifi_connect_by_wps_pbc_without_ssid(
+					__test_wps_pbc_connected_callback,
+					NULL);
+	if (rv != WIFI_ERROR_NONE)
+		printf("Fail to WPS connection request  : %s\n",
+		       __test_convert_error_to_string(rv));
+	else
+		printf("Success to WPS connection request \n");
+	return 1;
+}
+
+int test_cancel_wps(void)
+{
+	int rv;
+	rv = wifi_cancel_wps();
+	if (rv != WIFI_ERROR_NONE)
+		printf("Fail to WPS cancel request  : %s\n",
+		       __test_convert_error_to_string(rv));
+	else
+		printf("Success to WPS cancel request \n");
+	return 1;
+}
+#endif
+
 int test_forget_ap(void)
 {
 	int rv = 0;
@@ -1743,6 +1785,10 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("p   - Set EAP configuration\n");
 		printf("q   - TDLS TearDown\n");
 		printf("r   - TDLS Get Connected Peer\n");
+#if defined TIZEN_TV
+		printf("s   - Connect WPS PBC without SSID\n");
+		printf("t   - Cancel WPS Request\n");
+#endif
 		printf(LOG_RED "0   - Exit \n" LOG_END);
 
 		printf("ENTER  - Show options menu.......\n");
@@ -1830,7 +1876,14 @@ gboolean test_thread(GIOChannel *source, GIOCondition condition, gpointer data)
 	case 'r':
 		rv = test_wifi_tdls_get_connected_peer();
 		break;
-
+#if defined TIZEN_TV
+	case 's':
+		rv = test_connect_wps_without_ssid();
+		break;
+	case 't':
+		rv = test_cancel_wps();
+		break;
+#endif
 	default:
 		break;
 	}

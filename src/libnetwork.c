@@ -1498,6 +1498,18 @@ int _wifi_libnet_connect_with_wps_pin_without_ssid(const char *pin,
 
 	return WIFI_ERROR_NONE;
 }
+
+int _wifi_libnet_cancel_wps(void)
+{
+	int rv;
+
+	rv = net_wifi_cancel_wps();
+
+	if (rv != NET_ERR_NONE)
+		return WIFI_ERROR_OPERATION_FAILED;
+
+	return WIFI_ERROR_NONE;
+}
 #endif
 
 int _wifi_check_feature_supported(const char *feature_name, ...)
