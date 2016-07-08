@@ -123,6 +123,9 @@ static void __test_connection_state_callback(wifi_connection_state_e state, wifi
 	case WIFI_CONNECTION_STATE_DISCONNECTED:
 		printf(", state : Disconnected");
 		break;
+	case WIFI_CONNECTION_STATE_FAILURE:
+		printf(", state : Failure");
+		break;
 	default:
 		printf(", state : Unknown");
 	}
