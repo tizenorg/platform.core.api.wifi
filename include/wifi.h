@@ -28,11 +28,12 @@ extern "C" {
  */
 
 /**
-* @addtogroup CAPI_NETWORK_WIFI_MANAGER_MODULE
+* @addtogroup CAPI_NETWORK_WIFI_MANAGEMENT_MODULE
 * @{
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_error_e instead.
  * @brief Enumeration for the Wi-Fi error type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -67,6 +68,7 @@ typedef enum
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_device_state_e instead.
  * @brief Enumeration for the state of the Wi-Fi device.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -77,6 +79,7 @@ typedef enum
 } wifi_device_state_e;
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_connection_state_e instead.
  * @brief Enumeration for the state of the Wi-Fi connection.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -90,6 +93,7 @@ typedef enum
 } wifi_connection_state_e;
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_rssi_level_e instead.
  * @brief Enumeration for the RSSI level.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -113,6 +117,7 @@ typedef enum
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ip_config_type_e instead.
  * @brief Enumeration for the Net IP configuration type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -126,6 +131,7 @@ typedef enum
 } wifi_ip_config_type_e;
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_address_family_e instead.
  * @brief Enumeration for the address type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -136,6 +142,7 @@ typedef enum
 } wifi_address_family_e;
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_proxy_type_e instead.
  * @brief Enumeration for the proxy method type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -157,6 +164,7 @@ typedef enum
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_security_type_e instead.
  * @brief Enumeration for Wi-Fi security type.
  * @details The following security modes are used in infrastructure and ad-hoc mode.
  * For now all EAP security mechanisms are provided only in infrastructure mode.
@@ -173,6 +181,7 @@ typedef enum
 } wifi_security_type_e;
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_encryption_type_e instead.
  * @brief Enumeration for Wi-Fi encryption type.
  * @details The following encryption modes are used in infrastructure and ad-hoc mode.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
@@ -197,6 +206,7 @@ typedef enum
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_eap_type_e instead.
  * @brief Enumeration for EAP type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -210,6 +220,7 @@ typedef enum
 } wifi_eap_type_e;
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_eap_auth_type_e instead.
  * @brief Enumeration for EAP phase2 authentication type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -234,6 +245,7 @@ typedef enum
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_h instead.
  * @brief The Wi-Fi access point handle.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
@@ -249,6 +261,7 @@ typedef void* wifi_ap_h;
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_h instead.
  * @brief The Wi-Fi access point configuration handle
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  */
@@ -259,11 +272,12 @@ typedef void *wifi_config_h;
 */
 
 /**
-* @addtogroup CAPI_NETWORK_WIFI_MANAGER_MODULE
+* @addtogroup CAPI_NETWORK_WIFI_MANAGEMENT_MODULE
 * @{
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_found_ap_cb instead.
  * @brief Called when you get the found access point repeatedly.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks @a ap is valid only in this function. In order to use @a ap outside this function, you must copy the ap with wifi_ap_clone().
@@ -279,6 +293,7 @@ typedef void *wifi_config_h;
 typedef bool(*wifi_found_ap_cb)(wifi_ap_h ap, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_scan_finished_cb instead.
  * @brief Called when the scan is finished.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] error_code  The error code
@@ -290,6 +305,7 @@ typedef bool(*wifi_found_ap_cb)(wifi_ap_h ap, void *user_data);
 typedef void(*wifi_scan_finished_cb)(wifi_error_e error_code, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_activated_cb instead.
  * @brief Called after wifi_activate() or wifi_activate_with_wifi_picker_tested() is completed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] result  The result
@@ -301,6 +317,7 @@ typedef void(*wifi_scan_finished_cb)(wifi_error_e error_code, void *user_data);
 typedef void(*wifi_activated_cb)(wifi_error_e result, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_deactivated_cb instead.
  * @brief Called after wifi_deactivate() is completed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] result  The result
@@ -311,6 +328,7 @@ typedef void(*wifi_activated_cb)(wifi_error_e result, void *user_data);
 typedef void(*wifi_deactivated_cb)(wifi_error_e result, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_connected_cb instead.
  * @brief Called after either wifi_connect() or wifi_connect_by_wps_pbc() or wifi_connect_by_wps_pin() are completed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] result  The result
@@ -323,6 +341,7 @@ typedef void(*wifi_deactivated_cb)(wifi_error_e result, void *user_data);
 typedef void(*wifi_connected_cb)(wifi_error_e result, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_disconnected_cb instead.
  * @brief Called after wifi_disconnect() is completed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] result  The result
@@ -343,6 +362,7 @@ typedef void(*wifi_disconnected_cb)(wifi_error_e result, void *user_data);
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_device_state_changed_cb instead.
  * @brief Called when the device state is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] state  The device state
@@ -353,6 +373,7 @@ typedef void(*wifi_disconnected_cb)(wifi_error_e result, void *user_data);
 typedef void(*wifi_device_state_changed_cb)(wifi_device_state_e state, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_connection_state_changed_cb instead.
  * @brief Called when the connection state is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] state  The connection state
@@ -364,6 +385,7 @@ typedef void(*wifi_device_state_changed_cb)(wifi_device_state_e state, void *use
 typedef void(*wifi_connection_state_changed_cb)(wifi_connection_state_e state, wifi_ap_h ap, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_rssi_level_changed_cb instead.
  * @brief Called when the RSSI of connected Wi-Fi is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] rssi_level  The level of RSSI
@@ -383,6 +405,7 @@ typedef void(*wifi_rssi_level_changed_cb)(wifi_rssi_level_e rssi_level, void *us
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_list_cb instead.
  * @brief Called when you get the found access point configurations repeatedly.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks @a config is valid only in this function. In order to use @a config outside this function, you must copy the config with wifi_config_clone().
@@ -406,6 +429,7 @@ typedef bool (*wifi_config_list_cb)(const wifi_config_h config, void *user_data)
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_initialize instead.
  * @brief Initializes Wi-Fi.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -420,6 +444,7 @@ typedef bool (*wifi_config_list_cb)(const wifi_config_h config, void *user_data)
 int wifi_initialize(void);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_deinitialize instead.
  * @brief Deinitializes Wi-Fi.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @return 0 on success, otherwise negative error value
@@ -436,11 +461,12 @@ int wifi_deinitialize(void);
 
 
 /**
-* @addtogroup CAPI_NETWORK_WIFI_MANAGER_MODULE
+* @addtogroup CAPI_NETWORK_WIFI_MANAGEMENT_MODULE
 * @{
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_activate instead.
  * @brief Activates Wi-Fi asynchronously.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -464,6 +490,7 @@ int wifi_deinitialize(void);
 int wifi_activate(wifi_activated_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_activate_with_wifi_picker_tested instead.
  * @brief Activates Wi-Fi asynchronously and displays Wi-Fi picker (popup) when Wi-Fi is not automatically connected.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -487,6 +514,7 @@ int wifi_activate(wifi_activated_cb callback, void *user_data);
 int wifi_activate_with_wifi_picker_tested(wifi_activated_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_deactivate instead.
  * @brief Deactivates Wi-Fi asynchronously.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -509,6 +537,7 @@ int wifi_activate_with_wifi_picker_tested(wifi_activated_cb callback, void *user
 int wifi_deactivate(wifi_deactivated_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_is_activated instead.
  * @brief Checks whether Wi-Fi is activated.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -525,6 +554,7 @@ int wifi_deactivate(wifi_deactivated_cb callback, void *user_data);
 int wifi_is_activated(bool* activated);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_get_mac_address instead.
  * @brief Gets the local MAC address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a mac_address using free().
@@ -538,6 +568,7 @@ int wifi_is_activated(bool* activated);
 int wifi_get_mac_address(char** mac_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_get_network_interface_name instead.
  * @brief Gets the name of the network interface.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -555,6 +586,7 @@ int wifi_get_mac_address(char** mac_address);
 int wifi_get_network_interface_name(char** name);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_scan instead.
  * @brief Starts scan asynchronously.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -575,6 +607,7 @@ int wifi_get_network_interface_name(char** name);
 int wifi_scan(wifi_scan_finished_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_scan_specific_ap instead.
  * @brief Starts specific ap scan, asynchronously.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
  * @privlevel public
@@ -596,6 +629,7 @@ int wifi_scan(wifi_scan_finished_cb callback, void *user_data);
 int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb callback, void* user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_get_connected_ap instead.
  * @brief Gets the handle of the connected access point.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -613,6 +647,7 @@ int wifi_scan_specific_ap(const char* essid, wifi_scan_finished_cb callback, voi
 int wifi_get_connected_ap(wifi_ap_h* ap);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_foreach_found_aps instead.
  * @brief Gets the result of the scan.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -630,6 +665,7 @@ int wifi_get_connected_ap(wifi_ap_h* ap);
 int wifi_foreach_found_aps(wifi_found_ap_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_foreach_found_specific_aps instead.
  * @brief Gets the result of specific ap scan.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0
  * @privlevel public
@@ -648,6 +684,7 @@ int wifi_foreach_found_aps(wifi_found_ap_cb callback, void *user_data);
 int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_connect instead.
  * @brief Connects the access point asynchronously.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -674,6 +711,7 @@ int wifi_foreach_found_specific_aps(wifi_found_ap_cb callback, void* user_data);
 int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_disconnect instead.
  * @brief Disconnects the access point asynchronously.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -700,6 +738,7 @@ int wifi_connect(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
 int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_connect_by_wps_pbc instead.
  * @brief Connects the access point with WPS PBC asynchronously.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -726,6 +765,7 @@ int wifi_disconnect(wifi_ap_h ap, wifi_disconnected_cb callback, void *user_data
 int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_connect_by_wps_pin instead.
  * @brief Connects the access point with WPS PIN asynchronously.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -752,6 +792,7 @@ int wifi_connect_by_wps_pbc(wifi_ap_h ap, wifi_connected_cb callback, void *user
 int wifi_connect_by_wps_pin(wifi_ap_h ap, const char *pin, wifi_connected_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_forget_ap instead.
  * @brief Deletes the information of stored access point and disconnects it when it connected.
  * @details If an AP is connected, then connection information will be stored.
  * This information is used when a connection to that AP is established automatically.
@@ -782,6 +823,7 @@ int wifi_forget_ap(wifi_ap_h ap);
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_get_connection_state instead.
  * @brief Gets the connection state.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -797,6 +839,7 @@ int wifi_forget_ap(wifi_ap_h ap);
 int wifi_get_connection_state(wifi_connection_state_e* connection_state);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_set_device_state_changed_cb instead.
  * @brief Registers the callback called when the device state is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] callback  The callback function to be called
@@ -810,6 +853,7 @@ int wifi_get_connection_state(wifi_connection_state_e* connection_state);
 int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_unset_device_state_changed_cb instead.
  * @brief Unregisters the callback called when the device state is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @return 0 on success, otherwise negative error value
@@ -820,6 +864,7 @@ int wifi_set_device_state_changed_cb(wifi_device_state_changed_cb callback, void
 int wifi_unset_device_state_changed_cb(void);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_set_background_scan_cb instead.
  * @brief Registers the callback called when the background scan is finished periodically.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] callback  The callback function to be called
@@ -833,6 +878,7 @@ int wifi_unset_device_state_changed_cb(void);
 int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_unset_background_scan_cb instead.
  * @brief Unregisters the callback called when the scan is finished periodically.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @return 0 on success, otherwise negative error value
@@ -843,6 +889,7 @@ int wifi_set_background_scan_cb(wifi_scan_finished_cb callback, void *user_data)
 int wifi_unset_background_scan_cb(void);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_set_connection_state_changed_cb instead.
  * @brief Registers the callback called when the connection state is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] callback  The callback function to be called
@@ -856,6 +903,7 @@ int wifi_unset_background_scan_cb(void);
 int wifi_set_connection_state_changed_cb(wifi_connection_state_changed_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_unset_connection_state_changed_cb instead.
  * @brief Unregisters the callback called when the connection state is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @return 0 on success, otherwise negative error value
@@ -866,6 +914,7 @@ int wifi_set_connection_state_changed_cb(wifi_connection_state_changed_cb callba
 int wifi_unset_connection_state_changed_cb(void);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_set_rssi_level_changed_cb instead.
  * @brief Registers callback called when the RSSI of connected Wi-Fi is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] callback  The callback function to be called
@@ -879,6 +928,7 @@ int wifi_unset_connection_state_changed_cb(void);
 int wifi_set_rssi_level_changed_cb(wifi_rssi_level_changed_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_unset_rssi_level_changed_cb instead.
  * @brief Unregisters callback called when the RSSI of connected Wi-Fi is changed.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @return 0 on success, otherwise negative error value
@@ -899,6 +949,7 @@ int wifi_unset_rssi_level_changed_cb(void);
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_create instead.
  * @brief Creates the access point handle.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a ap using wifi_ap_destroy().
@@ -915,6 +966,7 @@ int wifi_unset_rssi_level_changed_cb(void);
 int wifi_ap_create(const char* essid, wifi_ap_h* ap);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_hidden_create instead.
  * @brief Creates the hidden access point handle.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a ap using wifi_ap_destroy().
@@ -930,6 +982,7 @@ int wifi_ap_create(const char* essid, wifi_ap_h* ap);
 int wifi_ap_hidden_create(const char* essid, wifi_ap_h* ap);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_destroy instead.
  * @brief Destroys the access point handle.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -942,6 +995,7 @@ int wifi_ap_hidden_create(const char* essid, wifi_ap_h* ap);
 int wifi_ap_destroy(wifi_ap_h ap);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_clone instead.
  * @brief Clones the access point handle.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a cloned_ap using wifi_ap_destroy().
@@ -957,6 +1011,7 @@ int wifi_ap_destroy(wifi_ap_h ap);
 int wifi_ap_clone(wifi_ap_h* cloned_ap, wifi_ap_h origin);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_refresh instead.
  * @brief Refreshes the access point information.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -984,6 +1039,7 @@ int wifi_ap_refresh(wifi_ap_h ap);
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_essid instead.
  * @brief Gets ESSID (Extended Service Set Identifier).
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a essid using free().
@@ -998,6 +1054,7 @@ int wifi_ap_refresh(wifi_ap_h ap);
 int wifi_ap_get_essid(wifi_ap_h ap, char** essid);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_bssid instead.
  * @brief Gets BSSID (Basic Service Set Identifier).
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a bssid using free().
@@ -1012,6 +1069,7 @@ int wifi_ap_get_essid(wifi_ap_h ap, char** essid);
 int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_rssi instead.
  * @brief Gets the RSSI.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1025,6 +1083,7 @@ int wifi_ap_get_bssid(wifi_ap_h ap, char** bssid);
 int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_frequency instead.
  * @brief Gets the frequency band (MHz).
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1038,6 +1097,7 @@ int wifi_ap_get_rssi(wifi_ap_h ap, int* rssi);
 int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_max_speed instead.
  * @brief Gets the max speed (Mbps).
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1051,6 +1111,7 @@ int wifi_ap_get_frequency(wifi_ap_h ap, int* frequency);
 int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_is_favorite instead.
  * @brief Checks whether the access point is favorite or not.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1065,6 +1126,7 @@ int wifi_ap_get_max_speed(wifi_ap_h ap, int* max_speed);
 int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_is_passpoint instead.
  * @brief Checks whether the access point is passpoint or not.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1079,6 +1141,7 @@ int wifi_ap_is_favorite(wifi_ap_h ap, bool* favorite);
 int wifi_ap_is_passpoint(wifi_ap_h ap, bool* passpoint);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_connection_state instead.
  * @brief Gets the connection state.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1092,6 +1155,7 @@ int wifi_ap_is_passpoint(wifi_ap_h ap, bool* passpoint);
 int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_ip_config_type instead.
  * @brief Gets the config type of IP.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1107,6 +1171,7 @@ int wifi_ap_get_connection_state(wifi_ap_h ap, wifi_connection_state_e* state);
 int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e* type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_ip_config_type instead.
  * @brief Sets the config type of IP.
  * @details If you set IP config type to #WIFI_IP_CONFIG_TYPE_STATIC,
  * then IP address, Gateway and Subnet mask will be set to the initial value "0.0.0.0".
@@ -1129,6 +1194,7 @@ int wifi_ap_get_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_famil
 int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_family, wifi_ip_config_type_e type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_vap_get_ip_address instead.
  * @brief Gets the IP address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a ip_address using free().
@@ -1145,6 +1211,7 @@ int wifi_ap_set_ip_config_type(wifi_ap_h ap, wifi_address_family_e address_famil
 int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, char** ip_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_ip_address instead.
  * @brief Sets the IP address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -1165,6 +1232,7 @@ int wifi_ap_get_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, c
 int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* ip_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_subnet_mask instead.
  * @brief Gets the subnet mask.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a subnet_mask using free().
@@ -1181,6 +1249,7 @@ int wifi_ap_set_ip_address(wifi_ap_h ap, wifi_address_family_e address_family, c
 int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, char** subnet_mask);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_subnet_mask instead.
  * @brief Sets the subnet mask.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -1201,6 +1270,7 @@ int wifi_ap_get_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, 
 int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, const char* subnet_mask);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_gateway_address instead.
  * @brief Gets the gateway address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a gateway_address using free().
@@ -1217,6 +1287,7 @@ int wifi_ap_set_subnet_mask(wifi_ap_h ap, wifi_address_family_e address_family, 
 int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, char** gateway_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_gateway_address instead.
  * @brief Sets the gateway address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -1238,6 +1309,7 @@ int wifi_ap_get_gateway_address(wifi_ap_h ap, wifi_address_family_e address_fami
 int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* gateway_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_proxy_address instead.
  * @brief Gets the proxy address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks You must release @a proxy_address using free().
@@ -1254,6 +1326,7 @@ int wifi_ap_set_gateway_address(wifi_ap_h ap, wifi_address_family_e address_fami
 int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, char** proxy_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_proxy_address instead.
  * @brief Sets the proxy address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -1275,6 +1348,7 @@ int wifi_ap_get_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family
 int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family, const char* proxy_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_proxy_type instead.
  * @brief Gets the Proxy type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1288,6 +1362,7 @@ int wifi_ap_set_proxy_address(wifi_ap_h ap, wifi_address_family_e address_family
 int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_proxy_type instead.
  * @brief Sets the Proxy address.
  * @details If you set Proxy type to #WIFI_PROXY_TYPE_AUTO or #WIFI_PROXY_TYPE_MANUAL, then Proxy will be restored.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
@@ -1307,6 +1382,7 @@ int wifi_ap_get_proxy_type(wifi_ap_h ap, wifi_proxy_type_e* type);
 int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_dns_address instead.
  * @brief Gets the DNS address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks The allowance of DNS address is @c 2.You must release @a dns_address using free().
@@ -1324,6 +1400,7 @@ int wifi_ap_set_proxy_type(wifi_ap_h ap, wifi_proxy_type_e proxy_type);
 int wifi_ap_get_dns_address(wifi_ap_h ap, int order, wifi_address_family_e address_family, char** dns_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_dns_address instead.
  * @brief Sets the DNS address.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
@@ -1358,6 +1435,7 @@ int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e addre
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_security_type instead.
  * @brief Gets the Wi-Fi security mode.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1371,6 +1449,7 @@ int wifi_ap_set_dns_address(wifi_ap_h ap, int order, wifi_address_family_e addre
 int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_security_type instead.
  * @brief Sets the Wi-Fi security mode.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1384,6 +1463,7 @@ int wifi_ap_get_security_type(wifi_ap_h ap, wifi_security_type_e* type);
 int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_encryption_type instead.
  * @brief Gets the Wi-Fi encryption type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1397,6 +1477,7 @@ int wifi_ap_set_security_type(wifi_ap_h ap, wifi_security_type_e type);
 int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_encryption_type instead.
  * @brief Sets the Wi-Fi encryption type.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1410,6 +1491,7 @@ int wifi_ap_get_encryption_type(wifi_ap_h ap, wifi_encryption_type_e* type);
 int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_is_passphrase_required instead.
  * @brief Checks whether the passphrase is required or not.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This function is not valid if security type is #WIFI_SECURITY_TYPE_EAP.
@@ -1425,6 +1507,7 @@ int wifi_ap_set_encryption_type(wifi_ap_h ap, wifi_encryption_type_e type);
 int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_passphrase instead.
  * @brief Sets the passphrase.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1438,6 +1521,7 @@ int wifi_ap_is_passphrase_required(wifi_ap_h ap, bool* required);
 int wifi_ap_set_passphrase(wifi_ap_h ap, const char* passphrase);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_is_wps_supported instead.
  * @brief Checks whether the WPS(Wi-Fi Protected Setup) is supported or not.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1464,6 +1548,7 @@ int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported);
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_eap_passphrase instead.
  * @brief Sets the passphrase of EAP.
  * @details You can set one of @a user_name and @a password as @c NULL.
  * In this case, the value of a parameter which is set as @c NULL will be the previous value.
@@ -1484,6 +1569,7 @@ int wifi_ap_is_wps_supported(wifi_ap_h ap, bool* supported);
 int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* password);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_eap_passphrase instead.
  * @brief Gets the passphrase of EAP.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This function is valid only if the EAP type is #WIFI_EAP_TYPE_PEAP or #WIFI_EAP_TYPE_TTLS.
@@ -1502,6 +1588,7 @@ int wifi_ap_set_eap_passphrase(wifi_ap_h ap, const char* user_name, const char* 
 int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password_set);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_eap_ca_cert_file instead.
  * @brief Gets the CA Certificate of EAP.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This function is valid only if the EAP type is #WIFI_EAP_TYPE_TLS.
@@ -1518,6 +1605,7 @@ int wifi_ap_get_eap_passphrase(wifi_ap_h ap, char** user_name, bool* is_password
 int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_eap_ca_cert_file instead.
  * @brief Sets the CA Certificate of EAP.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This function is valid only if the EAP type is #WIFI_EAP_TYPE_TLS.
@@ -1532,6 +1620,7 @@ int wifi_ap_get_eap_ca_cert_file(wifi_ap_h ap, char** file);
 int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_eap_client_cert_file instead.
  * @brief Gets the Client Certificate of EAP.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This function is valid only if the EAP type is #WIFI_EAP_TYPE_TLS.
@@ -1548,6 +1637,7 @@ int wifi_ap_set_eap_ca_cert_file(wifi_ap_h ap, const char* file);
 int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_eap_client_cert_file instead.
  * @brief Sets the CA Certificate of EAP.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This function is valid only if the EAP type is #WIFI_EAP_TYPE_TLS.
@@ -1562,6 +1652,7 @@ int wifi_ap_get_eap_client_cert_file(wifi_ap_h ap, char** file);
 int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_eap_private_key_file instead.
  * @brief Gets the private key file of EAP.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This function is valid only if the EAP type is #WIFI_EAP_TYPE_TLS.
@@ -1578,6 +1669,7 @@ int wifi_ap_set_eap_client_cert_file(wifi_ap_h ap, const char* file);
 int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_eap_private_key_info instead.
  * @brief Sets the private key information of EAP.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This function is valid only if the EAP type is #WIFI_EAP_TYPE_TLS.
@@ -1593,6 +1685,7 @@ int wifi_ap_get_eap_private_key_file(wifi_ap_h ap, char** file);
 int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char* password);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_eap_type instead.
  * @brief Gets the EAP type of Wi-Fi.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1607,6 +1700,7 @@ int wifi_ap_set_eap_private_key_info(wifi_ap_h ap, const char* file, const char*
 int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_eap_type instead.
  * @brief Sets the EAP type of Wi-Fi.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1620,6 +1714,7 @@ int wifi_ap_get_eap_type(wifi_ap_h ap, wifi_eap_type_e* type);
 int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_get_eap_auth_type instead.
  * @brief Gets the type of EAP phase2 authentication of Wi-Fi.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1634,6 +1729,7 @@ int wifi_ap_set_eap_type(wifi_ap_h ap, wifi_eap_type_e type);
 int wifi_ap_get_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e* type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_ap_set_eap_auth_type instead.
  * @brief Sets the type of EAP phase2 authentication of Wi-Fi.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] ap  The access point handle
@@ -1656,6 +1752,7 @@ int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type);
 */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_create instead.
  * @brief Gets access point configuration handle.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a config using wifi_config_destroy().
@@ -1677,6 +1774,7 @@ int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type);
 int wifi_config_create(const char *name, const char *passphrase, wifi_security_type_e security_type, wifi_config_h *config);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_clone instead.
  * @brief Clones the access point configuration handle.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a cloned_config using wifi_config_destroy().
@@ -1695,6 +1793,7 @@ int wifi_config_create(const char *name, const char *passphrase, wifi_security_t
 int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_destroy instead.
  * @brief Destroys the access point configuration handle.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
@@ -1711,6 +1810,7 @@ int wifi_config_clone(wifi_config_h origin, wifi_config_h *cloned_config);
 int wifi_config_destroy(wifi_config_h config);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_save_configuration instead.
  * @brief Saves Wi-Fi configuration of access point.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -1729,6 +1829,7 @@ int wifi_config_destroy(wifi_config_h config);
 int wifi_config_save_configuration(wifi_config_h config);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_remove instead.
  * @brief Removes Wi-Fi configuration of access point.
  * @since_tizen 3.0
  * @privlevel public
@@ -1748,6 +1849,7 @@ int wifi_config_save_configuration(wifi_config_h config);
 int wifi_config_remove(wifi_config_h config);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_foreach_configuration instead.
  * @brief Gets the result of access point configurations repeatedly.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -1769,6 +1871,7 @@ int wifi_config_remove(wifi_config_h config);
 int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_name instead.
  * @brief Gets the name of access point from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a name using free().
@@ -1786,6 +1889,7 @@ int wifi_config_foreach_configuration(wifi_config_list_cb callback, void *user_d
 int wifi_config_get_name(wifi_config_h config, char **name);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_security_type instead.
  * @brief Gets the security type of access point from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
@@ -1801,6 +1905,7 @@ int wifi_config_get_name(wifi_config_h config, char **name);
 int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *security_type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_proxy_address instead.
  * @brief Sets access point proxy address configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -1821,6 +1926,7 @@ int wifi_config_get_security_type(wifi_config_h config, wifi_security_type_e *se
 int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e address_family, const char *proxy_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_proxy_address instead.
  * @brief Gets the proxy address of access point from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a proxy_address using free().
@@ -1839,6 +1945,7 @@ int wifi_config_set_proxy_address(wifi_config_h config, wifi_address_family_e ad
 int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *address_family, char **proxy_address);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_hidden_ap_property instead.
  * @brief Sets the hidden property of access point from the configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -1857,6 +1964,7 @@ int wifi_config_get_proxy_address(wifi_config_h config, wifi_address_family_e *a
 int wifi_config_set_hidden_ap_property(wifi_config_h config, bool is_hidden);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_hidden_ap_property instead.
  * @brief Gets the hidden property of access point from the configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
@@ -1872,6 +1980,7 @@ int wifi_config_set_hidden_ap_property(wifi_config_h config, bool is_hidden);
 int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *is_hidden);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_eap_anonymous_identity instead.
  * @brief Gets access point anonymous identity from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a anonymous_identity using free().
@@ -1886,6 +1995,7 @@ int wifi_config_get_hidden_ap_property(wifi_config_h config, bool *is_hidden);
 int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymous_identity);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_eap_anonymous_identity instead.
  * @brief Sets access point anonymous identity to configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -1902,6 +2012,7 @@ int wifi_config_get_eap_anonymous_identity(wifi_config_h config, char** anonymou
 int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* anonymous_identity);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_eap_ca_cert_file instead.
  * @brief Gets access point cacert file from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a ca_cert using free().
@@ -1920,6 +2031,7 @@ int wifi_config_set_eap_anonymous_identity(wifi_config_h config, const char* ano
 int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_eap_ca_cert_file instead.
  * @brief Sets access point cacert file to configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -1940,12 +2052,13 @@ int wifi_config_get_eap_ca_cert_file(wifi_config_h config, char** ca_cert);
 int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_eap_client_cert_file instead.
  * @brief Gets access point client cert file from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a client_crt using free().
  *
  * @param[in] config		The access point configuration handle
- * @param[out] client_crt	The certification authority(CA) certificates file of access point
+ * @param[out] client_cert	The certification authority(CA) certificates file of access point
  *
  * @return 0 on success, otherwise negative error value
  * @retval #WIFI_ERROR_NONE					Successful
@@ -1954,6 +2067,7 @@ int wifi_config_set_eap_ca_cert_file(wifi_config_h config, const char* ca_cert);
 int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cert);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_eap_client_cert_file instead.
  * @brief Sets access point client cert file to configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -1961,7 +2075,7 @@ int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cer
  *
  * @param[in] config		The access point configuration handle
  * @param[in] private_key	The private key file
- * @param[in] client_crt		The certification authority(CA) certificates file of access point
+ * @param[in] client_cert		The certification authority(CA) certificates file of access point
  *
  * @return 0 on success, otherwise negative error value
  * @retval #WIFI_ERROR_NONE					Successful
@@ -1971,6 +2085,7 @@ int wifi_config_get_eap_client_cert_file(wifi_config_h config, char** client_cer
 int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* private_key, const char* client_cert);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_eap_identity instead.
  * @brief Gets access point identity from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a identity using free().
@@ -1985,6 +2100,7 @@ int wifi_config_set_eap_client_cert_file(wifi_config_h config, const char* priva
 int wifi_config_get_eap_identity(wifi_config_h config, char** identity);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_eap_identity instead.
  * @brief Sets access point identity to configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -2001,6 +2117,7 @@ int wifi_config_get_eap_identity(wifi_config_h config, char** identity);
 int wifi_config_set_eap_identity(wifi_config_h config, const char* identity);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_eap_type instead.
  * @brief Gets access point eap type from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
@@ -2014,6 +2131,7 @@ int wifi_config_set_eap_identity(wifi_config_h config, const char* identity);
 int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_eap_type instead.
  * @brief Sets access point eap type to configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -2030,6 +2148,7 @@ int wifi_config_get_eap_type(wifi_config_h config, wifi_eap_type_e *eap_type);
 int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_eap_auth_type instead.
  * @brief Gets access point eap auth type from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
@@ -2043,6 +2162,7 @@ int wifi_config_set_eap_type(wifi_config_h config, wifi_eap_type_e eap_type);
 int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* eap_auth_type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_eap_auth_type instead.
  * @brief Sets access point eap auth type to configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -2059,6 +2179,7 @@ int wifi_config_get_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e* ea
 int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap_auth_type);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_get_eap_subject_match instead.
  * @brief Gets access point subject match from configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @remarks You must release @a subject_match using free().
@@ -2073,6 +2194,7 @@ int wifi_config_set_eap_auth_type(wifi_config_h config, wifi_eap_auth_type_e eap
 int wifi_config_get_eap_subject_match(wifi_config_h config, char** subject_match);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_config_set_eap_subject_match instead.
  * @brief Sets access point subject match to configuration.
  * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  * @privlevel public
@@ -2098,6 +2220,7 @@ int wifi_config_set_eap_subject_match(wifi_config_h config, const char* subject_
  */
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_tdls_state_e instead.
  * @brief Enumeration for the state of the Wi-Fi TDLS.
  * @since_tizen 3.0
  */
@@ -2108,6 +2231,7 @@ typedef enum
 } wifi_tdls_state_e;
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_tdls_state_changed_cb instead.
  * @brief Called when the WiFi TDLS state is changed.
  * @since_tizen 3.0
  *
@@ -2120,6 +2244,7 @@ typedef enum
 typedef void(*wifi_tdls_state_changed_cb)(wifi_tdls_state_e state, char* peer_mac_addr, void* user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_tdls_disconnect instead.
  * @brief Disconnects the connected peer.
  * @since_tizen 3.0
  * @privlevel public
@@ -2138,6 +2263,7 @@ typedef void(*wifi_tdls_state_changed_cb)(wifi_tdls_state_e state, char* peer_ma
 int wifi_tdls_disconnect(const char* peer_mac_addr);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_tdls_get_connected_peer instead.
  * @brief Gets Peer Mac address of Connected peer.
  * @since_tizen 3.0
  * @privlevel public
@@ -2158,6 +2284,7 @@ int wifi_tdls_disconnect(const char* peer_mac_addr);
 int wifi_tdls_get_connected_peer(char** peer_mac_addr);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_tdls_set_state_changed_cb instead.
  * @brief Registers the callback called when TDLS state is changed.
  * @since_tizen 3.0
  *
@@ -2173,6 +2300,7 @@ int wifi_tdls_get_connected_peer(char** peer_mac_addr);
 int wifi_tdls_set_state_changed_cb(wifi_tdls_state_changed_cb callback, void* user_data);
 
 /**
+ * @deprecated Deprecated since 3.0. Use wifi_manager_tdls_unset_state_changed_cb instead.
  * @brief Unregisters the callback called when TDLS state is changed.
  * @since_tizen 3.0
  *

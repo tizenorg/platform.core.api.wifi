@@ -19,9 +19,9 @@
 #define __TIZEN_NETWORK_WIFI_DOC_H__
 
 /**
- * @defgroup CAPI_NETWORK_WIFI_MODULE  Wi-Fi
+ * @defgroup CAPI_NETWORK_WIFI_MODULE  Wi-Fi (Deprecated)
  * @brief The Wi-Fi API provides functions for managing Wi-Fi and monitoring the state of Wi-Fi.
- * @ingroup CAPI_NETWORK_FRAMEWORK
+ * @ingroup CAPI_NETWORK_WIFI_PACKAGE
  *
  * @section CAPI_NETWORK_WIFI_MODULE_HEADER Required Header
  *   \#include <wifi.h>
@@ -34,41 +34,41 @@
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
 /**
- * @defgroup CAPI_NETWORK_WIFI_MANAGER_MODULE  Wi-Fi Manager
+ * @defgroup CAPI_NETWORK_WIFI_MANAGEMENT_MODULE  Wi-Fi Management
  * @brief The Wi-Fi API provides functions for managing Wi-Fi.
  * @ingroup CAPI_NETWORK_WIFI_MODULE
  *
- * @section CAPI_NETWORK_WIFI_MANAGER_MODULE_HEADER Required Header
+ * @section CAPI_NETWORK_WIFI_MANAGEMENT_MODULE_HEADER Required Header
  *   \#include <wifi.h>
  *
- * @section CAPI_NETWORK_WIFI_MANAGER_MODULE_OVERVEW Overview
+ * @section CAPI_NETWORK_WIFI_MANAGEMENT_MODULE_OVERVEW Overview
  * The Wi-Fi Manager provides functions for managing Wi-Fi.
  * Using the Wi-Fi Manager, you can implement features that allow the users of your application to:
  * - Activate / Deactivate the Wi-Fi device
  * - Connect to the access point
  * - Scans the access points
- * @section CAPI_NETWORK_WIFI_MANAGER_MODULE_FEATURE Related Features
+ * @section CAPI_NETWORK_WIFI_MANAGEMENT_MODULE_FEATURE Related Features
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -86,20 +86,20 @@
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
 /**
  * @defgroup CAPI_NETWORK_WIFI_AP_MODULE  AP
  * @brief The Access Point API provides functions for managing the Access Point.
- * @ingroup CAPI_NETWORK_WIFI_MANAGER_MODULE
+ * @ingroup CAPI_NETWORK_WIFI_MANAGEMENT_MODULE
  *
  * @section CAPI_NETWORK_WIFI_AP_MODULE  Required Header
  *   \#include <wifi.h>
@@ -111,13 +111,13 @@
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -135,13 +135,13 @@
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -159,13 +159,13 @@
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -183,13 +183,13 @@
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
@@ -208,20 +208,20 @@
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.\n
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.</a>
  *
  */
 
 /**
- * @defgroup CAPI_NETWORK_WIFI_TDLS_MODULE TDLS
+ * @defgroup CAPI_NETWORK_WIFI_TDLS_MODULE Wi-Fi TDLS
  * @brief The TDLS APIs for managing TDLS.
- * @ingroup CAPI_NETWORK_WIFI_MANAGER_MODULE
+ * @ingroup CAPI_NETWORK_WIFI_MODULE
  *
  * @section CAPI_NETWORK_WIFI_TDLS_MODULE  Required Header
  *   \#include <wifi.h>
@@ -232,13 +232,13 @@
  * This API is related with the following features:\n
  * - http://tizen.org/feature/network.wifi.tdls\n
  *
- * It is recommended to design feature related codes in your application for reliability.\n
+ * It is recommended to design applications with regard to features, for reliability.\n
  *
- * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, thereby controlling the procedure of your application.
+ * You can check if a device supports the related features for this API by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.
+ * More details on using features in your application can be found in the <a href="https://developer.tizen.org/development/getting-started/native-application/understanding-tizen-programming/application-filtering"><b>Feature List</b>.
  *
  */
 
