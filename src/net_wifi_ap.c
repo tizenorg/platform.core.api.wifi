@@ -22,6 +22,7 @@
 #include <netinet/in.h>
 
 #include "net_wifi_private.h"
+#include "tv/wifi_extension.h"
 
 #define MAX_PREFIX_LENGTH 6
 
@@ -1638,6 +1639,39 @@ EXPORT_API int wifi_ap_set_eap_auth_type(wifi_ap_h ap, wifi_eap_auth_type_e type
 		return WIFI_ERROR_INVALID_PARAMETER;
 	//LCOV_EXCL_STOP
 	}
+
+	return WIFI_ERROR_NONE;
+}
+
+EXPORT_API int wifi_ap_get_disconnect_reason(wifi_ap_h ap,
+				wifi_disconnect_reason_e *disconnect_reason)
+{
+
+	CHECK_FEATURE_SUPPORTED(WIFI_FEATURE);
+
+	int rv = NET_ERR_NONE;
+
+	if (_wifi_libnet_check_ap_validity(ap) == false || disconnect_reason == NULL) {
+		WIFI_LOG(WIFI_ERROR,"[App<--TizenMW] Wrong Parameter Passed\n");
+		return WIFI_ERROR_INVALID_PARAMETER;
+	}
+
+	net_profile_info_t *profile_info = ap;
+	net_profile_info_t ap_info_local;
+
+	rv = net_get_profile_info(profile_info->ProfileName, &ap_info_local);
+	if (rv == NET_ERR_ACCESS_DENIED) {
+		WIFI_LOG(WIFI_ERROR, "Access denied");
+		return WIFI_ERROR_PERMISSION_DENIED;
+	} else if (rv != NET_ERR_NONE) {
+		WIFI_LOG(WIFI_ERROR, "Failed to Get profile_info");
+		return WIFI_ERROR_OPERATION_FAILED;
+	}
+
+	*disconnect_reason = ap_info_local.ProfileInfo.Wlan.disconnect_reason;
+
+	WIFI_LOG(WIFI_INFO, "[App<--TizenMW]disconnect_reason %d\n",
+		 *disconnect_reason);
 
 	return WIFI_ERROR_NONE;
 }

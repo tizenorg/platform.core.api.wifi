@@ -29,6 +29,7 @@
 #include <assert.h>
 #include <wifi.h>
 #include <tizen_error.h>
+#include <tv/wifi_extension.h>
 
 #define LOG_RED "\033[0;31m"
 #define LOG_GREEN "\033[0;32m"
@@ -715,6 +716,7 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 	wifi_encryption_type_e enc_type;
 	wifi_eap_type_e eap_type;
 	wifi_eap_auth_type_e eap_auth_type;
+	wifi_disconnect_reason_e disconnect_reason;
 	bool bool_value;
 	char *ap_name_part = (char*)user_data;
 
@@ -835,6 +837,11 @@ static bool __test_found_print_ap_info_callback(wifi_ap_h ap, void *user_data)
 			printf("WPS supported : %s\n", bool_value ? "TRUE" : "FALSE");
 		else
 			printf("Fail to get WPS supported\n");
+
+		if (wifi_ap_get_disconnect_reason(ap, &disconnect_reason) == WIFI_ERROR_NONE)
+			printf("Disconnect Reason of AP : %d\n", disconnect_reason);
+		else
+			printf("Fail to get Disconnect Reason\n");
 
 		if (sec_type != WIFI_SECURITY_TYPE_EAP) {
 			g_free(ap_name);
